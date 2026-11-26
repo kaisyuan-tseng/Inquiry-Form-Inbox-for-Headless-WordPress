@@ -344,12 +344,12 @@ trait IFI_CPT_Actions_Trait {
 	 * 列表页的批量操作。
 	 *
 	 * 列表页是自渲染的（admin.php?page=ifi-inquiry），核心 edit.php 的批量处理器不会运行，
-	 * 所以这里接住表单提交。动作名与 WP_List_Table 一致（action / action2），nonce 复用
-	 * 核心批量表单里的 bulk-posts。
+	 * 所以这里接住表单提交（含「清空回收站」的 delete_all）。动作名与 WP_List_Table 一致，
+	 * nonce 复用核心批量表单里的 bulk-posts。
 	 */
 	public static function handle_bulk_actions(): void {
 		$action = self::current_bulk_action();
-		if ( ! in_array( $action, array( 'trash', 'untrash', 'delete' ), true ) ) {
+		if ( ! in_array( $action, array( 'trash', 'untrash', 'delete', 'delete_all' ), true ) ) {
 			return;
 		}
 
@@ -359,27 +359,59 @@ trait IFI_CPT_Actions_Trait {
 			wp_die( esc_html( self::t( 'error_forbidden' ) ), '', array( 'response' => 403 ) );
 		}
 
-        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- verified above.
-		$post_ids = isset( $_REQUEST['post'] ) ? array_map( 'absint', (array) wp_unslash( $_REQUEST['post'] ) ) : array();
-		$post_ids = array_values( array_unique( array_filter( $post_ids ) ) );
+		// 批量动作全是删除族（trash / untrash / delete / delete_all），能力是全局的：
+		// 在这里一次判定，既避免逐条查能力，也避免删到一半才 403 留下半套数据。
+		if ( ! current_user_can( Inquiry_Form_Inbox::CAP_DELETE ) ) {
+			wp_die( esc_html( self::t( 'error_forbidden' ) ), '', array( 'response' => 403 ) );
+		}
+
+		$empty_trash = 'delete_all' === $action;
+		if ( $empty_trash ) {
+			// 清空回收站 = 对当前 CPT 的所有 trash 记录执行永久删除；
+			// 附件清理仍由 before_delete_post 联动。
+			$post_ids = get_posts(
+				array(
+					'post_type'      => self::POST_TYPE,
+					'post_status'    => 'trash',
+					'posts_per_page' => -1,
+					'fields'         => 'ids',
+					'no_found_rows'  => true,
+				)
+			);
+			$action   = 'delete';
+		} else {
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- verified above.
+			$post_ids = isset( $_REQUEST['post'] ) ? array_map( 'absint', (array) wp_unslash( $_REQUEST['post'] ) ) : array();
+			$post_ids = array_values( array_unique( array_filter( $post_ids ) ) );
+		}
 
 		self::run_bulk_action( $action, $post_ids );
 
-		// 回到来源页（保留当前视图 / 搜索 / 筛选），并去掉会重复触发批量动作的参数
-		$target = wp_get_referer();
-		$target = $target !== false && $target !== '' ? $target : self::list_url();
-		$target = remove_query_arg(
-			array( 'action', 'action2', 'post', '_wpnonce', '_wp_http_referer' ),
-			$target
-		);
+		if ( $empty_trash ) {
+			// 留在回收站视图，用户能看到清空后的空态，而不是被带回「全部」
+			$target = add_query_arg( 'post_status', 'trash', self::list_url() );
+		} else {
+			// 回到来源页（保留当前视图 / 搜索 / 筛选），并去掉会重复触发批量动作的参数
+			$target = wp_get_referer();
+			$target = $target !== false && $target !== '' ? $target : self::list_url();
+			$target = remove_query_arg(
+				array( 'action', 'action2', 'post', '_wpnonce', '_wp_http_referer' ),
+				$target
+			);
+		}
 
 		wp_safe_redirect( $target );
 		exit;
 	}
 
-	/** action / action2 与 WP_List_Table::current_action() 同口径 */
+	/** action / action2 / delete_all 与 WP_Posts_List_Table::current_action() 同口径 */
 	private static function current_bulk_action(): string {
         // phpcs:disable WordPress.Security.NonceVerification.Recommended
+		// 「清空回收站」提交的是 delete_all，不是下拉里的 action
+		if ( isset( $_REQUEST['delete_all'] ) || isset( $_REQUEST['delete_all2'] ) ) {
+			return 'delete_all';
+		}
+
 		$action = isset( $_REQUEST['action'] ) && is_string( $_REQUEST['action'] )
 			? sanitize_key( wp_unslash( $_REQUEST['action'] ) )
 			: '';
@@ -395,6 +427,7 @@ trait IFI_CPT_Actions_Trait {
 	/**
 	 * 执行批量动作，返回实际处理的条数。
 	 *
+	 * 能力检查由 handle_bulk_actions() 的统一入口完成；这里只负责 post type 过滤与动作分发。
 	 * 永久删除仍然只允许对已在回收站的记录执行；不在回收站的记录直接跳过。
 	 */
 	private static function run_bulk_action( string $action, array $post_ids ): int {
@@ -402,10 +435,6 @@ trait IFI_CPT_Actions_Trait {
 		foreach ( $post_ids as $post_id ) {
 			if ( get_post_type( $post_id ) !== self::POST_TYPE ) {
 				continue;
-			}
-			// 记录级 capability：与单条行操作同一口径
-			if ( ! current_user_can( 'ifi_delete_inquiry', $post_id ) ) {
-				wp_die( esc_html( self::t( 'invalid_request' ) ), '', array( 'response' => 403 ) );
 			}
 
 			if ( 'trash' === $action ) {

@@ -6,15 +6,15 @@ Node 22 · Playwright 1.62 (Chromium 1140).
 ```
 $ IFI_ALLOW_TEST_WRITES=1 php tests/bin/gate.php
 
-  php -l         ok      4.9s
-  phpcs          ok      5.6s
+  php -l         ok      4.0s
+  phpcs          ok      4.6s
   string keys    ok      0.1s
   gettext chain  ok      0.1s
   readme         ok      0.1s
-  unit           ok      0.4s
-  integration    ok     13.9s
-  http           ok      5.0s
-  ui             ok      8.8s
+  unit           ok      0.3s
+  integration    ok     12.6s
+  http           ok      4.6s
+  ui             ok      8.4s
 
 RESULT: OK
 ```
@@ -28,10 +28,10 @@ RESULT: OK
 | String keys | 232 declared, 232 referenced, **0 missing, 0 unused** | 311 call sites; 1 select-expression call registered both of its literals |
 | gettext chain | POT = 250 msgids · PO = 250 · MO = 250 | 0 stale, 0 empty MO entries, 4 untranslated per locale (plugin description + author name, author URI, plugin URI — the description is intentionally English-only) |
 | readme | 0 fail, 0 warn | 6,810 bytes, 5 tags, `Tested up to 7.1`, 4 screenshots present; changelog intentionally omitted (history in `changelog.txt`) |
-| Unit | **164 tests, 203 assertions, 0 skipped** | 0.4s |
-| Integration | **156 tests, 466 assertions, 0 skipped** | 13.9s |
-| HTTP | **13 scenarios, 55 assertions** | 5.0s |
-| UI | **6 pages clean** | 8.8s; detail screenshot skipped because the local inbox is empty |
+| Unit | **164 tests, 203 assertions, 0 skipped** | 0.3s |
+| Integration | **157 tests, 468 assertions, 0 skipped** | 12.6s |
+| HTTP | **13 scenarios, 55 assertions** | 4.6s |
+| UI | **6 pages clean** | 8.4s; detail screenshot skipped because the local inbox is empty |
 
 ## What the suites found
 
@@ -58,6 +58,7 @@ The tests were not written to confirm the code worked. These are defects they su
 - **Uploads:** arbitrary extensions are no longer rejected; `.exe` reaches the store step in-process and is accepted over HTTP, and a PNG in the `files` group is accepted. Size and count limits remain, and per-field caps are configurable through `ifi_file_groups`.
 - **Attachment groups:** the upload group is kept through staging, archiving and the attachment meta; notification emails render one row per group with that group's Field labels entry. Old records without a group keep the single merged list.
 - **Inquiries list:** bulk Trash, Restore and permanent Delete go through the self-rendered page handler (the core `edit.php` handler never runs there); the date and source filters wait for the Filter button; Screen Options no longer offers a View mode.
+- **Empty Trash:** the Trash view's button permanently deletes every trashed inquiry and returns to Trash; the list form keeps the current view, so filters, search and bulk actions stay where they were.
 - **Row badge:** the number column shows New / Pending / Contacted / Spam in priority order. Closing the detail dialog marks the record as viewed (`ifi_inquiry_viewed`), and the badge on the page switches to Pending without a reload.
 - **Activation:** the activation callback produces no output, leaves a one-time success transient, and `get_plugins('/inquiry-form-inbox')` returns exactly one plugin header.
 - **Build:** `build-zip.php` fails unless the package has the expected main file and exactly one `Plugin Name` header (the first run caught the guard itself comparing root-relative paths to slug-prefixed paths; fixed).

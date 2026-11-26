@@ -106,6 +106,16 @@ trait IFI_CPT_Trait {
 			<form id="posts-filter" method="get">
 				<input type="hidden" name="page" value="<?php echo esc_attr( self::LIST_SLUG ); ?>" />
 				<input type="hidden" name="post_type" value="<?php echo esc_attr( self::POST_TYPE ); ?>" />
+				<?php
+				// 表单提交会替换整个 query string：不带上当前视图就会跳回「全部」。
+				// 回收站用 post_status，待处理 / 已联系 / 垃圾用 ifi_status。
+				$current_view = self::status_view();
+				if ( 'trash' === $current_view ) {
+					echo '<input type="hidden" name="post_status" value="trash" />';
+				} elseif ( '' !== $current_view ) {
+					echo '<input type="hidden" name="ifi_status" value="' . esc_attr( $current_view ) . '" />';
+				}
+				?>
 				<?php $list_table->search_box( self::t( 'search_items' ), 'ifi-inquiry-search' ); ?>
 				<?php $list_table->display(); ?>
 			</form>

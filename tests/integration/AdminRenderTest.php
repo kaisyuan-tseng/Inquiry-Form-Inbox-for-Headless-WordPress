@@ -67,6 +67,20 @@ final class AdminRenderTest extends IfiTestCase {
 		$this->assertSame( 'publish', get_post_status( $id ) );
 	}
 
+	public function test_empty_trash_button_is_recognised_as_delete_all(): void {
+		$original = $_REQUEST;
+
+		try {
+			$_REQUEST = array( 'delete_all' => 'Empty Trash' );
+			$this->assertSame( 'delete_all', Reflect::call( 'current_bulk_action', array() ) );
+
+			$_REQUEST = array( 'delete_all2' => 'Empty Trash' );
+			$this->assertSame( 'delete_all', Reflect::call( 'current_bulk_action', array() ) );
+		} finally {
+			$_REQUEST = $original;
+		}
+	}
+
 	public function test_inquiry_badge_follows_the_triage_order(): void {
 		$today = $this->make_inquiry();
 		$this->assertSame( 'new', $this->badge_state( $today ) );
