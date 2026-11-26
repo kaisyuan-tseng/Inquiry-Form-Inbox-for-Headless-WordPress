@@ -6,15 +6,15 @@ Node 22 · Playwright 1.62 (Chromium 1140).
 ```
 $ IFI_ALLOW_TEST_WRITES=1 php tests/bin/gate.php
 
-  php -l         ok      4.3s
-  phpcs          ok      4.5s
+  php -l         ok      4.1s
+  phpcs          ok      4.7s
   string keys    ok      0.1s
   gettext chain  ok      0.1s
   readme         ok      0.1s
   unit           ok      0.3s
-  integration    ok     11.7s
-  http           ok      4.5s
-  ui             ok      8.1s
+  integration    ok     15.3s
+  http           ok      4.9s
+  ui             ok     10.4s
 
 RESULT: OK
 ```
@@ -25,13 +25,13 @@ RESULT: OK
 |---|---|---|
 | PHP syntax | 36 files, 0 failures | |
 | PHPCS (WPCS 3.1 + PHPCompatibilityWP) | **0 errors / 0 warnings** | 28 plugin files; `tests/`, `tools/` audited separately |
-| String keys | 229 declared, 229 referenced, **0 missing, 0 unused** | 300 call sites; 1 select-expression call registered both of its literals |
-| gettext chain | POT = 249 msgids · PO = 249 · MO = 247 | 0 stale, 0 empty MO entries, 4 untranslated per locale (plugin description + author name, author URI, plugin URI — the description is intentionally English-only) |
+| String keys | 230 declared, 230 referenced, **0 missing, 0 unused** | 302 call sites; 1 select-expression call registered both of its literals |
+| gettext chain | POT = 250 msgids · PO = 250 · MO = 248 | 0 stale, 0 empty MO entries, 4 untranslated per locale (plugin description + author name, author URI, plugin URI — the description is intentionally English-only) |
 | readme | 0 fail, 0 warn | 6,810 bytes, 5 tags, `Tested up to 7.1`, 4 screenshots present; changelog intentionally omitted (history in `changelog.txt`) |
 | Unit | **164 tests, 203 assertions, 0 skipped** | 0.3s |
-| Integration | **148 tests, 438 assertions, 0 skipped** | 11.7s |
-| HTTP | **13 scenarios, 54 assertions** | 4.5s |
-| UI | **6 pages clean** | 8.1s; detail screenshot skipped because the local inbox is empty |
+| Integration | **152 tests, 454 assertions, 0 skipped** | 15.3s |
+| HTTP | **13 scenarios, 55 assertions** | 4.9s |
+| UI | **6 pages clean** | 10.4s; detail screenshot skipped because the local inbox is empty |
 
 ## What the suites found
 
@@ -56,6 +56,7 @@ The tests were not written to confirm the code worked. These are defects they su
 - **Deletion:** a meta path that starts inside `uploads/ifi-inquiries/` but resolves outside it (`../secret.txt`) must leave the outside file intact.
 - **Admin render:** a stored body containing `<script>` is filtered before the detail view, while `rgba()` colors survive.
 - **Uploads:** arbitrary extensions are no longer rejected; `.exe` reaches the store step in-process and is accepted over HTTP, and a PNG in the `files` group is accepted. Size and count limits remain, and per-field caps are configurable through `ifi_file_groups`.
+- **Attachment groups:** the upload group is kept through staging, archiving and the attachment meta; notification emails render one row per group with that group's Field labels entry. Old records without a group keep the single merged list.
 - **Activation:** the activation callback produces no output, leaves a one-time success transient, and `get_plugins('/inquiry-form-inbox')` returns exactly one plugin header.
 - **Build:** `build-zip.php` fails unless the package has the expected main file and exactly one `Plugin Name` header (the first run caught the guard itself comparing root-relative paths to slug-prefixed paths; fixed).
 

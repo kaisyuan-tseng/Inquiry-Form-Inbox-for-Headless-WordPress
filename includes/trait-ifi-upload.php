@@ -9,7 +9,10 @@ trait IFI_Upload_Trait {
 
 
 	/**
-	 * 把上传文件挪进本次提交的暂存目录，返回 array( name, tmp_path, size )
+	 * 把上传文件挪进本次提交的暂存目录，返回 array( group, name, tmp_path, size )
+	 *
+	 * group 是提交时的上传字段名（files / images，站点可用 ifi_file_groups 增删），
+	 * 一路带到归档与邮件渲染：每类附件因此能用自己的字段标签单独成行。
 	 *
 	 * 文件类型由前端负责（input 的 accept / 前端校验）；服务端只校验上传错误、
 	 * 文件数量与单文件大小，并清洗文件名。
@@ -77,6 +80,7 @@ trait IFI_Upload_Trait {
 					self::reject( self::t( 'error_upload_store' ) );
 				}
 				$staged[] = array(
+					'group'    => (string) $group,
 					'name'     => $safe_name,
 					'tmp_path' => self::norm( $dest ),
 					'size'     => (int) $size,
@@ -115,8 +119,9 @@ trait IFI_Upload_Trait {
 	/**
 	 * 附件持久化：uploads/ifi-inquiries/{Ym}/{文章ID-随机}/，返回留档后的文件数组。
 	 *
-	 * 返回形状始终是 name/path/url/size 四件套——不管文件最后落在留档目录还是暂存目录。
-	 * url 为空只在「确实没能归档」时出现（后台据此显示不可点），不会因为路径算错而空。
+	 * 返回形状始终是 group/name/path/url/size 五件套——不管文件最后落在留档目录还是暂存目录。
+	 * group 为空只出现在归档前就没有分组信息的旧数据上；url 为空只在「确实没能归档」时出现
+	 * （后台据此显示不可点），不会因为路径算错而空。
 	 */
 	private static function persist_attachments( array $staged, int $record_id ): array {
 		if ( ! $staged ) {
@@ -148,10 +153,11 @@ trait IFI_Upload_Trait {
 				: '';
 
 			$out[] = array(
-				'name' => (string) $file['name'],
-				'path' => self::norm( $dest ),
-				'url'  => $web_path,
-				'size' => (int) $file['size'],
+				'group' => (string) ( $file['group'] ?? '' ),
+				'name'  => (string) $file['name'],
+				'path'  => self::norm( $dest ),
+				'url'   => $web_path,
+				'size'  => (int) $file['size'],
 			);
 		}
 

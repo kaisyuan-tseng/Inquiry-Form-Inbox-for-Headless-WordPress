@@ -148,6 +148,7 @@ async function main() {
 				const files = record.meta.ifi_inquiry_attachments;
 				check.ok( Array.isArray( files ) && files.length === 1, 'one attachment recorded' );
 				if ( Array.isArray( files ) && files[ 0 ] ) {
+					check.equal( files[ 0 ].group, 'files', 'upload group recorded' );
 					check.equal( files[ 0 ].name, 'drawing.pdf', 'file name' );
 					check.ok( files[ 0 ].url.startsWith( '/media/' ), 'relative web path' );
 

@@ -223,6 +223,113 @@ final class AttachmentsTest extends IfiTestCase {
 		$this->assertStringNotContainsString( 'colspan="2"', $html );
 	}
 
+	public function test_attachment_rows_split_by_upload_group(): void {
+		$fields = array(
+			'fieldLabels' => array(),
+		);
+		$staged = array(
+			array(
+				'group' => 'images',
+				'name'  => 'photo.png',
+				'size'  => 2048,
+			),
+			array(
+				'group' => 'files',
+				'name'  => 'spec.pdf',
+				'size'  => 1024,
+			),
+		);
+
+		$html = (string) Reflect::call(
+			'build_rows',
+			array( $fields, $staged, array( 'files' => 'Drawings', 'images' => 'Pictures' ) )
+		);
+
+		$this->assertStringContainsString( '>Drawings</th>', $html );
+		$this->assertStringContainsString( '>Pictures</th>', $html );
+		// 行序跟 file_groups() 一致：files 在前，images 在后
+		$this->assertLessThan( strpos( $html, 'Pictures' ), strpos( $html, 'Drawings' ) );
+	}
+
+	public function test_grouped_attachments_without_labels_render_one_list(): void {
+		$fields = array(
+			'fieldLabels' => array(),
+		);
+		$staged = array(
+			array(
+				'group' => 'files',
+				'name'  => 'a.pdf',
+				'size'  => 1024,
+			),
+			array(
+				'group' => 'images',
+				'name'  => 'b.png',
+				'size'  => 2048,
+			),
+		);
+
+		$html = (string) Reflect::call( 'build_rows', array( $fields, $staged, array() ) );
+
+		// 一个分组标签都没有：合并成一份跨两列的清单，不能出现两个无表头的行
+		$this->assertSame( 1, substr_count( $html, 'colspan="2"' ) );
+		$this->assertSame( 1, substr_count( $html, 'a.pdf' ) );
+		$this->assertSame( 1, substr_count( $html, 'b.png' ) );
+	}
+
+	public function test_only_the_attachments_label_keeps_one_list(): void {
+		$fields = array(
+			'fieldLabels' => array(),
+		);
+		$staged = array(
+			array(
+				'group' => 'files',
+				'name'  => 'a.pdf',
+				'size'  => 1024,
+			),
+			array(
+				'group' => 'images',
+				'name'  => 'b.png',
+				'size'  => 2048,
+			),
+		);
+
+		$html = (string) Reflect::call( 'build_rows', array( $fields, $staged, array( 'attachments' => 'Files' ) ) );
+
+		// 只配了总标签：仍是一份清单，不能拆成两行同名的表头
+		$this->assertSame( 1, substr_count( $html, '>Files</th>' ) );
+		$this->assertSame( 0, substr_count( $html, 'colspan="2"' ) );
+		$this->assertSame( 1, substr_count( $html, 'a.pdf' ) );
+		$this->assertSame( 1, substr_count( $html, 'b.png' ) );
+	}
+
+	public function test_a_group_without_its_own_label_has_no_header(): void {
+		$fields = array(
+			'fieldLabels' => array(),
+		);
+		$staged = array(
+			array(
+				'group' => 'files',
+				'name'  => 'a.pdf',
+				'size'  => 1024,
+			),
+			array(
+				'group' => 'images',
+				'name'  => 'b.png',
+				'size'  => 2048,
+			),
+		);
+
+		$html = (string) Reflect::call(
+			'build_rows',
+			array( $fields, $staged, array( 'attachments' => 'Files', 'files' => 'Drawings' ) )
+		);
+
+		$this->assertStringContainsString( '>Drawings</th>', $html );
+		// images 没有自己的标签：不借用总标签，直接跨两列
+		$this->assertSame( 0, substr_count( $html, '>Files</th>' ) );
+		$this->assertSame( 1, substr_count( $html, 'colspan="2"' ) );
+	}
+
 	public function test_persisting_moves_the_file_into_the_record_directory(): void {
 		$post_id = (int) wp_insert_post(
 			array(
@@ -236,6 +343,7 @@ final class AttachmentsTest extends IfiTestCase {
 		file_put_contents( $source, '%PDF-1.4 archived' );
 		$staged = array(
 			array(
+				'group'    => 'files',
 				'name'     => 'drawing.pdf',
 				'tmp_path' => wp_normalize_path( $source ),
 				'size'     => 17,
@@ -245,6 +353,7 @@ final class AttachmentsTest extends IfiTestCase {
 		$stored = Reflect::call( 'persist_attachments', array( $staged, $post_id ) );
 
 		$this->assertCount( 1, $stored );
+		$this->assertSame( 'files', $stored[0]['group'] );
 		$this->assertSame( 'drawing.pdf', $stored[0]['name'] );
 		$this->assertSame( 17, $stored[0]['size'] );
 		$this->assertFileExists( $stored[0]['path'] );

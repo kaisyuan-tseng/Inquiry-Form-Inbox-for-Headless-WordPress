@@ -331,7 +331,7 @@ trait IFI_Mailer_Trait {
 		return $ordered;
 	}
 
-	/** 字段表行（HTML） */
+	/** 字段表行 + 附件清单（HTML） */
 	private static function build_rows( array $fields, array $staged, ?array $labels = null ): string {
 		// 1) 行与行序
 		$ordered = self::ordered_fields( $fields, $labels );
@@ -349,43 +349,106 @@ trait IFI_Mailer_Trait {
 		}
 
 		// 3) 附件清单（真实附件在邮件附件区，这里列清单供核对）。
-		// 表头不做固定文案：优先取字段标签里的 attachments，其次取实际上传字段
-		// （files / images）的标签；都没有就让清单跨两列，插件不替站点决定这一行叫什么。
+		// 表头不做固定文案：每个上传分组用自己的字段标签（files / images）；
+		// 所有分组都没配标签时，才退回总标签 attachments 的合并清单。
 		if ( $staged ) {
-			$items = '';
-			foreach ( $staged as $file ) {
-				$items .= '<div style="margin:1px 0;">' . esc_html( $file['name'] )
-						. ' <span style="color:#8a979d;font-size:12px;">(' . esc_html( self::size_label( $file['size'] ) ) . ')</span></div>';
-			}
-
 			$attach_labels    = (array) $labels;
 			$submitted_labels = (array) ( $fields['fieldLabels'] ?? array() );
-			$attach_label     = trim( (string) ( $attach_labels['attachments'] ?? '' ) );
-			if ( '' === $attach_label ) {
-				$attach_label = trim( (string) ( $submitted_labels['attachments'] ?? '' ) );
+
+			$global_label = trim( (string) ( $attach_labels['attachments'] ?? '' ) );
+			if ( '' === $global_label ) {
+				$global_label = trim( (string) ( $submitted_labels['attachments'] ?? '' ) );
 			}
-			if ( '' === $attach_label ) {
-				foreach ( array_keys( self::file_groups() ) as $group ) {
-					$candidate = trim( (string) ( $attach_labels[ $group ] ?? '' ) );
-					if ( '' === $candidate ) {
-						$candidate = trim( (string) ( $submitted_labels[ $group ] ?? '' ) );
+
+			// 新记录每项都带 group；旧数据没有分组信息，统一按 '' 归并，渲染保持原样
+			$groups  = array();
+			$grouped = false;
+			foreach ( $staged as $file ) {
+				$group = (string) ( $file['group'] ?? '' );
+				if ( '' !== $group ) {
+					$grouped = true;
+				}
+				$groups[ $group ][] = $file;
+			}
+
+			if ( ! $grouped ) {
+				$attach_label = $global_label;
+				if ( '' === $attach_label ) {
+					foreach ( array_keys( self::file_groups() ) as $group ) {
+						$attach_label = self::attachment_label( (string) $group, $attach_labels, $submitted_labels );
+						if ( '' !== $attach_label ) {
+							break;
+						}
 					}
-					if ( '' !== $candidate ) {
-						$attach_label = $candidate;
+				}
+				$html .= self::attachment_row_html( $attach_label, $staged );
+			} else {
+				// 按 file_groups() 的顺序出行，未知分组（站点自定义的）排在后面
+				$sections = array();
+				foreach ( array_keys( self::file_groups() ) as $group ) {
+					if ( isset( $groups[ $group ] ) ) {
+						$sections[ $group ] = $groups[ $group ];
+						unset( $groups[ $group ] );
+					}
+				}
+				foreach ( $groups as $group => $files ) {
+					$sections[ $group ] = $files;
+				}
+
+				$section_labels = array();
+				foreach ( array_keys( $sections ) as $group ) {
+					$section_labels[ $group ] = self::attachment_label( (string) $group, $attach_labels, $submitted_labels );
+				}
+
+				// 没有任何分组配了自己的标签：退回一份合并清单，保留总标签的旧行为
+				$has_group_label = false;
+				foreach ( $section_labels as $label ) {
+					if ( '' !== $label ) {
+						$has_group_label = true;
 						break;
 					}
 				}
-			}
 
-			if ( '' !== $attach_label ) {
-				$html .= '<tr><th style="' . self::th_style() . '">' . esc_html( $attach_label ) . '</th>'
-						. '<td style="' . self::td_style() . '">' . $items . '</td></tr>';
-			} else {
-				$html .= '<tr><td colspan="2" style="' . self::td_style() . '">' . $items . '</td></tr>';
+				if ( ! $has_group_label ) {
+					$html .= self::attachment_row_html( $global_label, $staged );
+				} else {
+					// 配了标签的分组各自成行；没配的分组不出表头，不借用总标签
+					foreach ( $sections as $group => $files ) {
+						$html .= self::attachment_row_html( $section_labels[ $group ], $files );
+					}
+				}
 			}
 		}
 
 		return $html;
+	}
+
+	/** 附件分组的标签：只看该分组自己的标签；没有就返回空串，由调用方决定是否出表头 */
+	private static function attachment_label( string $group, array $labels, array $submitted ): string {
+		if ( '' === $group ) {
+			return '';
+		}
+		foreach ( array( $labels, $submitted ) as $source ) {
+			$candidate = trim( (string) ( $source[ $group ] ?? '' ) );
+			if ( '' !== $candidate ) {
+				return $candidate;
+			}
+		}
+		return '';
+	}
+
+	/** 一行附件清单：有标签时两列，没有时跨两列，插件不替站点决定这一行叫什么 */
+	private static function attachment_row_html( string $label, array $files ): string {
+		$items = '';
+		foreach ( $files as $file ) {
+			$items .= '<div style="margin:1px 0;">' . esc_html( (string) ( $file['name'] ?? '' ) )
+					. ' <span style="color:#8a979d;font-size:12px;">(' . esc_html( self::size_label( (int) ( $file['size'] ?? 0 ) ) ) . ')</span></div>';
+		}
+
+		return '' !== $label
+			? '<tr><th style="' . self::th_style() . '">' . esc_html( $label ) . '</th>'
+				. '<td style="' . self::td_style() . '">' . $items . '</td></tr>'
+			: '<tr><td colspan="2" style="' . self::td_style() . '">' . $items . '</td></tr>';
 	}
 
 	private static function size_label( int $bytes ): string {

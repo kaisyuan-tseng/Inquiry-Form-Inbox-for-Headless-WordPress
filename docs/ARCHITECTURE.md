@@ -40,7 +40,7 @@ Content-Type: multipart/form-data
 - **按名透传**：其余字段按前端提交的名字原样收下
 - **环境数据**：`browserLanguage` / `timezone` 由前端采集，服务端校验后入库
 - **IP**：默认只取 `REMOTE_ADDR`；只有 `REMOTE_ADDR` 是配置的可信代理时才采信 `X-Forwarded-For` / `X-Real-IP`。转发链从右向左读，跳过可信代理，取第一个不可信跳——最左侧条目由客户端提供，不能作为限流或入库依据
-- **附件**：`files[]`（单个 ≤20MB）、`images[]`（单个 ≤10MB）；字段用途由前端 `accept` 决定，服务端只校验上传错误、数量与大小
+- **附件**：`files[]`（单个 ≤20MB）、`images[]`（单个 ≤10MB）；字段用途由前端 `accept` 决定，服务端只校验上传错误、数量与大小。通知邮件按上传分组分行，表头取该分组的字段标签（`files` / `images`）；只有所有分组都没配标签时，`attachments` 才作为整份清单的兜底
 - **蜜罐**：`companyWebsite`（默认，后台可改）非空即机器人，静默丢弃（不消耗限流配额）
 - **限流**：同一可信请求标识默认 1 分钟 3 次 / 1 小时 10 次（后台「Block Rules」页可改，0 = 关掉该窗口），超限 429 + `Retry-After`；窗口长度固定为 60s / 3600s，`ifi_rate_limits` 过滤器可整份替换（含 `ttl`）
 - **垃圾规则**（后台「Block Rules」页，option `ifi_spam_rules`）：蜜罐开关、关键词、邮箱域名、
