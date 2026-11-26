@@ -223,7 +223,6 @@ WordPress 仪表盘上的「最近询盘」挂件用同一套读法：四个指�
 | `ifi_honeypot_field` | 后台「隐藏字段名」（默认 `companyWebsite`） | 蜜罐字段名；过滤器优先于设置页的值，改了前端要同步 |
 | `ifi_rate_limits` | `minute` 3/60s、`hour` 10/3600s（次数取自 Block Rules 页的 `rate_minute` / `rate_hour`） | 两个限流窗口的 `limit` 与 `ttl`；`limit` 设 0 关闭该窗口；优先级高于设置页 |
 | `ifi_trusted_proxies` | `IFI_TRUSTED_PROXIES` 常量 | 可信代理，决定是否采信转发头 |
-| `ifi_source_title_prefixes` | `['Article','Post','文章']` | 从页面标题里剥掉的前缀 |
 | `ifi_form_variants` | `page`/`modal`/`drawer`/`floating`/`sticky` | 表单形态 slug => 显示名；加自定义形态不必改插件 |
 
 ### Actions

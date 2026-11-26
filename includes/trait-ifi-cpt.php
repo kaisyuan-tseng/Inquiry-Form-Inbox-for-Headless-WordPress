@@ -308,7 +308,7 @@ trait IFI_CPT_Trait {
 				'<option value="%s"%s>%s</option>',
 				esc_attr( $value ),
 				selected( $value, $current, false ),
-				esc_html( self::clean_source_title( $value ) )
+				esc_html( $value )
 			);
 		}
 		echo '</select>';

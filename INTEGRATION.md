@@ -46,8 +46,8 @@ add_filter('ifi_required_fields', fn() => ['name', 'mail', 'body']);
 |---|---|
 | `formVariant` | 表单形态：`page`（页内嵌）/ `modal`（弹窗）/ `drawer`（抽屉）/ `floating`（悬浮）/ `sticky`（固定）；也接受自定义值，见 §2.2.1 |
 | `pageUrl` | 提交页面的完整 URL |
-| `pageTitle` | 当前语言下的页面标题（已去品牌后缀；文章页与普通页一样，直接传文章标题，不要带「文章：」之类的前缀） |
-| `pageTitleEn` | 该页面的**英文**标题；用于后台统一来源口径（同样不要带前缀） |
+| `pageTitle` | 当前语言下的页面标题（已去品牌后缀；文章页与普通页一样，直接传文章标题。**前缀由前端去掉**，插件原样存储与显示，不再替站点剥「文章：」之类的词） |
+| `pageTitleEn` | 该页面的**英文**标题；用于后台统一来源口径（同样由前端去掉前缀） |
 | `locale` | 页面语言，如 `zh-hans` / `en` |
 | `browserLanguage` | 浏览器语言，如 `zh-CN` / `en-US`（取 `navigator.languages[0]`） |
 | `timezone` | 用户时区，IANA 标识如 `Asia/Shanghai`（取 `Intl.DateTimeFormat().resolvedOptions().timeZone`） |
@@ -240,6 +240,8 @@ if (tz) data.append("timezone", tz);
 
 主题（subject）用**和正文同一套** `{{rows.*.value}}` / `{{rows.*.label}}` 字段变量；留空用语言字典的默认文案。
 主题走 `sanitize_text_field`，**不要写 `<` `>`**（会被当成 HTML 标签剥掉）。
+
+**附件清单行**：邮件正文末尾会列出附件文件名与大小（真实文件仍作为邮件附件发送）。这一行的表头取字段标签里的 `attachments`；没有就取上传字段名（`files` / `images`）的标签。两个都没有时不显示表头，文件名清单跨两列，插件不会塞一个固定的「附件」文案。
 
 ---
 

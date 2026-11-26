@@ -91,6 +91,7 @@ trait IFI_I18n_Trait {
 			'dash_failed_notify'       => __( '%d notifications failed', 'inquiry-form-inbox' ),
 			/* translators: Placeholders must be preserved. */
 			'dash_failed_reply'        => __( '%d confirmations failed', 'inquiry-form-inbox' ),
+			'dash_unsent_ignored'      => __( 'Unsent warnings are ignored', 'inquiry-form-inbox' ),
 			'dash_view'                => __( 'View', 'inquiry-form-inbox' ),
 			'dash_sources_title'       => __( 'Sources', 'inquiry-form-inbox' ),
 			'dash_langs_title'         => __( 'Languages', 'inquiry-form-inbox' ),
@@ -139,7 +140,7 @@ trait IFI_I18n_Trait {
 			'tpl_reply_on'             => __( 'Enable auto-confirmation', 'inquiry-form-inbox' ),
 			'tpl_reply_on_hint'        => __( 'Sent to the address the visitor typed, right after they submit. Replies come back to the inquiry inbox.', 'inquiry-form-inbox' ),
 			'tpl_ignore_unsent'        => __( 'Ignore unsent warning', 'inquiry-form-inbox' ),
-			'tpl_ignore_unsent_hint'   => __( 'When enabled, an auto-confirmation that was not sent is not counted as an email problem. Failed inquiry notifications are still reported.', 'inquiry-form-inbox' ),
+			'tpl_ignore_unsent_hint'   => __( 'When enabled, any email that was not sent is ignored in the email status — auto-confirmation does not need to be on.', 'inquiry-form-inbox' ),
 			'tpl_lang_bar'             => __( 'Language', 'inquiry-form-inbox' ),
 			'tpl_lang_default'         => __( 'Default', 'inquiry-form-inbox' ),
 			'tpl_lang_code'            => __( 'Language', 'inquiry-form-inbox' ),
@@ -294,7 +295,6 @@ trait IFI_I18n_Trait {
 			'form_sticky'              => __( 'Sticky form', 'inquiry-form-inbox' ),
 			/* translators: Placeholders must be preserved. */
 			'email_subject'            => __( 'New inquiry from %s', 'inquiry-form-inbox' ),
-			'row_attachments'          => __( 'Attachments', 'inquiry-form-inbox' ),
 			'read_only'                => __( 'Inquiries are read-only. Open them from the Inquiries list.', 'inquiry-form-inbox' ),
 			'email_subject_reply'      => __( 'We received your inquiry', 'inquiry-form-inbox' ),
 		);

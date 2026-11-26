@@ -13,7 +13,6 @@ return array(
 	'This plugin stores inquiry data submitted through the site contact form: name, email, message, form fields, browser language, timezone, IP address, source page, and any uploaded attachments. Records are visible only to authorized administrators and are used to send inquiry notifications and delivery confirmations. Use the WordPress privacy tools to export or erase records by email address; deleting an inquiry also removes its attachments.'
 		=> '本插件保存通过站点联系表单提交的询盘数据：姓名、邮箱、留言、表单字段、浏览器语言、时区、IP 地址、来源页面以及上传的附件。这些记录仅对有权查看询盘的管理员可见，用于发送询盘通知与送达确认。可在 WordPress 隐私工具中按邮箱地址导出或删除记录；删除询盘时附件会一并清除。',
 
-	'Inquiry Form Inbox migration error: %s' => '询盘表单收件箱迁移出错：%s',
 	'Inquiry %s could not be deleted.'        => '询盘 %s 无法删除。',
 
 	'Page locale'   => '页面语言',
@@ -29,8 +28,9 @@ return array(
 	"list view\x04Trash"  => '回收站',
 	"row action\x04Trash" => '移至回收站',
 
-	'When enabled, an auto-confirmation that was not sent is not counted as an email problem. Failed inquiry notifications are still reported.'
-		=> '开启后，自动确认邮件未发出不计入发信异常；询盘通知失败仍会计入。',
+	'When enabled, any email that was not sent is ignored in the email status — auto-confirmation does not need to be on.'
+		=> '开启后，任何未发送成功的邮件都不计入发信状态，无需启用自动确认。',
+	'Unsent warnings are ignored' => '未发送警告已忽略',
 
 	'Sorry, you are not allowed to access this page.' => '抱歉，你无权访问此页面。',
 	'Missing required field: %s'                     => '缺少必填字段：%s',

@@ -91,7 +91,7 @@ That message comes from WordPress when the Activate link on the install screen p
 
 = Are there developer hooks? =
 
-Yes. Filters: `ifi_recipient`, `ifi_required_fields`, `ifi_max_files`, `ifi_file_groups`, `ifi_length_limits`, `ifi_dashboard_limit`, `ifi_field_manifest`, `ifi_strings`, `ifi_spam_rules`, `ifi_spam_verdict`, `ifi_honeypot_field`, `ifi_rate_limits`, `ifi_trusted_proxies`, `ifi_source_title_prefixes`. Action: `ifi_autoreply_sent`. Full list in `docs/ARCHITECTURE.md`.
+Yes. Filters: `ifi_recipient`, `ifi_required_fields`, `ifi_max_files`, `ifi_file_groups`, `ifi_length_limits`, `ifi_dashboard_limit`, `ifi_field_manifest`, `ifi_strings`, `ifi_spam_rules`, `ifi_spam_verdict`, `ifi_honeypot_field`, `ifi_rate_limits`, `ifi_trusted_proxies`. Action: `ifi_autoreply_sent`. Full list in `docs/ARCHITECTURE.md`.
 
 = How do I remove my data? =
 

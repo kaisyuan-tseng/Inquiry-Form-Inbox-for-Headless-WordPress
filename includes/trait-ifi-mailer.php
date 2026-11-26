@@ -282,7 +282,7 @@ trait IFI_Mailer_Trait {
 			$title = (string) ( $fields['pageTitle'] ?? '' );
 		}
 		if ( $title !== '' ) {
-			return self::clean_source_title( $title );
+			return trim( $title );
 		}
 		$path = parse_url( (string) ( $fields['pageUrl'] ?? '' ), PHP_URL_PATH );
 		if ( $path && $path !== '/' ) {
@@ -348,15 +348,41 @@ trait IFI_Mailer_Trait {
 					. '<td style="' . self::td_style() . '">' . $value_html . '</td></tr>';
 		}
 
-		// 3) 附件清单（真实附件在邮件附件区，这里列清单供核对）
+		// 3) 附件清单（真实附件在邮件附件区，这里列清单供核对）。
+		// 表头不做固定文案：优先取字段标签里的 attachments，其次取实际上传字段
+		// （files / images）的标签；都没有就让清单跨两列，插件不替站点决定这一行叫什么。
 		if ( $staged ) {
 			$items = '';
 			foreach ( $staged as $file ) {
 				$items .= '<div style="margin:1px 0;">' . esc_html( $file['name'] )
 						. ' <span style="color:#8a979d;font-size:12px;">(' . esc_html( self::size_label( $file['size'] ) ) . ')</span></div>';
 			}
-			$html .= '<tr><th style="' . self::th_style() . '">' . esc_html( self::t( 'row_attachments' ) ) . '</th>'
-					. '<td style="' . self::td_style() . '">' . $items . '</td></tr>';
+
+			$attach_labels    = (array) $labels;
+			$submitted_labels = (array) ( $fields['fieldLabels'] ?? array() );
+			$attach_label     = trim( (string) ( $attach_labels['attachments'] ?? '' ) );
+			if ( '' === $attach_label ) {
+				$attach_label = trim( (string) ( $submitted_labels['attachments'] ?? '' ) );
+			}
+			if ( '' === $attach_label ) {
+				foreach ( array_keys( self::file_groups() ) as $group ) {
+					$candidate = trim( (string) ( $attach_labels[ $group ] ?? '' ) );
+					if ( '' === $candidate ) {
+						$candidate = trim( (string) ( $submitted_labels[ $group ] ?? '' ) );
+					}
+					if ( '' !== $candidate ) {
+						$attach_label = $candidate;
+						break;
+					}
+				}
+			}
+
+			if ( '' !== $attach_label ) {
+				$html .= '<tr><th style="' . self::th_style() . '">' . esc_html( $attach_label ) . '</th>'
+						. '<td style="' . self::td_style() . '">' . $items . '</td></tr>';
+			} else {
+				$html .= '<tr><td colspan="2" style="' . self::td_style() . '">' . $items . '</td></tr>';
+			}
 		}
 
 		return $html;

@@ -54,12 +54,13 @@ trait IFI_Dashboard_Trait {
 		$spam_peak   = max( 1, max( $spam_series ) );
 
 		$failed14 = self::daily_failed_series( 14 );
-		// 自动确认页的「忽略未发送警告」：开启后自动确认没发出去不算异常，
-		// 计数只看询盘通知；卡片本身照常显示，通知失败仍然要报。
-		$ignore_unsent = (string) ( self::tpl( 'autoreply' )['ignore_unsent'] ?? '0' ) === '1';
+		// 「忽略未发送警告」是全局开关：勾选后任何未发送成功的邮件都不计入异常，
+		// 与「启用自动确认」是否开启无关；不勾选时通知与自动确认的失败都要警告。
+		$autoreply_cfg = self::tpl( 'autoreply' );
+		$ignore_unsent = (string) ( $autoreply_cfg['ignore_unsent'] ?? '0' ) === '1';
 		$notify_failed = self::failed_count( 'ifi_inquiry_mail_sent' );
 		$reply_failed  = self::failed_count( 'ifi_inquiry_autoreply_sent' );
-		$unsent        = $ignore_unsent ? $notify_failed : self::unsent_count();
+		$unsent        = self::board_unsent( $autoreply_cfg );
 
 		$all_url = self::list_url();
 		$new_url = add_query_arg( 'ifi_status', 'pending', $all_url );
@@ -114,11 +115,10 @@ trait IFI_Dashboard_Trait {
 							<p class="ifi-board__hint">
 								<?php if ( $unsent > 0 ) : ?>
 									<span><?php echo esc_html( sprintf( self::t( 'dash_failed_notify' ), $notify_failed ) ); ?></span>
-									<?php // 忽略未发送警告时自动确认不计入异常，这一行也就不再列出 ?>
-									<?php if ( ! $ignore_unsent ) : ?>
-										<span aria-hidden="true">·</span>
-										<span><?php echo esc_html( sprintf( self::t( 'dash_failed_reply' ), $reply_failed ) ); ?></span>
-									<?php endif; ?>
+									<span aria-hidden="true">·</span>
+									<span><?php echo esc_html( sprintf( self::t( 'dash_failed_reply' ), $reply_failed ) ); ?></span>
+								<?php elseif ( $ignore_unsent ) : ?>
+									<span><?php echo esc_html( self::t( 'dash_unsent_ignored' ) ); ?></span>
 								<?php else : ?>
 									<span class="ifi-board__ok"><?php echo esc_html( self::t( 'dash_all_delivered' ) ); ?></span>
 								<?php endif; ?>
@@ -168,7 +168,7 @@ trait IFI_Dashboard_Trait {
 									<?php $swatch = $index < 5 ? self::palette_color( $index ) : '#c3c4c7'; ?>
 									<li class="ifi-board__row">
 										<?php if ( $row['value'] !== '' ) : ?>
-											<a class="ifi-board__row-label" href="<?php echo esc_url( add_query_arg( 'ifi_inquiry_source', $row['value'], $all_url ) ); ?>" title="<?php echo esc_attr( self::clean_source_title( $row['value'] ) ); ?>"><span class="ifi-board__swatch" style="background:<?php echo esc_attr( $swatch ); ?>"></span><?php echo esc_html( self::clean_source_title( $row['value'] ) ); ?></a>
+											<a class="ifi-board__row-label" href="<?php echo esc_url( add_query_arg( 'ifi_inquiry_source', $row['value'], $all_url ) ); ?>" title="<?php echo esc_attr( $row['value'] ); ?>"><span class="ifi-board__swatch" style="background:<?php echo esc_attr( $swatch ); ?>"></span><?php echo esc_html( $row['value'] ); ?></a>
 										<?php else : ?>
 											<span class="ifi-board__row-label"><span class="ifi-board__swatch" style="background:<?php echo esc_attr( $swatch ); ?>"></span>—</span>
 										<?php endif; ?>
@@ -702,6 +702,21 @@ trait IFI_Dashboard_Trait {
 		return (int) $query->found_posts;
 	}
 
+	/**
+	 * 看板「邮件状态」的异常数。
+	 *
+	 * 「忽略未发送警告」是全局开关，只认自己的值：打开时任何未发送成功的邮件
+	 * （通知或自动确认）都不计入，与「启用自动确认」是否开启无关。
+	 *
+	 * @param array $cfg 自动确认配置（含 ignore_unsent）.
+	 */
+	private static function board_unsent( array $cfg ): int {
+		if ( (string) ( $cfg['ignore_unsent'] ?? '0' ) === '1' ) {
+			return 0;
+		}
+		return self::unsent_count();
+	}
+
 	/** 通知或自动确认明确发送失败（'no'）的询盘数；'none'（自动确认未启用）不算异常 */
 	private static function unsent_count(): int {
 		$query = new WP_Query(
@@ -846,9 +861,10 @@ trait IFI_Dashboard_Trait {
 		$today   = self::today_count();
 		$pending = self::pending_count();
 
-		// 与看板同一个口径：开启「忽略未发送警告」后，自动确认没发出去不算异常
-		$ignore_unsent = (string) ( self::tpl( 'autoreply' )['ignore_unsent'] ?? '0' ) === '1';
-		$unsent        = $ignore_unsent ? self::failed_count( 'ifi_inquiry_mail_sent' ) : self::unsent_count();
+		// 与看板同一个口径：开启「忽略未发送警告」后，任何未发送成功的邮件都不算异常
+		$autoreply_cfg = self::tpl( 'autoreply' );
+		$ignore_unsent = (string) ( $autoreply_cfg['ignore_unsent'] ?? '0' ) === '1';
+		$unsent        = self::board_unsent( $autoreply_cfg );
 
 		$all_url     = self::list_url();
 		$pending_url = add_query_arg( 'ifi_status', 'pending', $all_url );

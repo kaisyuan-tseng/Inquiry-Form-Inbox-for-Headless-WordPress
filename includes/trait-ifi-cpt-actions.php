@@ -63,45 +63,6 @@ trait IFI_CPT_Actions_Trait {
 	}
 
 	/**
-	 * 清理前端传来的页面标题：去掉 document.title 常见的「文章：」「Post:」类前缀。
-	 *
-	 * 前端应传干净的页面标题，但实际数据里出现过 `文章：How to …` 这种把整段
-	 * document.title 直接提交上来的情况；展示前统一剥掉，避免 Source 列带前缀。
-	 *
-	 * 前缀表可用 ifi_source_title_prefixes 过滤器替换，换一种语言的站点不必改代码。
-	 */
-	private static function clean_source_title( string $title ): string {
-		$prefixes = (array) apply_filters( 'ifi_source_title_prefixes', array( 'Article', 'Post', '文章' ) );
-		$prefixes = array_values(
-			array_filter(
-				array_map(
-					static function ( $prefix ): string {
-						return trim( (string) $prefix );
-					},
-					$prefixes
-				),
-				static function ( string $prefix ): bool {
-					return '' !== $prefix;
-				}
-			)
-		);
-
-		if ( ! $prefixes ) {
-			return trim( $title );
-		}
-
-		$quoted  = array_map(
-			static function ( string $prefix ): string {
-				return preg_quote( $prefix, '/' );
-			},
-			$prefixes
-		);
-		$pattern = '/^\s*(?:' . implode( '|', $quoted ) . ')\s*[：:]\s*/u';
-
-		return trim( (string) preg_replace( $pattern, '', $title ) );
-	}
-
-	/**
 	 * 单条记录的来源展示名：英文页面标题 > 本地化标题 > URL 路径。
 	 *
 	 * @param int  $post_id      询盘记录 ID.
@@ -118,7 +79,7 @@ trait IFI_CPT_Actions_Trait {
 			$path = parse_url( $url, PHP_URL_PATH );
 			$name = $path && $path !== '/' ? trim( (string) $path, '/' ) : '';
 		}
-		$name = self::clean_source_title( $name );
+		$name = trim( $name );
 		if ( ! $with_variant ) {
 			return $name !== '' ? $name : '—';
 		}

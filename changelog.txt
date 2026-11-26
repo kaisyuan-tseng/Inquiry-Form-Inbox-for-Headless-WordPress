@@ -20,6 +20,9 @@ by the plugin directory.
 * Change: the plugin homepage now points to the GitHub repository, and the Chinese translation of the plugin description was removed; the description stays in English.
 * Breaking change: removed the legacy 1.x/2.x migration and the 3.x backfill passes. Existing `ifi_*` data is untouched; sites still on old identifiers must migrate before upgrading.
 * Breaking change: upload field groups are now `files[]` (20 MB per file) and `images[]` (10 MB per file); the old business-specific group names are no longer read. Per-field caps come from the new `ifi_file_groups` filter, so changing them no longer requires editing the plugin.
+* Change: the attachment summary row in notification emails no longer uses a fixed "Attachments" header. It reads the `attachments` key from Field labels; without that key the file list spans both columns. The hard-coded `row_attachments` string is gone.
+* Change: source titles are stored and displayed exactly as the frontend sends them. The `ifi_source_title_prefixes` filter and its `Article:` / `Post:` / `文章：` stripping are gone; cleaning the page title is the frontend's job.
+* Fix: "Ignore unsent warning" is now a global switch. When enabled, any email that was not sent is ignored in the email status, whether auto-confirmation is on or not; when disabled, both notification and confirmation failures are reported again.
 * Fix: the activation hook is registered from the main plugin file, which is the location WordPress documents, instead of from the class initializer.
 
 = 3.1.2 =

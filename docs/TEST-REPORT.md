@@ -6,13 +6,13 @@ Node 22 · Playwright 1.62 (Chromium 1140).
 ```
 $ IFI_ALLOW_TEST_WRITES=1 php tests/bin/gate.php
 
-  php -l         ok      4.0s
+  php -l         ok      4.3s
   phpcs          ok      4.5s
   string keys    ok      0.1s
   gettext chain  ok      0.1s
   readme         ok      0.1s
   unit           ok      0.3s
-  integration    ok     11.9s
+  integration    ok     11.7s
   http           ok      4.5s
   ui             ok      8.1s
 
@@ -26,12 +26,12 @@ RESULT: OK
 | PHP syntax | 36 files, 0 failures | |
 | PHPCS (WPCS 3.1 + PHPCompatibilityWP) | **0 errors / 0 warnings** | 28 plugin files; `tests/`, `tools/` audited separately |
 | String keys | 229 declared, 229 referenced, **0 missing, 0 unused** | 300 call sites; 1 select-expression call registered both of its literals |
-| gettext chain | POT = 248 msgids · PO = 248 · MO = 246 | 0 stale, 0 empty MO entries, 4 untranslated per locale (plugin description + author name, author URI, plugin URI — the description is intentionally English-only) |
-| readme | 0 fail, 0 warn | 6,839 bytes, 5 tags, `Tested up to 7.1`, 4 screenshots present; changelog intentionally omitted (history in `changelog.txt`) |
-| Unit | **173 tests, 212 assertions, 0 skipped** | 0.3s |
-| Integration | **144 tests, 429 assertions, 0 skipped** | 11.9s |
+| gettext chain | POT = 249 msgids · PO = 249 · MO = 247 | 0 stale, 0 empty MO entries, 4 untranslated per locale (plugin description + author name, author URI, plugin URI — the description is intentionally English-only) |
+| readme | 0 fail, 0 warn | 6,810 bytes, 5 tags, `Tested up to 7.1`, 4 screenshots present; changelog intentionally omitted (history in `changelog.txt`) |
+| Unit | **164 tests, 203 assertions, 0 skipped** | 0.3s |
+| Integration | **148 tests, 438 assertions, 0 skipped** | 11.7s |
 | HTTP | **13 scenarios, 54 assertions** | 4.5s |
-| UI | **6 pages clean** | 10.2s; detail screenshot skipped because the local inbox is empty |
+| UI | **6 pages clean** | 8.1s; detail screenshot skipped because the local inbox is empty |
 
 ## What the suites found
 

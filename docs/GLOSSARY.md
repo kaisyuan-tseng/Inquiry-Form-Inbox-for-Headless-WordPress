@@ -136,7 +136,7 @@
 | `form_floating` | Floating form | 悬浮表单 |
 | `form_sticky` | Sticky form | 固定表单 |
 
-#### 详情弹窗（11 条）
+#### 详情弹窗（10 条）
 
 | Key | English (msgid) | 中文 |
 |---|---|---|
@@ -149,7 +149,6 @@
 | `modal_next` | Next inquiry | 下一条询盘 |
 | `modal_reply` | Reply | 回复 |
 | `modal_delete` | Delete | 删除 |
-| `row_attachments` | Attachments | 附件 |
 | `read_only` | Inquiries are read-only. Open them from the Inquiries list. | 询盘为只读，请从「询盘」列表打开。 |
 
 #### 邮件模板页（53 条）
@@ -175,7 +174,7 @@
 | `tpl_reply_on` | Enable auto-confirmation | 启用自动确认 |
 | `tpl_reply_on_hint` | Sent to the address the visitor typed, right after they submit. Replies come back to the inquiry inbox. | 访客提交后立即发到其填写的地址；回复会回到询盘收件箱。 |
 | `tpl_ignore_unsent` | Ignore unsent warning | 忽略未发送警告 |
-| `tpl_ignore_unsent_hint` | When enabled, an auto-confirmation that was not sent is not counted as an email problem. Failed inquiry notifications are still reported. | 开启后，自动确认邮件未发出不计入发信异常；询盘通知失败仍会计入。 |
+| `tpl_ignore_unsent_hint` | When enabled, any email that was not sent is ignored in the email status — auto-confirmation does not need to be on. | 开启后，任何未发送成功的邮件都不计入发信状态，无需启用自动确认。 |
 | `tpl_lang_bar` | Language | 语言 |
 | `tpl_lang_default` | Default | 默认 |
 | `tpl_lang_code` | Language | 语言 |
@@ -281,7 +280,7 @@
 | `spam_detail_domain` | domain %s | 域名 %s |
 | `spam_detail_links` | %s links | %s 个链接 |
 
-#### 仪表盘挂件（23 条）
+#### 仪表盘挂件（24 条）
 
 | Key | English (msgid) | 中文 |
 |---|---|---|
@@ -296,6 +295,7 @@
 | `dash_all_delivered` | All emails sent | 邮件均已发送 |
 | `dash_failed_notify` | %d notifications failed | %d 封通知失败 |
 | `dash_failed_reply` | %d confirmations failed | %d 封确认失败 |
+| `dash_unsent_ignored` | Unsent warnings are ignored | 未发送警告已忽略 |
 | `dash_view` | View | 查看 |
 | `dash_sources_title` | Sources | 来源 |
 | `dash_langs_title` | Languages | 语言 |

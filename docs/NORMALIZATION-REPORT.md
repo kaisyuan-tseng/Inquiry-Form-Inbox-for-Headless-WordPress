@@ -144,7 +144,7 @@ hard-coded punctuation was reaching for, done properly.
 | Plugin header | 60 lines of Chinese design notes | a short docblock; the notes moved to `docs/ARCHITECTURE.md` |
 | Terminology | `Pending` in code, `New` in INTEGRATION.md, `view_new` as a key | `Pending` everywhere, key renamed `view_pending` |
 | `ifi_strings` overlay | returning one key wiped the other 213 | merged over the base map |
-| Source-title prefixes | `文章\|Article\|Post` hard-coded | `ifi_source_title_prefixes` filter |
+| Source-title prefixes | `文章\|Article\|Post` hard-coded | removed; the frontend owns `pageTitle` |
 | `readable_label('SKU')` | `S K U` | `SKU` — acronyms survive, `HTTPServer` still becomes `HTTP Server` |
 | Capacity / capability grants | six `update_option()` calls per admin request | zero when the caps are present |
 | Template cache | method-level `static`, invisible to `update_option` | class-level, flushed on option update |

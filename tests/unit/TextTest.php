@@ -19,8 +19,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Covers readable_label(), size_label(), html_to_text() and
- * clean_source_title().
+ * Covers readable_label(), size_label() and html_to_text().
  */
 final class TextTest extends TestCase {
 
@@ -104,37 +103,5 @@ final class TextTest extends TestCase {
 	public function test_html_to_text_collapses_repeated_blank_lines(): void {
 		$text = Reflect::call( 'html_to_text', array( "<p>a</p><div></div><div></div><p>b</p>" ) );
 		$this->assertStringNotContainsString( "\n\n\n", $text );
-	}
-
-	/**
-	 * Raw title / expected cleaned title.
-	 *
-	 * @return array<string, array{0: string, 1: string}>
-	 */
-	public static function sourceTitleCases(): array {
-		return array(
-			'chinese prefix'     => array( '文章：How to choose a gooseneck', 'How to choose a gooseneck' ),
-			'post prefix'        => array( 'Post: Hello world', 'Hello world' ),
-			'article prefix'     => array( 'Article: Something', 'Something' ),
-			'ascii colon'        => array( 'Post: Hello', 'Hello' ),
-			'no prefix'          => array( 'Contact us', 'Contact us' ),
-			'prefix as content'  => array( 'Postmortem: what happened', 'Postmortem: what happened' ),
-			'leading whitespace' => array( '   Post:   Padded   ', 'Padded' ),
-			'empty'              => array( '', '' ),
-		);
-	}
-
-	#[DataProvider( 'sourceTitleCases' )]
-	public function test_clean_source_title( string $title, string $expected ): void {
-		$this->assertSame( $expected, Reflect::call( 'clean_source_title', array( $title ) ) );
-	}
-
-	public function test_clean_source_title_does_not_eat_a_title_that_merely_starts_with_a_similar_word(): void {
-		// "Postage rates" must survive: the pattern requires the colon, so a word that
-		// merely starts with "Post" is untouched.
-		$this->assertSame(
-			'Postage rates 2026',
-			Reflect::call( 'clean_source_title', array( 'Postage rates 2026' ) )
-		);
 	}
 }

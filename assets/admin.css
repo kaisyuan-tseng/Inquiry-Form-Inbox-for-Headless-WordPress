@@ -40,7 +40,7 @@
 /* 编号现在同时是 h2：覆盖上面那条小字号规则，按侧栏标题显示 */
 .ifi-modal__title.ifi-modal__no{margin:0 0 16px;color:#1d2327;font-size:21px;font-weight:400;line-height:1.4;}
 .ifi-modal__fields{margin:0;}
-.ifi-modal__fields dt{margin:16px 0 3px;color:#646970;font-size:12px;}
+.ifi-modal__fields dt{margin:24px 0 4px;color:#646970;font-size:12px;}
 .ifi-modal__fields dt:first-of-type{margin-top:0;}
 .ifi-modal__fields dd{margin:0;font-size:13px;word-break:break-word;}
 .ifi-modal__fields dd .ifi-mail-item{display:block;}

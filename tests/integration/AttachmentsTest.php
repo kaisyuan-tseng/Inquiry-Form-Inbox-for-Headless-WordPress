@@ -167,6 +167,62 @@ final class AttachmentsTest extends IfiTestCase {
 		}
 	}
 
+	public function test_the_attachment_row_has_no_hard_coded_header(): void {
+		// 附件清单行的表头来自字段标签里的 attachments；没配置就不该出现固定文案。
+		$fields = array(
+			'fullName'    => 'Test Buyer',
+			'fieldLabels' => array(),
+		);
+		$staged = array(
+			array(
+				'name' => 'a.pdf',
+				'size' => 1024,
+			),
+		);
+
+		$html = (string) Reflect::call( 'build_rows', array( $fields, $staged, array() ) );
+
+		$this->assertStringContainsString( 'a.pdf', $html );
+		$this->assertStringNotContainsString( 'Attachments', $html );
+		$this->assertStringContainsString( 'colspan="2"', $html );
+	}
+
+	public function test_the_attachment_row_uses_the_attachments_label(): void {
+		$fields = array(
+			'fullName'    => 'Test Buyer',
+			'fieldLabels' => array(),
+		);
+		$staged = array(
+			array(
+				'name' => 'a.pdf',
+				'size' => 1024,
+			),
+		);
+
+		$html = (string) Reflect::call( 'build_rows', array( $fields, $staged, array( 'attachments' => 'Files' ) ) );
+
+		$this->assertStringContainsString( '>Files</th>', $html );
+		$this->assertStringNotContainsString( 'colspan="2"', $html );
+	}
+
+	public function test_the_attachment_row_falls_back_to_the_upload_field_label(): void {
+		$fields = array(
+			'fullName'    => 'Test Buyer',
+			'fieldLabels' => array(),
+		);
+		$staged = array(
+			array(
+				'name' => 'a.pdf',
+				'size' => 1024,
+			),
+		);
+
+		$html = (string) Reflect::call( 'build_rows', array( $fields, $staged, array( 'files' => 'Drawings' ) ) );
+
+		$this->assertStringContainsString( '>Drawings</th>', $html );
+		$this->assertStringNotContainsString( 'colspan="2"', $html );
+	}
+
 	public function test_persisting_moves_the_file_into_the_record_directory(): void {
 		$post_id = (int) wp_insert_post(
 			array(

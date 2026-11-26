@@ -15,6 +15,7 @@ namespace Ifi\Tests\Integration;
 
 use Ifi\Tests\IfiTestCase;
 use Ifi\Tests\MailSpy;
+use Ifi\Tests\Reflect;
 use Ifi\Tests\Scratch;
 
 /**
@@ -99,5 +100,23 @@ final class MailFailureTest extends IfiTestCase {
 		MailSpy::reset();
 		$this->assert_sent( $this->submit( array( 'message' => 'Retry me' ) ) );
 		$this->assertSame( 1, MailSpy::count() );
+	}
+
+	/**
+	 * 「忽略未发送警告」只看自己的开关，与「启用自动确认」是否开启无关：
+	 * ignore=0 时通知失败计入异常，ignore=1 时归零——即使自动确认是关的。
+	 */
+	public function test_ignore_unsent_does_not_depend_on_auto_confirmation(): void {
+		MailSpy::fail_next( 'SMTP connect() failed' );
+		$this->submit();
+
+		$this->assertSame(
+			1,
+			Reflect::call( 'board_unsent', array( array( 'enabled' => '0', 'ignore_unsent' => '0' ) ) )
+		);
+		$this->assertSame(
+			0,
+			Reflect::call( 'board_unsent', array( array( 'enabled' => '0', 'ignore_unsent' => '1' ) ) )
+		);
 	}
 }
