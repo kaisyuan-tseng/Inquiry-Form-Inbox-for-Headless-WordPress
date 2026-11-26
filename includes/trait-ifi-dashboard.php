@@ -54,13 +54,17 @@ trait IFI_Dashboard_Trait {
 		$spam_peak   = max( 1, max( $spam_series ) );
 
 		$failed14 = self::daily_failed_series( 14 );
-		// 「忽略未发送警告」是全局开关：勾选后任何未发送成功的邮件都不计入异常，
-		// 与「启用自动确认」是否开启无关；不勾选时通知与自动确认的失败都要警告。
+		// 「忽略未发送警告」与「启用自动确认」的组合见 board_email_status()：
+		// 未启用自动确认会按一条问题计；忽略开关一开则任何问题都不再提示。
 		$autoreply_cfg = self::tpl( 'autoreply' );
 		$ignore_unsent = (string) ( $autoreply_cfg['ignore_unsent'] ?? '0' ) === '1';
+		$auto_enabled  = ! empty( $autoreply_cfg['enabled'] );
 		$notify_failed = self::failed_count( 'ifi_inquiry_mail_sent' );
 		$reply_failed  = self::failed_count( 'ifi_inquiry_autoreply_sent' );
-		$unsent        = self::board_unsent( $autoreply_cfg );
+		$email_status  = self::board_email_status( $autoreply_cfg );
+		$unsent        = $email_status['unsent'];
+		$email_warn    = $email_status['warn'];
+		$auto_off      = ! $auto_enabled && ! $ignore_unsent;
 
 		$all_url = self::list_url();
 		$new_url = add_query_arg( 'ifi_status', 'pending', $all_url );
@@ -110,10 +114,16 @@ trait IFI_Dashboard_Trait {
 					<div class="ifi-board__card ifi-board__card--kpi">
 						<?php echo self::area_chart( $failed14, $labels14, '#d63638', 'ifi-g-mail' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 						<div class="ifi-board__kpi">
-							<h3 class="ifi-board__card-title"><?php echo esc_html( $unsent > 0 ? self::t( 'dash_email_problem' ) : self::t( 'dash_email_delivered' ) ); ?></h3>
-							<p class="ifi-board__num<?php echo $unsent > 0 ? ' is-warn' : ''; ?>"><?php echo esc_html( number_format_i18n( $unsent ) ); ?></p>
+							<h3 class="ifi-board__card-title"><?php echo esc_html( $email_warn ? self::t( 'dash_email_problem' ) : self::t( 'dash_email_delivered' ) ); ?></h3>
+							<p class="ifi-board__num<?php echo $email_warn ? ' is-warn' : ''; ?>"><?php echo esc_html( number_format_i18n( $unsent ) ); ?></p>
 							<p class="ifi-board__hint">
-								<?php if ( $unsent > 0 ) : ?>
+								<?php if ( $auto_off ) : ?>
+									<span><?php echo esc_html( self::t( 'dash_auto_off' ) ); ?></span>
+									<?php if ( $notify_failed > 0 ) : ?>
+										<span aria-hidden="true">·</span>
+										<span><?php echo esc_html( sprintf( self::t( 'dash_failed_notify' ), $notify_failed ) ); ?></span>
+									<?php endif; ?>
+								<?php elseif ( $unsent > 0 ) : ?>
 									<span><?php echo esc_html( sprintf( self::t( 'dash_failed_notify' ), $notify_failed ) ); ?></span>
 									<span aria-hidden="true">·</span>
 									<span><?php echo esc_html( sprintf( self::t( 'dash_failed_reply' ), $reply_failed ) ); ?></span>
@@ -703,18 +713,39 @@ trait IFI_Dashboard_Trait {
 	}
 
 	/**
-	 * 看板「邮件状态」的异常数。
+	 * 邮件状态：异常计数 + 是否需要警告。
 	 *
-	 * 「忽略未发送警告」是全局开关，只认自己的值：打开时任何未发送成功的邮件
-	 * （通知或自动确认）都不计入，与「启用自动确认」是否开启无关。
+	 * 真值表（enabled = 启用自动确认，ignore = 忽略未发送警告）：
+	 *   enabled=0, ignore=0 → 警告（未启用自动确认本身就是要提示的状态）
+	 *   enabled=0, ignore=1 → 不警告
+	 *   enabled=1, ignore=0 → 按实际发信状态：有失败才警告
+	 *   enabled=1, ignore=1 → 不警告
 	 *
-	 * @param array $cfg 自动确认配置（含 ignore_unsent）.
+	 * @param array $cfg 自动确认配置（含 enabled / ignore_unsent）.
+	 * @return array{unsent: int, warn: bool}
 	 */
-	private static function board_unsent( array $cfg ): int {
+	private static function board_email_status( array $cfg ): array {
 		if ( (string) ( $cfg['ignore_unsent'] ?? '0' ) === '1' ) {
-			return 0;
+			return array(
+				'unsent' => 0,
+				'warn'   => false,
+			);
 		}
-		return self::unsent_count();
+
+		if ( empty( $cfg['enabled'] ) ) {
+			// 没有自动确认邮件要发，但这项配置本身需要提示，按一条问题计
+			return array(
+				'unsent' => 1,
+				'warn'   => true,
+			);
+		}
+
+		$unsent = self::unsent_count();
+
+		return array(
+			'unsent' => $unsent,
+			'warn'   => $unsent > 0,
+		);
 	}
 
 	/** 通知或自动确认明确发送失败（'no'）的询盘数；'none'（自动确认未启用）不算异常 */
@@ -861,10 +892,11 @@ trait IFI_Dashboard_Trait {
 		$today   = self::today_count();
 		$pending = self::pending_count();
 
-		// 与看板同一个口径：开启「忽略未发送警告」后，任何未发送成功的邮件都不算异常
+		// 与看板同一个口径：未启用自动确认或发信失败都会警告，忽略开关可以压制
 		$autoreply_cfg = self::tpl( 'autoreply' );
-		$ignore_unsent = (string) ( $autoreply_cfg['ignore_unsent'] ?? '0' ) === '1';
-		$unsent        = self::board_unsent( $autoreply_cfg );
+		$email_status  = self::board_email_status( $autoreply_cfg );
+		$unsent        = $email_status['unsent'];
+		$email_warn    = $email_status['warn'];
 
 		$all_url     = self::list_url();
 		$pending_url = add_query_arg( 'ifi_status', 'pending', $all_url );
@@ -890,10 +922,10 @@ trait IFI_Dashboard_Trait {
 				'warn'  => false,
 			),
 			array(
-				'label' => $unsent > 0 ? self::t( 'dash_email_problem' ) : self::t( 'dash_email_delivered' ),
+				'label' => $email_warn ? self::t( 'dash_email_problem' ) : self::t( 'dash_email_delivered' ),
 				'value' => $unsent,
 				'url'   => $all_url,
-				'warn'  => $unsent > 0,
+				'warn'  => $email_warn,
 			),
 		);
 		?>

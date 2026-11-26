@@ -28,9 +28,10 @@ return array(
 	"list view\x04Trash"  => '回收站',
 	"row action\x04Trash" => '移至回收站',
 
-	'When enabled, any email that was not sent is ignored in the email status — auto-confirmation does not need to be on.'
-		=> '开启后，任何未发送成功的邮件都不计入发信状态，无需启用自动确认。',
+	'When enabled, all email-status warnings are suppressed, including the one shown while auto-confirmation is off.'
+		=> '开启后，邮件状态不再警告，包括自动确认未启用时的提示。',
 	'Unsent warnings are ignored' => '未发送警告已忽略',
+	'Auto-confirmation is off'    => '自动确认未启用',
 
 	'Sorry, you are not allowed to access this page.' => '抱歉，你无权访问此页面。',
 	'Missing required field: %s'                     => '缺少必填字段：%s',

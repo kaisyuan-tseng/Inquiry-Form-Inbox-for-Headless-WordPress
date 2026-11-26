@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-26T08:55:18+00:00\n"
+"POT-Creation-Date: 2026-11-26T09:27:18+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: inquiry-form-inbox\n"
@@ -65,7 +65,7 @@ msgid "Inquiry %s could not be deleted."
 msgstr ""
 
 #: includes/class-ifi-privacy.php:248
-#: includes/trait-ifi-i18n.php:165
+#: includes/trait-ifi-i18n.php:166
 msgid "Inquiry number"
 msgstr ""
 
@@ -75,7 +75,7 @@ msgid "Email"
 msgstr ""
 
 #: includes/class-ifi-privacy.php:250
-#: includes/trait-ifi-i18n.php:216
+#: includes/trait-ifi-i18n.php:217
 msgid "IP address"
 msgstr ""
 
@@ -100,7 +100,7 @@ msgid "Source page"
 msgstr ""
 
 #: includes/class-ifi-privacy.php:256
-#: includes/trait-ifi-i18n.php:166
+#: includes/trait-ifi-i18n.php:167
 msgid "Source page title"
 msgstr ""
 
@@ -122,7 +122,7 @@ msgid "Search Inquiries"
 msgstr ""
 
 #: includes/trait-ifi-i18n.php:27
-#: includes/trait-ifi-i18n.php:108
+#: includes/trait-ifi-i18n.php:109
 msgid "No inquiries yet."
 msgstr ""
 
@@ -316,709 +316,713 @@ msgid "Unsent warnings are ignored"
 msgstr ""
 
 #: includes/trait-ifi-i18n.php:95
-#: includes/trait-ifi-i18n.php:244
-msgid "View"
+msgid "Auto-confirmation is off"
 msgstr ""
 
 #: includes/trait-ifi-i18n.php:96
-msgid "Sources"
+#: includes/trait-ifi-i18n.php:245
+msgid "View"
 msgstr ""
 
 #: includes/trait-ifi-i18n.php:97
-msgid "Languages"
+msgid "Sources"
 msgstr ""
 
 #: includes/trait-ifi-i18n.php:98
-msgid "Form Type"
+msgid "Languages"
 msgstr ""
 
 #: includes/trait-ifi-i18n.php:99
-msgid "Monthly Trend"
+msgid "Form Type"
 msgstr ""
 
 #: includes/trait-ifi-i18n.php:100
-msgid "vs last month"
+msgid "Monthly Trend"
 msgstr ""
 
 #: includes/trait-ifi-i18n.php:101
+msgid "vs last month"
+msgstr ""
+
+#: includes/trait-ifi-i18n.php:102
 msgid "Other"
 msgstr ""
 
 #. translators: Placeholders must be preserved.
-#: includes/trait-ifi-i18n.php:103
+#: includes/trait-ifi-i18n.php:104
 #, php-format
 msgid "vs previous %d days"
 msgstr ""
 
 #. translators: Placeholders must be preserved.
-#: includes/trait-ifi-i18n.php:105
+#: includes/trait-ifi-i18n.php:106
 #, php-format
 msgid "Today %s"
 msgstr ""
 
 #. translators: Placeholders must be preserved.
-#: includes/trait-ifi-i18n.php:107
+#: includes/trait-ifi-i18n.php:108
 #, php-format
 msgid "Yesterday %s"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:109
+#: includes/trait-ifi-i18n.php:110
 msgid "View all inquiries"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:112
+#: includes/trait-ifi-i18n.php:113
 msgid "Inquiry Form Inbox is active"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:113
+#: includes/trait-ifi-i18n.php:114
 msgid "Start with the email template, review the block rules, or open the inbox."
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:114
-#: includes/trait-ifi-i18n.php:124
-#: includes/trait-ifi-i18n.php:134
+#: includes/trait-ifi-i18n.php:115
+#: includes/trait-ifi-i18n.php:125
+#: includes/trait-ifi-i18n.php:135
 msgid "Email Template"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:115
-#: includes/trait-ifi-i18n.php:179
+#: includes/trait-ifi-i18n.php:116
+#: includes/trait-ifi-i18n.php:180
 msgid "Block Rules"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:116
+#: includes/trait-ifi-i18n.php:117
 msgid "Open Inquiries"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:117
+#: includes/trait-ifi-i18n.php:118
 msgid "Inquiry Form Inbox installation check"
 msgstr ""
 
 #. translators: %s: comma-separated plugin files that carry a plugin header.
-#: includes/trait-ifi-i18n.php:119
+#: includes/trait-ifi-i18n.php:120
 #, php-format
 msgid "This plugin folder contains more than one plugin header: %s. The install screen may activate the wrong file and report “The plugin does not have a valid header.” Delete the extra copies and install the official zip."
 msgstr ""
 
 #. translators: %s: actual main plugin file name.
-#: includes/trait-ifi-i18n.php:121
+#: includes/trait-ifi-i18n.php:122
 #, php-format
 msgid "The plugin main file is %s, not inquiry-form-inbox.php. Reinstall the official zip so the main file has the expected name."
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:125
+#: includes/trait-ifi-i18n.php:126
 msgid "Template Content"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:126
+#: includes/trait-ifi-i18n.php:127
 msgid "Email Subject"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:127
+#: includes/trait-ifi-i18n.php:128
 msgid "Available variables:"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:128
+#: includes/trait-ifi-i18n.php:129
 msgid "Fields:"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:129
+#: includes/trait-ifi-i18n.php:130
 msgid "Save Changes"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:130
+#: includes/trait-ifi-i18n.php:131
 msgid "Desktop"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:131
+#: includes/trait-ifi-i18n.php:132
 msgid "Mobile"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:132
+#: includes/trait-ifi-i18n.php:133
 msgid "Use a field name from Field labels, e.g. {{rows.fullName.value}}. Leave empty for the default subject."
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:133
+#: includes/trait-ifi-i18n.php:134
 msgid "Field names must match what your frontend sends. Drag rows to reorder; the label becomes the row title in the email."
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:135
+#: includes/trait-ifi-i18n.php:136
 msgid "Add Media"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:136
+#: includes/trait-ifi-i18n.php:137
 msgid "Insert"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:137
+#: includes/trait-ifi-i18n.php:138
 msgid "Full HTML of the email, header included. The comments at the top of the source mark where the header text lives; {{...}} placeholders are filled with inquiry data."
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:138
+#: includes/trait-ifi-i18n.php:139
 msgid "Inquiry Notification Template"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:139
+#: includes/trait-ifi-i18n.php:140
 msgid "Auto-Confirmation Template"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:140
+#: includes/trait-ifi-i18n.php:141
 msgid "Enable auto-confirmation"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:141
+#: includes/trait-ifi-i18n.php:142
 msgid "Sent to the address the visitor typed, right after they submit. Replies come back to the inquiry inbox."
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:142
+#: includes/trait-ifi-i18n.php:143
 msgid "Ignore unsent warning"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:143
-msgid "When enabled, any email that was not sent is ignored in the email status — auto-confirmation does not need to be on."
-msgstr ""
-
 #: includes/trait-ifi-i18n.php:144
-#: includes/trait-ifi-i18n.php:146
-msgid "Language"
+msgid "When enabled, all email-status warnings are suppressed, including the one shown while auto-confirmation is off."
 msgstr ""
 
 #: includes/trait-ifi-i18n.php:145
+#: includes/trait-ifi-i18n.php:147
+msgid "Language"
+msgstr ""
+
+#: includes/trait-ifi-i18n.php:146
 msgid "Default"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:147
-#: includes/trait-ifi-i18n.php:173
+#: includes/trait-ifi-i18n.php:148
+#: includes/trait-ifi-i18n.php:174
 msgid "Add"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:148
+#: includes/trait-ifi-i18n.php:149
 msgid "Delete this language group"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:149
+#: includes/trait-ifi-i18n.php:150
 msgid "Delete this language group and its template?"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:150
+#: includes/trait-ifi-i18n.php:151
 msgid "Language group added."
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:151
+#: includes/trait-ifi-i18n.php:152
 msgid "Language group deleted."
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:152
+#: includes/trait-ifi-i18n.php:153
 msgid "That language group already exists."
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:153
+#: includes/trait-ifi-i18n.php:154
 msgid "Only affects {{rows}} in this language group."
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:154
+#: includes/trait-ifi-i18n.php:155
 msgid "Used when the visitor’s browser language matches no language group"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:155
+#: includes/trait-ifi-i18n.php:156
 msgid "Drag to reorder"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:156
+#: includes/trait-ifi-i18n.php:157
 msgid "Live Preview"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:157
+#: includes/trait-ifi-i18n.php:158
 msgid "Preview uses placeholders — each {{...}} is replaced with the inquiry data when the email is sent."
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:158
+#: includes/trait-ifi-i18n.php:159
 msgid "Send Test Email"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:159
+#: includes/trait-ifi-i18n.php:160
 msgid "Renders the preview and sends it to the inquiry inbox — never to a customer."
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:160
+#: includes/trait-ifi-i18n.php:161
 msgid "Test email sent."
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:161
+#: includes/trait-ifi-i18n.php:162
 msgid "Test email failed. Check your mailer configuration."
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:162
+#: includes/trait-ifi-i18n.php:163
 msgid "Field table. Headers use the field labels."
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:163
+#: includes/trait-ifi-i18n.php:164
 msgid "Replace * with a field name — outputs that field's display label (e.g. {{rows.fullName.label}})."
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:164
+#: includes/trait-ifi-i18n.php:165
 msgid "Replace * with a field name — outputs that field's value (e.g. {{rows.fullName.value}})."
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:167
+#: includes/trait-ifi-i18n.php:168
 msgid "Form style the visitor used, e.g. Drawer form"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:168
+#: includes/trait-ifi-i18n.php:169
 msgid "Submitted at, site timezone"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:169
+#: includes/trait-ifi-i18n.php:170
 msgid "Submitted at, visitor timezone"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:170
+#: includes/trait-ifi-i18n.php:171
 msgid "Visitor timezone, e.g. Asia/Shanghai"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:171
+#: includes/trait-ifi-i18n.php:172
 msgid "Field labels"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:172
+#: includes/trait-ifi-i18n.php:173
 msgid "No fields yet. Add the field names your frontend sends — each one becomes a row in the email."
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:174
+#: includes/trait-ifi-i18n.php:175
 msgid "Field name"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:175
+#: includes/trait-ifi-i18n.php:176
 msgid "Label"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:176
+#: includes/trait-ifi-i18n.php:177
 msgid "Remove field"
 msgstr ""
 
 #. translators: Placeholders must be preserved.
-#: includes/trait-ifi-i18n.php:181
+#: includes/trait-ifi-i18n.php:182
 #, php-format
 msgid "%s blocked in the last 30 days"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:182
-#: includes/trait-ifi-i18n.php:224
+#: includes/trait-ifi-i18n.php:183
+#: includes/trait-ifi-i18n.php:225
 msgid "Honeypot"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:183
+#: includes/trait-ifi-i18n.php:184
 msgid "A field real visitors never see. Submissions that fill it are bots."
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:184
+#: includes/trait-ifi-i18n.php:185
 msgid "Enable the honeypot"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:185
+#: includes/trait-ifi-i18n.php:186
 msgid "Hidden field name"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:186
+#: includes/trait-ifi-i18n.php:187
 msgid "Your frontend posts this field and hides it with CSS. Letters, digits, hyphens and underscores only."
 msgstr ""
 
 #. translators: Placeholders must be preserved.
-#: includes/trait-ifi-i18n.php:188
+#: includes/trait-ifi-i18n.php:189
 #, php-format
 msgid "A code filter (ifi_honeypot_field) is overriding this setting: the form must post %s. The value above takes effect again once that filter is removed."
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:189
+#: includes/trait-ifi-i18n.php:190
 msgid "Content rules"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:190
+#: includes/trait-ifi-i18n.php:191
 msgid "Keywords and links are checked in every text field the form sends, except the email address — that one is matched by domain."
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:191
+#: includes/trait-ifi-i18n.php:192
 msgid "Blocked keywords"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:192
+#: includes/trait-ifi-i18n.php:193
 msgid "One per line. Case-insensitive and matched anywhere in the text, so prefer phrases over short words."
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:193
+#: includes/trait-ifi-i18n.php:194
 msgid "Blocked email domains"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:194
+#: includes/trait-ifi-i18n.php:195
 msgid "One per line, e.g. example.com. Subdomains are covered too."
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:195
+#: includes/trait-ifi-i18n.php:196
 msgid "Maximum links"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:196
+#: includes/trait-ifi-i18n.php:197
 msgid "Counts http://, https:// and www. links across all text fields. 0 = no limit."
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:197
+#: includes/trait-ifi-i18n.php:198
 msgid "Network and duplicates"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:198
+#: includes/trait-ifi-i18n.php:199
 msgid "Hard blocks and duplicate detection."
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:199
+#: includes/trait-ifi-i18n.php:200
 msgid "Rate limits"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:200
+#: includes/trait-ifi-i18n.php:201
 msgid "How many submissions a visitor can send before the API returns HTTP 429."
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:201
+#: includes/trait-ifi-i18n.php:202
 msgid "Blocked IP addresses"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:202
+#: includes/trait-ifi-i18n.php:203
 msgid "One per line: 203.0.113.10, 2001:db8::1, or a range like 203.0.113.0/24. Matching requests are dropped on arrival and are not recorded."
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:203
+#: includes/trait-ifi-i18n.php:204
 msgid "Duplicate window"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:204
+#: includes/trait-ifi-i18n.php:205
 msgid "Blocks the same message from the same email again inside this window. 0 = off."
 msgstr ""
 
 #. translators: 1: submissions allowed per minute, 2: submissions allowed per hour.
-#: includes/trait-ifi-i18n.php:206
+#: includes/trait-ifi-i18n.php:207
 msgid "Per minute"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:207
+#: includes/trait-ifi-i18n.php:208
 msgid "Per hour"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:208
+#: includes/trait-ifi-i18n.php:209
 msgid "0 turns that window off. Over the limit, the API returns HTTP 429 with a Retry-After header; no record is created."
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:209
+#: includes/trait-ifi-i18n.php:210
 msgid "minutes"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:210
+#: includes/trait-ifi-i18n.php:211
 msgid "When a rule matches"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:211
+#: includes/trait-ifi-i18n.php:212
 msgid "Keep blocked submissions in the Spam view"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:212
+#: includes/trait-ifi-i18n.php:213
 msgid "Blocked submissions are never emailed. Turn this off to drop them without a trace."
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:213
+#: includes/trait-ifi-i18n.php:214
 msgid "Test a submission"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:214
+#: includes/trait-ifi-i18n.php:215
 msgid "Runs the rules in this form, including unsaved edits. Nothing is stored and no email is sent."
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:215
+#: includes/trait-ifi-i18n.php:216
 msgid "Name"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:217
+#: includes/trait-ifi-i18n.php:218
 msgid "Run test"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:218
+#: includes/trait-ifi-i18n.php:219
 msgid "Fill in at least one field to run the test."
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:219
+#: includes/trait-ifi-i18n.php:220
 msgid "No rules matched"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:220
+#: includes/trait-ifi-i18n.php:221
 msgid "This submission would be delivered."
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:221
+#: includes/trait-ifi-i18n.php:222
 msgid "Would be blocked"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:222
+#: includes/trait-ifi-i18n.php:223
 msgid "Dropped on arrival"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:223
+#: includes/trait-ifi-i18n.php:224
 msgid "This IP is on the blocklist: the request would be dropped and not recorded."
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:225
+#: includes/trait-ifi-i18n.php:226
 msgid "Keyword"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:226
+#: includes/trait-ifi-i18n.php:227
 msgid "Email domain"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:227
+#: includes/trait-ifi-i18n.php:228
 msgid "Too many links"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:228
+#: includes/trait-ifi-i18n.php:229
 msgid "Duplicate submission"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:229
+#: includes/trait-ifi-i18n.php:230
 msgid "Blocked IP"
 msgstr ""
 
 #. translators: Placeholders must be preserved.
-#: includes/trait-ifi-i18n.php:231
+#: includes/trait-ifi-i18n.php:232
 #, php-format
 msgid "These IP entries are not valid addresses or ranges and will never match: %s"
 msgstr ""
 
 #. translators: Placeholders must be preserved.
-#: includes/trait-ifi-i18n.php:233
+#: includes/trait-ifi-i18n.php:234
 #, php-format
 msgid "These email domains do not look valid and will never match: %s"
 msgstr ""
 
 #. translators: 1: the field name that was rejected, 2: the field name now in use.
-#: includes/trait-ifi-i18n.php:235
+#: includes/trait-ifi-i18n.php:236
 #, php-format
 msgid "“%1$s” cannot be used as the hidden field name — it needs letters, digits, hyphens or underscores, and cannot be one of the form’s own fields. Using %2$s instead."
 msgstr ""
 
 #. translators: Placeholders must be preserved.
-#: includes/trait-ifi-i18n.php:237
+#: includes/trait-ifi-i18n.php:238
 #, php-format
 msgid "matched \"%s\""
 msgstr ""
 
 #. translators: Placeholders must be preserved.
-#: includes/trait-ifi-i18n.php:239
+#: includes/trait-ifi-i18n.php:240
 #, php-format
 msgid "domain %s"
 msgstr ""
 
 #. translators: Placeholders must be preserved.
-#: includes/trait-ifi-i18n.php:241
+#: includes/trait-ifi-i18n.php:242
 #, php-format
 msgid "%s links"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:245
+#: includes/trait-ifi-i18n.php:246
 msgid "Restore"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:246
-#: includes/trait-ifi-i18n.php:282
+#: includes/trait-ifi-i18n.php:247
+#: includes/trait-ifi-i18n.php:283
 msgid "Delete"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:247
+#: includes/trait-ifi-i18n.php:248
 msgctxt "row action"
 msgid "Trash"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:248
+#: includes/trait-ifi-i18n.php:249
 msgid "Delete this inquiry and its attachments? This cannot be undone."
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:249
+#: includes/trait-ifi-i18n.php:250
 msgid "Inquiry deleted."
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:250
+#: includes/trait-ifi-i18n.php:251
 msgid "Invalid request."
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:251
+#: includes/trait-ifi-i18n.php:252
 msgid "Inquiry not found."
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:254
+#: includes/trait-ifi-i18n.php:255
 msgid "Sorry, you are not allowed to access this page."
 msgstr ""
 
 #. translators: %s: form field name.
-#: includes/trait-ifi-i18n.php:256
+#: includes/trait-ifi-i18n.php:257
 #, php-format
 msgid "Missing required field: %s"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:257
+#: includes/trait-ifi-i18n.php:258
 msgid "Invalid email address."
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:258
+#: includes/trait-ifi-i18n.php:259
 msgid "Too many submissions. Please try again later."
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:259
+#: includes/trait-ifi-i18n.php:260
 msgid "Your inquiry could not be sent. Please email us directly."
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:260
+#: includes/trait-ifi-i18n.php:261
 msgid "The upload could not be processed. Please try again."
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:261
+#: includes/trait-ifi-i18n.php:262
 msgid "The upload failed. Please try again."
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:262
+#: includes/trait-ifi-i18n.php:263
 msgid "Too many files in one submission."
 msgstr ""
 
 #. translators: %s: file name.
-#: includes/trait-ifi-i18n.php:264
+#: includes/trait-ifi-i18n.php:265
 #, php-format
 msgid "%s is empty."
 msgstr ""
 
 #. translators: %s: file name.
-#: includes/trait-ifi-i18n.php:266
+#: includes/trait-ifi-i18n.php:267
 #, php-format
 msgid "%s has an invalid declared size."
 msgstr ""
 
 #. translators: 1: file name, 2: size limit in megabytes.
-#: includes/trait-ifi-i18n.php:268
+#: includes/trait-ifi-i18n.php:269
 #, php-format
 msgid "%1$s exceeds the %2$d MB limit."
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:269
+#: includes/trait-ifi-i18n.php:270
 msgid "The upload could not be stored."
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:270
+#: includes/trait-ifi-i18n.php:271
 msgid "Unnamed"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:271
+#: includes/trait-ifi-i18n.php:272
 msgid "Sent with the notification email, not archived under uploads."
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:272
+#: includes/trait-ifi-i18n.php:273
 msgid "View Inquiry"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:273
+#: includes/trait-ifi-i18n.php:274
 msgid "← All Inquiries"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:274
+#: includes/trait-ifi-i18n.php:275
 msgid "Inquiry content"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:275
+#: includes/trait-ifi-i18n.php:276
 msgid "Close"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:276
+#: includes/trait-ifi-i18n.php:277
 msgid "Loading…"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:277
+#: includes/trait-ifi-i18n.php:278
 msgid "Could not load this inquiry."
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:278
+#: includes/trait-ifi-i18n.php:279
 msgid "Inquiry details"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:279
+#: includes/trait-ifi-i18n.php:280
 msgid "Previous inquiry"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:280
+#: includes/trait-ifi-i18n.php:281
 msgid "Next inquiry"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:281
+#: includes/trait-ifi-i18n.php:282
 msgid "Reply"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:283
+#: includes/trait-ifi-i18n.php:284
 msgid "Reply Template"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:284
+#: includes/trait-ifi-i18n.php:285
 msgid "To"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:285
+#: includes/trait-ifi-i18n.php:286
 msgid "Cc"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:286
+#: includes/trait-ifi-i18n.php:287
 msgid "Bcc"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:287
+#: includes/trait-ifi-i18n.php:288
 msgid "Used by the reply button in the inquiry detail — matched to the visitor’s browser language, falling back to the default group."
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:288
+#: includes/trait-ifi-i18n.php:289
 msgid "Subject"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:289
+#: includes/trait-ifi-i18n.php:290
 msgid "Body"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:290
+#: includes/trait-ifi-i18n.php:291
 msgid "Separate multiple addresses with commas."
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:291
+#: includes/trait-ifi-i18n.php:292
 msgid "Page form"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:292
+#: includes/trait-ifi-i18n.php:293
 msgid "Popup form"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:293
+#: includes/trait-ifi-i18n.php:294
 msgid "Drawer form"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:294
+#: includes/trait-ifi-i18n.php:295
 msgid "Floating form"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:295
+#: includes/trait-ifi-i18n.php:296
 msgid "Sticky form"
 msgstr ""
 
 #. translators: Placeholders must be preserved.
-#: includes/trait-ifi-i18n.php:297
+#: includes/trait-ifi-i18n.php:298
 #, php-format
 msgid "New inquiry from %s"
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:298
+#: includes/trait-ifi-i18n.php:299
 msgid "Inquiries are read-only. Open them from the Inquiries list."
 msgstr ""
 
-#: includes/trait-ifi-i18n.php:299
+#: includes/trait-ifi-i18n.php:300
 msgid "We received your inquiry"
 msgstr ""
 
 #. translators: %s: dictionary key that has no string.
-#: includes/trait-ifi-i18n.php:369
+#: includes/trait-ifi-i18n.php:370
 #, php-format
 msgid "Unknown string key: %s"
 msgstr ""

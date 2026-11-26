@@ -103,20 +103,47 @@ final class MailFailureTest extends IfiTestCase {
 	}
 
 	/**
-	 * 「忽略未发送警告」只看自己的开关，与「启用自动确认」是否开启无关：
-	 * ignore=0 时通知失败计入异常，ignore=1 时归零——即使自动确认是关的。
+	 * 真值表：enabled=0 时无论有没有发信都算需要提示；enabled=1 时只在有失败时提示；
+	 * ignore_unsent=1 一律不提示。
 	 */
-	public function test_ignore_unsent_does_not_depend_on_auto_confirmation(): void {
+	public function test_email_status_follows_the_enabled_and_ignore_matrix(): void {
 		MailSpy::fail_next( 'SMTP connect() failed' );
 		$this->submit();
 
-		$this->assertSame(
-			1,
-			Reflect::call( 'board_unsent', array( array( 'enabled' => '0', 'ignore_unsent' => '0' ) ) )
+		$cases = array(
+			'disabled, warn'    => array(
+				array(
+					'enabled'       => '0',
+					'ignore_unsent' => '0',
+				),
+				true,
+			),
+			'disabled, ignored' => array(
+				array(
+					'enabled'       => '0',
+					'ignore_unsent' => '1',
+				),
+				false,
+			),
+			'enabled, failed'   => array(
+				array(
+					'enabled'       => '1',
+					'ignore_unsent' => '0',
+				),
+				true,
+			),
+			'enabled, ignored'  => array(
+				array(
+					'enabled'       => '1',
+					'ignore_unsent' => '1',
+				),
+				false,
+			),
 		);
-		$this->assertSame(
-			0,
-			Reflect::call( 'board_unsent', array( array( 'enabled' => '0', 'ignore_unsent' => '1' ) ) )
-		);
+
+		foreach ( $cases as $label => $case ) {
+			$status = Reflect::call( 'board_email_status', array( $case[0] ) );
+			$this->assertSame( $case[1], $status['warn'], $label );
+		}
 	}
 }

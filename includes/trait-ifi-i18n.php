@@ -92,6 +92,7 @@ trait IFI_I18n_Trait {
 			/* translators: Placeholders must be preserved. */
 			'dash_failed_reply'        => __( '%d confirmations failed', 'inquiry-form-inbox' ),
 			'dash_unsent_ignored'      => __( 'Unsent warnings are ignored', 'inquiry-form-inbox' ),
+			'dash_auto_off'            => __( 'Auto-confirmation is off', 'inquiry-form-inbox' ),
 			'dash_view'                => __( 'View', 'inquiry-form-inbox' ),
 			'dash_sources_title'       => __( 'Sources', 'inquiry-form-inbox' ),
 			'dash_langs_title'         => __( 'Languages', 'inquiry-form-inbox' ),
@@ -140,7 +141,7 @@ trait IFI_I18n_Trait {
 			'tpl_reply_on'             => __( 'Enable auto-confirmation', 'inquiry-form-inbox' ),
 			'tpl_reply_on_hint'        => __( 'Sent to the address the visitor typed, right after they submit. Replies come back to the inquiry inbox.', 'inquiry-form-inbox' ),
 			'tpl_ignore_unsent'        => __( 'Ignore unsent warning', 'inquiry-form-inbox' ),
-			'tpl_ignore_unsent_hint'   => __( 'When enabled, any email that was not sent is ignored in the email status — auto-confirmation does not need to be on.', 'inquiry-form-inbox' ),
+			'tpl_ignore_unsent_hint'   => __( 'When enabled, all email-status warnings are suppressed, including the one shown while auto-confirmation is off.', 'inquiry-form-inbox' ),
 			'tpl_lang_bar'             => __( 'Language', 'inquiry-form-inbox' ),
 			'tpl_lang_default'         => __( 'Default', 'inquiry-form-inbox' ),
 			'tpl_lang_code'            => __( 'Language', 'inquiry-form-inbox' ),
