@@ -199,6 +199,12 @@ a.ifi-board__row-label:hover { color: #135e96; text-decoration: underline; }
 /* 列宽：来源是页面标题、状态是一枚徽章，默认宽度会把它们挤成两行 */
 .ifi-muted { color: #646970; font-size: 12px; }
 .ifi-no { color: #50575e; font-size: 12px; }
+/* 编号后的处理状态徽章：新增 / 待处理 / 已联系 / 垃圾 */
+.ifi-row-badge { margin-left: 4px; }
+.ifi-status-chip.is-new { background: #f0f6fc; color: #135e96; }
+.ifi-status-chip.is-pending { background: #fcf9e8; color: #996800; }
+.ifi-status-chip.is-contacted { background: #edfaef; color: #007017; }
+.ifi-status-chip.is-spam { background: #fcf0f1; color: #b32d2e; }
 /* 附件列：回形针 + 数量，点开是每个附件的展开菜单 */
 .ifi-attach { position: relative; display: inline-block; }
 .ifi-attach > summary { display: inline-flex; align-items: center; gap: 4px; color: #2271b1; cursor: pointer; list-style: none; }

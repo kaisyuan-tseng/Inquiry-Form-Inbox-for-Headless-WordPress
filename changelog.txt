@@ -27,6 +27,7 @@ by the plugin directory.
 * Change: the date and source filters no longer submit when a value is picked; both wait for the Filter button.
 * Change: the source filter's empty option reads 所有来源 in zh_CN instead of 全部来源.
 * Change: the View mode section is removed from Screen Options on the inquiries screen; the list has one layout.
+* New: inquiry rows show a status badge after the number — New (today, not opened), Pending (opened or older), Contacted, or Spam. Closing the detail dialog marks the record as viewed, so the badge changes from New to Pending without a reload.
 * Fix: the email status now follows the enabled/ignore matrix — with auto-confirmation off it warns even when nothing failed, with it on it warns only for failed sends, and "Ignore unsent warning" suppresses both cases.
 * Fix: the activation hook is registered from the main plugin file, which is the location WordPress documents, instead of from the class initializer.
 

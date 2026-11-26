@@ -66,4 +66,43 @@ final class AdminRenderTest extends IfiTestCase {
 
 		$this->assertSame( 'publish', get_post_status( $id ) );
 	}
+
+	public function test_inquiry_badge_follows_the_triage_order(): void {
+		$today = $this->make_inquiry();
+		$this->assertSame( 'new', $this->badge_state( $today ) );
+
+		update_post_meta( $today, 'ifi_inquiry_viewed', time() );
+		$this->assertSame( 'pending', $this->badge_state( $today ) );
+
+		update_post_meta( $today, 'ifi_inquiry_contacted', time() );
+		$this->assertSame( 'contacted', $this->badge_state( $today ) );
+
+		update_post_meta( $today, 'ifi_inquiry_spam', 'honeypot' );
+		$this->assertSame( 'spam', $this->badge_state( $today ) );
+
+		$older = $this->make_inquiry( 2 );
+		$this->assertSame( 'pending', $this->badge_state( $older ) );
+
+		wp_trash_post( $today );
+		$this->assertNull( Reflect::call( 'inquiry_badge', array( $today ) ) );
+	}
+
+	/** 创建一条指定天数的询盘，日期同时写 post_date 与 post_date_gmt */
+	private function make_inquiry( int $days_ago = 0 ): int {
+		$date = gmdate( 'Y-m-d H:i:s', time() - $days_ago * DAY_IN_SECONDS );
+		return (int) wp_insert_post(
+			array(
+				'post_type'     => 'ifi_inquiry',
+				'post_status'   => 'publish',
+				'post_title'    => 'Badge fixture',
+				'post_date'     => get_date_from_gmt( $date ),
+				'post_date_gmt' => $date,
+			)
+		);
+	}
+
+	private function badge_state( int $post_id ): ?string {
+		$badge = Reflect::call( 'inquiry_badge', array( $post_id ) );
+		return is_array( $badge ) ? (string) ( $badge['state'] ?? '' ) : null;
+	}
 }

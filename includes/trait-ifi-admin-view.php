@@ -110,6 +110,47 @@ trait IFI_Admin_View_Trait {
 		);
 	}
 
+	/**
+	 * AJAX：弹窗关闭后把记录标为「已查看」。
+	 *
+	 * 列表编号后的「新增」徽章据此变成「待处理」；已联系 / 垃圾的优先级更高，
+	 * 标记不会改变它们。重复调用是幂等的。
+	 */
+	public static function ajax_mark_viewed(): void {
+		check_ajax_referer( 'ifi_inquiry_viewed', 'nonce' );
+
+		$id = isset( $_GET['id'] ) ? absint( $_GET['id'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification
+		if ( ! $id || get_post_type( $id ) !== self::POST_TYPE ) {
+			wp_send_json_error(
+				array(
+					'code'    => 'ifi_not_found',
+					'message' => self::t( 'not_found_msg' ),
+				),
+				404
+			);
+		}
+		if ( ! current_user_can( 'ifi_edit_inquiry', $id ) ) {
+			wp_send_json_error(
+				array(
+					'code'    => 'ifi_forbidden',
+					'message' => self::t( 'error_forbidden' ),
+				),
+				403
+			);
+		}
+
+		// 已联系 / 垃圾 / 回收站不需要「已查看」；只有普通询盘才从新增进入待处理
+		$skip_viewed = 'trash' === get_post_status( $id )
+			|| metadata_exists( 'post', $id, 'ifi_inquiry_spam' )
+			|| metadata_exists( 'post', $id, 'ifi_inquiry_contacted' );
+		if ( ! $skip_viewed && ! metadata_exists( 'post', $id, 'ifi_inquiry_viewed' ) ) {
+			update_post_meta( $id, 'ifi_inquiry_viewed', time() );
+		}
+
+		$badge = self::inquiry_badge( $id );
+		wp_send_json_success( $badge ?? array() );
+	}
+
 	/** 详情页入参校验（load-* 阶段执行，早于任何输出） */
 	public static function guard_view_page(): void {
 		if ( ! current_user_can( Inquiry_Form_Inbox::CAP_VIEW ) ) {

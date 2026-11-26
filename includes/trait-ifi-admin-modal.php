@@ -33,6 +33,7 @@ trait IFI_Admin_Modal_Trait {
 		<div id="ifi-modal" class="ifi-modal" role="dialog" aria-modal="true"
 			aria-label="<?php echo esc_attr( self::t( 'modal_hint' ) ); ?>"
 			data-nonce="<?php echo esc_attr( wp_create_nonce( 'ifi_inquiry_detail' ) ); ?>"
+			data-viewed-nonce="<?php echo esc_attr( wp_create_nonce( 'ifi_inquiry_viewed' ) ); ?>"
 			data-loading="<?php echo esc_attr( self::t( 'modal_loading' ) ); ?>"
 			data-error="<?php echo esc_attr( self::t( 'modal_error' ) ); ?>"
 			data-reply-to="<?php echo esc_attr( self::reply_tpl()['to'] ); ?>"

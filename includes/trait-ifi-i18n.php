@@ -30,6 +30,9 @@ trait IFI_I18n_Trait {
 			'view_contacted'           => __( 'Contacted', 'inquiry-form-inbox' ),
 			'view_spam'                => __( 'Spam', 'inquiry-form-inbox' ),
 			'view_all'                 => __( 'All', 'inquiry-form-inbox' ),
+			// 列表编号后的处理状态徽章；待处理 / 已联系复用视图文案，短词用上下文区分
+			'badge_new'                => _x( 'New', 'inquiry badge', 'inquiry-form-inbox' ),
+			'badge_spam'               => _x( 'Spam', 'inquiry badge', 'inquiry-form-inbox' ),
 			// 视图链接与行操作在英文里都是 Trash，中文一个是「回收站」一个是「移至回收站」：
 			// 只能靠 gettext 上下文区分，否则同一个 msgid 只能有一种译法。
 			'view_trash'               => _x( 'Trash', 'list view', 'inquiry-form-inbox' ),

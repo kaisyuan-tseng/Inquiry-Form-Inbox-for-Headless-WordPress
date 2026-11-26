@@ -234,6 +234,7 @@ final class Inquiry_Form_Inbox {
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue_spam_assets' ) );
 		// 询盘列表：查看弹窗（AJAX 取正文）与弹窗骨架
 		add_action( 'wp_ajax_ifi_inquiry_detail', array( __CLASS__, 'ajax_inquiry_detail' ) );
+		add_action( 'wp_ajax_ifi_inquiry_viewed', array( __CLASS__, 'ajax_mark_viewed' ) );
 		add_action( 'admin_footer', array( __CLASS__, 'print_list_modal' ) );
 		add_action( 'admin_print_footer_scripts', array( __CLASS__, 'print_template_script' ) );
 		// 仪表盘「最近询盘」小挂件

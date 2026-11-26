@@ -299,6 +299,55 @@ trait IFI_CPT_Trait {
 		return array_values( array_diff( $post_types, array( self::POST_TYPE ) ) );
 	}
 
+	/**
+	 * 编号后的处理状态徽章：垃圾 > 已联系 > 已查看（待处理）> 今日新增 > 待处理。
+	 *
+	 * 回收站不出徽章：记录已经在回收站里，再标「新增 / 待处理」只会误导。
+	 *
+	 * @param int $post_id 询盘 ID.
+	 * @return array{state: string, label: string}|null
+	 */
+	private static function inquiry_badge( int $post_id ): ?array {
+		if ( 'trash' === get_post_status( $post_id ) ) {
+			return null;
+		}
+
+		if ( metadata_exists( 'post', $post_id, 'ifi_inquiry_spam' ) ) {
+			return array(
+				'state' => 'spam',
+				'label' => self::t( 'badge_spam' ),
+			);
+		}
+		if ( metadata_exists( 'post', $post_id, 'ifi_inquiry_contacted' ) ) {
+			return array(
+				'state' => 'contacted',
+				'label' => self::t( 'view_contacted' ),
+			);
+		}
+		if ( metadata_exists( 'post', $post_id, 'ifi_inquiry_viewed' ) ) {
+			return array(
+				'state' => 'pending',
+				'label' => self::t( 'view_pending' ),
+			);
+		}
+		if ( self::is_today_inquiry( $post_id ) ) {
+			return array(
+				'state' => 'new',
+				'label' => self::t( 'badge_new' ),
+			);
+		}
+
+		return array(
+			'state' => 'pending',
+			'label' => self::t( 'view_pending' ),
+		);
+	}
+
+	/** 记录是否今天创建（站点时区，按 post_date） */
+	private static function is_today_inquiry( int $post_id ): bool {
+		return get_post_time( 'Y-m-d', false, $post_id ) === current_time( 'Y-m-d' );
+	}
+
 	/** 列表上方的「来源」筛选下拉：选项来自已存档的英文页面标题 */
 	public static function source_filter( string $post_type ): void {
 		if ( $post_type !== self::POST_TYPE ) {
@@ -475,6 +524,16 @@ trait IFI_CPT_Trait {
 				echo $no !== ''
 					? '<span class="ifi-no">' . esc_html( $no ) . '</span>'
 					: '—';
+
+				$badge = self::inquiry_badge( $post_id );
+				if ( $badge ) {
+					printf(
+						' <span class="ifi-status-chip is-%1$s ifi-row-badge" data-id="%2$d" data-state="%1$s">%3$s</span>',
+						esc_attr( $badge['state'] ),
+						(int) $post_id,
+						esc_html( $badge['label'] )
+					);
+				}
 				break;
 			case 'ifi_inquiry_from':
 				$email = (string) get_post_meta( $post_id, 'ifi_inquiry_email', true );

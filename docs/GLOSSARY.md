@@ -84,7 +84,7 @@
 | `col_received` | Received | 接收时间 |
 | `col_email` | Email | 邮箱 |
 
-#### 视图与空态（9 条）
+#### 视图与空态（11 条）
 
 | Key | English (msgid) | 中文 |
 |---|---|---|
@@ -94,6 +94,8 @@
 | `view_contacted` | Contacted | 已联系 |
 | `view_spam` | Spam | 垃圾询盘 |
 | `view_all` | All | 全部 |
+| `badge_new` | New（gettext 上下文 `inquiry badge`） | 新增 |
+| `badge_spam` | Spam（gettext 上下文 `inquiry badge`） | 垃圾 |
 | `view_trash` | Trash（gettext 上下文 `list view`） | 回收站 |
 | `all_sources` | All sources | 所有来源 |
 | `not_found_msg` | Inquiry not found. | 询盘不存在。 |

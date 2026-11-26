@@ -25,8 +25,10 @@ return array(
 	'Live Preview' => '实时预览',
 
 	// 同一个 msgid「Trash」在两种语境下的译法不同，键写成 "context\x04msgid"。
-	"list view\x04Trash"  => '回收站',
-	"row action\x04Trash" => '移至回收站',
+	"list view\x04Trash"    => '回收站',
+	"row action\x04Trash"   => '移至回收站',
+	"inquiry badge\x04New"  => '新增',
+	"inquiry badge\x04Spam" => '垃圾',
 
 	'All sources' => '所有来源',
 

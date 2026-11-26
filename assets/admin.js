@@ -193,7 +193,27 @@
         closers[0].focus();
         show(ids.indexOf(id));
     }
+    function markViewed(id) {
+        var nonce = modal.getAttribute('data-viewed-nonce');
+        if (!nonce || !id) { return; }
+        var url = ajaxurl + '?action=ifi_inquiry_viewed&id=' + encodeURIComponent(id)
+                + '&nonce=' + encodeURIComponent(nonce);
+        window.fetch(url, { credentials: 'same-origin' })
+            .then(function (r) { return r.json(); })
+            .then(function (j) {
+                if (!j || !j.success || !j.data || !j.data.state) { return; }
+                var badge = document.querySelector('.ifi-row-badge[data-id="' + id + '"]');
+                if (!badge) { return; }
+                badge.className = 'ifi-status-chip is-' + j.data.state + ' ifi-row-badge';
+                badge.setAttribute('data-state', j.data.state);
+                if (j.data.label) { badge.textContent = j.data.label; }
+            })
+            .catch(function () {});
+    }
     function close() {
+        if (!modal.classList.contains('is-open')) { return; }
+        // 关闭即视为已查看：列表徽章从「新增」变为「待处理」
+        if (current >= 0 && ids[current]) { markViewed(ids[current]); }
         fetchAbort();
         modal.classList.remove('is-open');
         document.body.style.overflow = '';
