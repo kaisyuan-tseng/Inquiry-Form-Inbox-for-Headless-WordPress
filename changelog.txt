@@ -23,6 +23,10 @@ by the plugin directory.
 * Change: the attachment summary row in notification emails no longer uses a fixed "Attachments" header. It reads the `attachments` key from Field labels; without that key the file list spans both columns. The hard-coded `row_attachments` string is gone.
 * Change: notification email attachments are split by upload group (`files`, `images`) and each group uses its own Field labels entry as the header; `attachments` remains the fallback for the whole list when no group has its own label, and groups with no labels at all still render as one list. The upload group is stored in the attachment meta so archived records render the same way.
 * Change: source titles are stored and displayed exactly as the frontend sends them. The `ifi_source_title_prefixes` filter and its `Article:` / `Post:` / `文章：` stripping are gone; cleaning the page title is the frontend's job.
+* Fix: bulk "Move to Trash" now works on the self-rendered inquiries screen. The core `edit.php` bulk handler never runs on `admin.php?page=ifi-inquiry`, so the screen handles Trash, Restore and permanent Delete itself, using the list table's `bulk-posts` nonce and per-record capability checks.
+* Change: the date and source filters no longer submit when a value is picked; both wait for the Filter button.
+* Change: the source filter's empty option reads 所有来源 in zh_CN instead of 全部来源.
+* Change: the View mode section is removed from Screen Options on the inquiries screen; the list has one layout.
 * Fix: the email status now follows the enabled/ignore matrix — with auto-confirmation off it warns even when nothing failed, with it on it warns only for failed sends, and "Ignore unsent warning" suppresses both cases.
 * Fix: the activation hook is registered from the main plugin file, which is the location WordPress documents, instead of from the class initializer.
 

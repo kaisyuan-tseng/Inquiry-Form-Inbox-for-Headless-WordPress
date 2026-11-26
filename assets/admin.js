@@ -2,6 +2,15 @@
  * 从 PHP 内联脚本原样外置：仍从 .ifi-modal 的 data-* 属性读取配置。
  */
 (function () {
+    // 筛选下拉不自动提交：选好后点右边的「筛选」按钮。
+    // 有的 WordPress 版本/插件会给日期下拉补 onchange，这里一并去掉。
+    (function initFilters() {
+        var selects = document.querySelectorAll('#filter-by-date, select[name="ifi_inquiry_source"]');
+        for (var i = 0; i < selects.length; i++) {
+            selects[i].removeAttribute('onchange');
+        }
+    })();
+
     // 列表页概览看板：挪到标题下方、把列表包进面板
     (function initBoard() {
         var board = document.getElementById('ifi-board');

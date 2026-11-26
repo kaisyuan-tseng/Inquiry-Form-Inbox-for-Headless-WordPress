@@ -28,6 +28,8 @@ return array(
 	"list view\x04Trash"  => '回收站',
 	"row action\x04Trash" => '移至回收站',
 
+	'All sources' => '所有来源',
+
 	'When enabled, all email-status warnings are suppressed, including the one shown while auto-confirmation is off.'
 		=> '开启后，邮件状态不再警告，包括自动确认未启用时的提示。',
 	'Unsent warnings are ignored' => '未发送警告已忽略',

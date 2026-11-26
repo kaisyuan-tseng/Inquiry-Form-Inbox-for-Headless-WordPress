@@ -198,6 +198,8 @@ final class Inquiry_Form_Inbox {
 		// 列表页视图：全部 / 新询盘 / 已联系 / 回收站；批量操作只留「移动至回收站」
 		add_filter( 'views_edit-' . self::POST_TYPE, array( __CLASS__, 'admin_views' ) );
 		add_filter( 'bulk_actions-edit-' . self::POST_TYPE, array( __CLASS__, 'admin_bulk_actions' ) );
+		// 询盘列表没有「紧凑 / 扩展」两种查看模式：从屏幕选项里移除
+		add_filter( 'view_mode_post_types', array( __CLASS__, 'disable_view_mode' ) );
 		// 列表上方的来源筛选
 		add_action( 'restrict_manage_posts', array( __CLASS__, 'source_filter' ) );
 		add_action( 'pre_get_posts', array( __CLASS__, 'apply_list_filters' ) );
@@ -213,6 +215,8 @@ final class Inquiry_Form_Inbox {
 		add_action( 'admin_notices', array( __CLASS__, 'list_board' ) );
 		add_action( 'admin_notices', array( __CLASS__, 'deleted_notice' ) );
 		add_action( 'admin_menu', array( __CLASS__, 'register_list_page' ) );
+		// 自渲染列表页：核心 edit.php 的批量处理器不会运行，这里接住表单提交
+		add_action( 'load-toplevel_page_' . self::LIST_SLUG, array( __CLASS__, 'handle_bulk_actions' ) );
 		add_action( 'admin_menu', array( __CLASS__, 'register_view_page' ) );
 		add_action( 'admin_menu', array( __CLASS__, 'register_template_page' ) );
 		add_action( 'admin_menu', array( __CLASS__, 'register_spam_page' ) );

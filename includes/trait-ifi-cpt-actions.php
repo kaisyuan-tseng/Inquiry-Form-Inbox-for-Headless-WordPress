@@ -340,6 +340,89 @@ trait IFI_CPT_Actions_Trait {
 		}
 	}
 
+	/**
+	 * 列表页的批量操作。
+	 *
+	 * 列表页是自渲染的（admin.php?page=ifi-inquiry），核心 edit.php 的批量处理器不会运行，
+	 * 所以这里接住表单提交。动作名与 WP_List_Table 一致（action / action2），nonce 复用
+	 * 核心批量表单里的 bulk-posts。
+	 */
+	public static function handle_bulk_actions(): void {
+		$action = self::current_bulk_action();
+		if ( ! in_array( $action, array( 'trash', 'untrash', 'delete' ), true ) ) {
+			return;
+		}
+
+		check_admin_referer( 'bulk-posts' );
+
+		if ( ! current_user_can( Inquiry_Form_Inbox::CAP_VIEW ) ) {
+			wp_die( esc_html( self::t( 'error_forbidden' ) ), '', array( 'response' => 403 ) );
+		}
+
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- verified above.
+		$post_ids = isset( $_REQUEST['post'] ) ? array_map( 'absint', (array) wp_unslash( $_REQUEST['post'] ) ) : array();
+		$post_ids = array_values( array_unique( array_filter( $post_ids ) ) );
+
+		self::run_bulk_action( $action, $post_ids );
+
+		// 回到来源页（保留当前视图 / 搜索 / 筛选），并去掉会重复触发批量动作的参数
+		$target = wp_get_referer();
+		$target = $target !== false && $target !== '' ? $target : self::list_url();
+		$target = remove_query_arg(
+			array( 'action', 'action2', 'post', '_wpnonce', '_wp_http_referer' ),
+			$target
+		);
+
+		wp_safe_redirect( $target );
+		exit;
+	}
+
+	/** action / action2 与 WP_List_Table::current_action() 同口径 */
+	private static function current_bulk_action(): string {
+        // phpcs:disable WordPress.Security.NonceVerification.Recommended
+		$action = isset( $_REQUEST['action'] ) && is_string( $_REQUEST['action'] )
+			? sanitize_key( wp_unslash( $_REQUEST['action'] ) )
+			: '';
+		if ( '' === $action || '-1' === $action ) {
+			$action = isset( $_REQUEST['action2'] ) && is_string( $_REQUEST['action2'] )
+				? sanitize_key( wp_unslash( $_REQUEST['action2'] ) )
+				: '';
+		}
+        // phpcs:enable
+		return $action;
+	}
+
+	/**
+	 * 执行批量动作，返回实际处理的条数。
+	 *
+	 * 永久删除仍然只允许对已在回收站的记录执行；不在回收站的记录直接跳过。
+	 */
+	private static function run_bulk_action( string $action, array $post_ids ): int {
+		$done = 0;
+		foreach ( $post_ids as $post_id ) {
+			if ( get_post_type( $post_id ) !== self::POST_TYPE ) {
+				continue;
+			}
+			// 记录级 capability：与单条行操作同一口径
+			if ( ! current_user_can( 'ifi_delete_inquiry', $post_id ) ) {
+				wp_die( esc_html( self::t( 'invalid_request' ) ), '', array( 'response' => 403 ) );
+			}
+
+			if ( 'trash' === $action ) {
+				if ( wp_trash_post( $post_id ) ) {
+					++$done;
+				}
+			} elseif ( 'untrash' === $action ) {
+				if ( wp_untrash_post( $post_id ) ) {
+					++$done;
+				}
+			} elseif ( 'trash' === get_post_status( $post_id ) && wp_delete_post( $post_id, true ) ) {
+				++$done;
+			}
+		}
+		return $done;
+	}
+
 	/** 直连 edit / add-new 一律拦截；回收站相关的动作放行（恢复、移入回收站、永久删除） */
 	public static function block_edit_screen(): void {
         // phpcs:ignore WordPress.Security.NonceVerification

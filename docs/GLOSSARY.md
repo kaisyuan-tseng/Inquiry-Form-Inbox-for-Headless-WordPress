@@ -95,7 +95,7 @@
 | `view_spam` | Spam | 垃圾询盘 |
 | `view_all` | All | 全部 |
 | `view_trash` | Trash（gettext 上下文 `list view`） | 回收站 |
-| `all_sources` | All sources | 全部来源 |
+| `all_sources` | All sources | 所有来源 |
 | `not_found_msg` | Inquiry not found. | 询盘不存在。 |
 
 #### 发信状态徽章（10 条）

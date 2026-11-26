@@ -289,6 +289,16 @@ trait IFI_CPT_Trait {
 		return isset( $actions['trash'] ) ? array( 'trash' => $actions['trash'] ) : array();
 	}
 
+	/**
+	 * 询盘列表没有「紧凑 / 扩展」两种查看模式。
+	 *
+	 * 核心按 show_ui 自动把 CPT 加进 view_mode_post_types；列表是自渲染的，
+	 * 这套模式本来就不生效，留在屏幕选项里只会让用户以为它能改变列表。
+	 */
+	public static function disable_view_mode( array $post_types ): array {
+		return array_values( array_diff( $post_types, array( self::POST_TYPE ) ) );
+	}
+
 	/** 列表上方的「来源」筛选下拉：选项来自已存档的英文页面标题 */
 	public static function source_filter( string $post_type ): void {
 		if ( $post_type !== self::POST_TYPE ) {
@@ -301,7 +311,7 @@ trait IFI_CPT_Trait {
         // phpcs:ignore WordPress.Security.NonceVerification
 		$current = isset( $_GET['ifi_inquiry_source'] ) ? sanitize_text_field( wp_unslash( (string) $_GET['ifi_inquiry_source'] ) ) : '';
 
-		echo '<select name="ifi_inquiry_source" style="max-width:260px;" onchange="this.form.submit()">';
+		echo '<select name="ifi_inquiry_source" style="max-width:260px;">';
 		echo '<option value="">' . esc_html( self::t( 'all_sources' ) ) . '</option>';
 		foreach ( $values as $value ) {
 			printf(

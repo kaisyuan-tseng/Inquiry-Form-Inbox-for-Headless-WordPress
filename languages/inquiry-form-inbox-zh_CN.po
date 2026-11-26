@@ -142,7 +142,7 @@ msgstr "自动确认"
 
 #: includes/trait-ifi-i18n.php:36
 msgid "All sources"
-msgstr "全部来源"
+msgstr "所有来源"
 
 #: includes/trait-ifi-i18n.php:80
 msgid "Recent inquiries"
