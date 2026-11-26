@@ -1,0 +1,67 @@
+/* Inquiry Form Inbox for Headless WordPress — Block Rules 设置页样式（版本 3.0.14）
+ * 版式沿用邮件模板页：页头 / 卡片 / 字段 / 按钮全部来自 template.css，
+ * 本文件只补本页独有的统计条、规则计数、清单框与试跑结果。
+ * 配色仍是 WordPress 后台设计令牌：主色 #2271b1、悬停 #135e96、
+ * 文字 #1d2327 / #50575e / #646970、边框 #c3c4c7 / #dcdcde / #8c8f94、
+ * 浅底 #f0f0f1 / #f6f7f7、圆角 4px、阴影 0 1px 1px rgba(0,0,0,.04)。
+ */
+
+/* ---------------------------------------------------------------- 统计条 */
+.ifi-spam-stats { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; margin: 0 0 14px; padding: 10px 12px; background: #fff; border: 1px solid var(--ifi-line-strong); border-left: 4px solid var(--ifi-accent); border-radius: 4px; box-shadow: 0 1px 1px rgba(0, 0, 0, .04); }
+.ifi-spam-stats__total { margin-right: auto; color: var(--ifi-ink); font-size: 13px; font-weight: 600; }
+.ifi-spam-pill { display: inline-flex; align-items: center; gap: 6px; padding: 1px 9px; border: 1px solid var(--ifi-line); border-radius: 999px; background: #f6f7f7; color: var(--ifi-subtle); font-size: 12px; line-height: 18px; }
+.ifi-spam-pill b { color: var(--ifi-ink); font-weight: 600; }
+.ifi-spam-pill.is-zero { color: #8c8f94; }
+.ifi-spam-pill.is-zero b { color: #8c8f94; font-weight: 400; }
+
+/* ---------------------------------------------------------------- 两栏 */
+.ifi-spam-grid { display: grid; grid-template-columns: minmax(0, 1.32fr) minmax(0, 1fr); gap: 12px; align-items: start; }
+.ifi-spam-col { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+@media (max-width: 1240px) {
+	.ifi-spam-grid { grid-template-columns: minmax(0, 1fr); }
+	.ifi-spam-test { position: static; }
+}
+
+/* 蜜罐字段名：等宽字体便于和前端代码逐字核对；限宽，短名字不铺满整张卡 */
+.ifi-spam-field-name { max-width: 360px; }
+.ifi-spam-field-name input { font-family: Consolas, Monaco, monospace; font-size: 12px; }
+
+/* 过滤器覆盖了页面上的值时，用警告色把这一行顶出来：它意味着上面填什么都不生效 */
+.ifi-hint--warn { padding: 3px 0 3px 8px; border-left: 3px solid #dba617; color: #996800; }
+
+/* ---------------------------------------------------------------- 清单与数字 */
+/* 关键词 / 域名 / IP 都是「一行一条」，等宽字体更容易对齐和查错 */
+.ifi-spam-list textarea { min-height: 96px; font-family: Consolas, Monaco, monospace; font-size: 12px; line-height: 1.7; }
+/* 提示紧跟在字段下方，不再带模板页那种 14px 的下外边距（.ifi-field 自己会留间距） */
+.ifi-spam-page .ifi-field > .ifi-hint { margin: 0; }
+/* 卡片里最后一个字段 / 最后一段说明不再留底部外边距：否则离卡片下边框会多出一截 */
+.ifi-spam-page .ifi-tpl-card__body > .ifi-field:last-child,
+.ifi-spam-page .ifi-tpl-card__body > .ifi-hint:last-child { margin-bottom: 0; }
+.ifi-spam-num { display: flex; align-items: center; gap: 8px; }
+.ifi-spam-num input[type="number"] { width: 110px; min-height: 30px; border-color: var(--ifi-field-line); border-radius: 3px; }
+.ifi-spam-num span { color: var(--ifi-muted); font-size: 12px; }
+/* 并排的数字字段（限流那两个）：按内容宽度排，不各占半行——输入框只有 110px，
+   撑满整行后两个框之间会空出好几百像素。窄屏再退回上下排列。 */
+.ifi-spam-pair { display: flex; flex-wrap: wrap; gap: 16px 28px; margin: 0 0 14px; }
+.ifi-spam-pair > .ifi-field { flex: 0 0 auto; margin: 0; }
+
+/* ---------------------------------------------------------------- 试跑 */
+.ifi-spam-test { position: sticky; top: 32px; }
+.ifi-spam-test textarea { min-height: 88px; }
+.ifi-spam-test .ifi-btn { margin-top: 2px; }
+.ifi-spam-empty { margin: 12px 0 0; color: var(--ifi-muted); font-size: 12px; }
+
+/* 结果块：与后台 notice 同一套配色（仅保留左侧色条 + 浅底） */
+.ifi-spam-result { margin: 12px 0 0; padding: 9px 12px; border-left: 4px solid var(--ifi-line-strong); border-radius: 3px; background: #f6f7f7; }
+.ifi-spam-result.is-clean { border-left-color: #00a32a; background: #edfaef; }
+.ifi-spam-result.is-blocked { border-left-color: #d63638; background: #fcf0f1; }
+.ifi-spam-result__label { display: block; color: var(--ifi-ink); font-size: 13px; font-weight: 600; }
+.ifi-spam-result__text { display: block; margin-top: 2px; color: var(--ifi-subtle); font-size: 12px; line-height: 1.5; word-break: break-word; }
+
+@media (max-width: 782px) {
+	.ifi-spam-stats__total { margin-right: 0; flex: 1 1 100%; }
+	.ifi-spam-num input[type="number"] { width: 100%; }
+	.ifi-spam-pair { display: block; }
+	.ifi-spam-pair > .ifi-field { margin-bottom: 14px; }
+	.ifi-spam-pair > .ifi-field:last-child { margin-bottom: 0; }
+}

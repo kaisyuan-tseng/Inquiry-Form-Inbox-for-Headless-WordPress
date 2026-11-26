@@ -1,0 +1,237 @@
+== Changelog ==
+
+The WordPress.org plugin page shows only the current release and the previous major
+version. This file is the complete history; it ships with the plugin but is never rendered
+by the plugin directory.
+
+= 3.1.3 =
+
+* Security: `X-Forwarded-For` is now read from the hop closest to the server. The leftmost entry is client-supplied, so a visitor could rotate it to escape the rate limiter and poison the recorded IP; trusted proxies are skipped from the right.
+* Security: attachment staging and archive directories use `wp_generate_password()` (CSPRNG) instead of the predictable `uniqid()`.
+* Security: deleting an inquiry resolves each attachment path with `realpath()` before the allow-list check, so a `..` segment in meta can no longer escape `uploads/ifi-inquiries/`.
+* Security: stored email bodies are re-filtered with the template editor's kses allow-list before the admin detail view renders them. The same filter keeps `rgba()` colors and `{{tokens}}`; records migrated from 2.x no longer depend on how they were originally stored.
+* Security: the rate-limiter visitor cookie is marked `Secure` on HTTPS.
+* New: a one-time success notice after activation with links to Email Template, Block Rules and Inquiries. It is a notice, not a redirect, so AJAX activation from the install screen is unaffected.
+* New: an installation check on the plugin screens warns when the plugin folder contains more than one plugin header or stale 2.x files. That condition makes WordPress's install screen report "The plugin does not have a valid header." The check only reports; it never deletes files.
+* New: `build-zip.php` refuses to build unless the package has one top-level `inquiry-form-inbox/` folder, the expected main file, and exactly one `Plugin Name` header.
+* Change: uninstall now loops over every site on a multisite network; each site's options, inquiries, uploads and capabilities are removed.
+* Change: `uploads/ifi-inquiries` and each record directory get an `index.php` guard as soon as the first attachment creates them.
+* Change: the plugin homepage now points to the GitHub repository, and the Chinese translation of the plugin description was removed; the description stays in English.
+* Fix: the activation hook is registered from the main plugin file, which is the location WordPress documents, instead of from the class initializer.
+
+= 3.1.2 =
+
+* Change (zh_CN): the first submenu item under Inquiries reads 所有询盘 instead of 全部询盘, matching the dashboard's 查看所有询盘 and the detail back link. The browser title is still Inquiries; no option or string key changed.
+* New: the two rate-limit thresholds are editable on the Block Rules screen — `rate_minute` and `rate_hour`, defaulting to the 3 per minute and 10 per hour the plugin has always enforced. The windows themselves stay fixed at 60 seconds and one hour; 0 turns a window off. Existing sites keep their behaviour until someone changes the number, and `ifi_rate_limits` still wins over both fields, including the window length.
+* Change: the per-rule counters on the card headers are gone. A single 30-day number next to "Honeypot" answered a question the stats strip already answers in full ("N blocked in the last 30 days", broken down by rule), and it made the header row taller than the other cards for no benefit.
+* Fix: the rate-limit line that used to sit inside "Network and duplicates" is now a proper card with two inputs, so a number that can be changed no longer reads like documentation.
+
+= 3.1.1 =
+
+* New: the dashboard widget opens an inquiry in place. Clicking a name went to All Inquiries and popped the dialog there, which lost the dashboard context and cost a page load; the dialog now opens on the dashboard itself, and Previous/Next steps through the widget's recent list instead of the whole inbox.
+* New: the honeypot's hidden field name is editable on the Block Rules screen. It was a read-only `companyWebsite` that only the `ifi_honeypot_field` filter could rename — a frontend that posted a different name had no way to say so without code. Sites that already rename it in code keep winning; only then does the screen show the name actually in effect, instead of pretending the input works.
+* Change: the honeypot field name is normalised to `[A-Za-z0-9_-]`, the same character set the REST collector keeps. Anything else would never match the key the form posts, so it is stripped; an empty result falls back to `companyWebsite`.
+* Fix: the honeypot field name cannot reuse one of the form's own fields (`fullName`, `email`, `message`, `pageTitle`, `timezone`, …). A required field would 400 every submission; an optional field such as `pageTitle` is non-empty on real inquiries, so the honeypot would have silently swallowed all of them. The value falls back to `companyWebsite` and the screen explains why.
+* New: the Block Rules screen states the built-in rate limits — 3 per minute and 10 per hour per visitor, HTTP 429 beyond that. They were always enforced, but nothing in the admin said so; the first sign was the eleventh inquiry failing.
+* New: the `ifi_rate_limits` filter. The two windows were private constants with no way to tune them, which is too rigid for a B2B site where twenty colleagues share one office IP. `limit` 0 turns a window off; a malformed value falls back to the default instead of locking the site.
+* Change: the dashboard's "View all inquiries" link reads 查看所有询盘 in zh_CN, matching the "All Inquiries" menu and back link.
+* Change: the detail dialog is only printed for users who can view inquiries. The dashboard is visible to every account, and it was printing an empty skeleton with a nonce for users who could not open it.
+
+= 3.1.0 =
+
+* New: the form type recognises five styles — page, popup, drawer, floating and sticky. The Source column, the `{{form_type}}` placeholder and the overview board all use the right name.
+* New: the `ifi_form_variants` filter. Your frontend can post any `formVariant` slug; register it here to give it a display name without touching the plugin. Unregistered slugs are stored and shown as they were sent, so a frontend can ship a new form style before the site is updated.
+* New: the Form type card lists every style that actually has inquiries, and shows a dash when there are none — the same empty state as the Sources and Languages cards. It used to render two rows of zeros on an empty inbox.
+* Change: `{{form_type}}` falls back to "Page form" only when no `formVariant` was sent. Unknown slugs are now rendered as sent instead of being labelled a page form.
+* Fix: the `{{time}}` placeholder in both emails printed a UTC clock labelled with the site timezone. `date_i18n()` treats a passed timestamp as already offset; `wp_date()` uses the real one, so a +8 site no longer shows a time 8 hours early next to a correct "local time" line.
+* Change: the Languages and Form Type cards now match Sources — three rows visible, the rest scrollable; the redundant "more languages" hint is gone.
+* Change: there is no "Other" bucket in the Form Type card. Empty `formVariant` values (records from before 3.0) count as Page form; unregistered slugs get their own row labelled by the slug, exactly as the Source column shows them.
+* Change: the monthly sparkline labels follow the admin's language. A Chinese admin on an English site used to see Jan/Feb; it now reads 1 月 … 12 月.
+* Change: English card titles are Title Case ("New Today", "Emails Sent", "Monthly Trend", "Form Type"). Same for "Send Test Email", "Mark as Contacted", "Reply", "Reply Template", "Inquiry Notification Template" and "Auto-Confirmation Template".
+* Change: the detail dialog's side panel now uses the list's column names (# / From / Attachments / Source / Delivery status / Received) instead of its own Email / Emails / Submitted.
+* Change: the first list column is 24% wide so View | Mark as Contacted | Trash fits on one line; row actions no longer wrap.
+* Fix: the Add Media button carried WordPress's `insert-media add_media` classes, which opened a second media frame behind ours — two clicks to close and an "Insert into post" button. It now opens a single frame with an "Insert" button.
+* Fix: zh_CN wording — "全部询盘" → "所有询盘" and the Trash row action → "移至回收站", following WordPress core; the three new form styles are 抽屉/悬浮/固定表单 (no "式").
+* Change: "Mark as pending" → "Mark as Pending" in English.
+* Change: removed the `embedded` form style and stopped showing unregistered slugs in the Form Type card. A custom slug is still accepted and stored, and the Source column still shows it; it just no longer looks like a sixth official style.
+* Change: the Add Media button keeps the `add_media` class (that is where WordPress puts the dashicon) but no longer has `insert-media`, so core's second click handler is gone — one frame, one click to close.
+* Change: hovering the form-type bar no longer hides the percentage labels.
+* Change: the detail side panel's heading is now the inquiry number (#); "From" shows name + email like the list column.
+* Change: inquiry numbers use the `IQ-` prefix — `IQ-20261125001` instead of `IN-20261125001`. The date and the 3-digit daily sequence are unchanged, and records already issued keep their number. The prefix lives in one constant, so it is changed in one place again next time.
+* Change: every row in the Form Type card carries the same colour swatch as its segment in the bar below, so the list and the bar read as one thing.
+* Change: the Languages card names locales the way the current admin language names them — `en-US` reads 英语（美国） in a Chinese admin, English (United States) in an English one. The names ship with the plugin (`includes/class-ifi-locale.php`) because `intl` is missing on a lot of hosts and WordPress's own locale list only carries native names.
+* Fix: "Ignore unsent warning" used to hide the entire Email Problem card, which also hid failed inquiry notifications. It now only keeps unsent auto-confirmations out of the count; the card stays and still reports notification failures.
+* Fix: permanently deleting an inquiry could leave files behind. Attachments whose archiving failed stay in the PHP temp folder (`ifi-stage-*`), outside `uploads/`; those are now removed too, and the record's own folder is swept by its `{ID}-` name in case the meta list is incomplete.
+* Change: every date and time the plugin prints — list "Received", detail dialog, dashboard widget, sparkline tooltips and both emails — follows the site's Date Format and Time Format settings instead of a hard-coded `Y-m-d H:i` / `g:i a`.
+* Fix: `{{time_local}}` in the reply template was always empty. The visitor timezone is stored in post meta, not in the field values the template receives, so the lookup now falls back to the meta.
+* Change: the `#` column is a fixed 218px — enough for `View | Mark as Contacted | Trash` (or 查看 | 标记为已联系 | 移至回收站) on one line. As a percentage it grew to 305px on a wide screen and shrank to 168px on a laptop, where the last action was clipped.
+* Fix: the Trash view in the list's status links reads 回收站 again; the row action keeps 移至回收站. Both are "Trash" in English, so they are two gettext contexts of the same msgid rather than one shared translation.
+* Change: the WordPress dashboard widget is rebuilt on the plugin's own vocabulary — four KPI tiles (New Today, Pending, Spam, Email Problem) plus recent inquiries showing number, sender, source with form style, delivery chip and received time. The old date-column layout, its status dots, its two summary strings and its CSS are gone.
+* New: a "Not Spam" row action on blocked inquiries replaces "Mark as Contacted" — a blocked record was never delivered, so marking it contacted made no sense. The action clears the spam marker and moves the record back to the normal list.
+* Fix: blocked inquiries were archived with the raw message as post body, so View showed a plain-text paragraph instead of the email card. They now use the same `build_body()` template rendering as normal inquiries (no mail is sent).
+
+= 3.0.15 =
+
+* Accessibility and correctness: the plugin no longer grants its capabilities on every admin request — they are granted once on activation and topped up only when a capability is actually missing.
+* Fix: privacy export and erase now include inquiries in the Trash, and both paginate in batches of 500 instead of loading the whole inbox in one request.
+* Fix: the privacy exporter now includes every stored meta field and expands the submitted form values, instead of exporting a list of field names.
+* Fix: auto-confirmation and reply templates now really render in the visitor's language. The template used to switch language while fixed labels such as the default subject stayed in the admin's language.
+* Fix: uninstalling left the `ifi_labels_manual` option behind.
+* Fix: the request-identity helpers no longer read `$_SERVER` without sanitising it.
+* Fix: the string dictionary no longer silences a mistyped key — it falls back to the key itself and raises a developer notice, and a linter in the test suite guards the whole catalogue.
+* Change: removed 26 unused dictionary entries and 13 dead meta helpers; the placeholder catalogue is 12% smaller.
+* Change: every remaining user-facing English string is translatable, including REST and upload error messages.
+* Change: hard-coded full-width punctuation was replaced by translatable format strings, so Chinese gets `：` and English gets `: ` from the same code path.
+* Change: "Pending" is now the single name for the not-yet-contacted state, everywhere.
+* Change: `Plugin URI` added; the plugin row no longer links to a repository under the old plugin name.
+* Change: the design notes moved from the plugin header into `docs/ARCHITECTURE.md`.
+* Change: the readme was rewritten and the full history moved to `changelog.txt`.
+
+= 3.0.14 =
+
+* New: Spam Rules screen under Inquiries. Toggle the honeypot; block keywords, email domains, IPv4/IPv6 addresses and CIDR ranges; cap the number of links; drop duplicate submissions inside a time window. Every rule runs on the server, before the inquiry is stored or emailed, and blocked submissions still get the normal success response.
+* New: test panel on the same screen — runs the rules in the form (including unsaved edits) against a sample submission, without storing or emailing anything.
+* New: the screen ships with a conservative starter list — ten disposable email domains and nine high-confidence spam phrases — so a fresh install is protected without any setup. Clear a list to turn it off.
+* New: blocked inquiries keep the rule that caught them, shown as a badge in the Spam view; the screen also counts blocks per rule over the last 30 days.
+* New: `ifi_spam_rules`, `ifi_spam_verdict` and `ifi_honeypot_field` filters.
+* Change: whether a blocked submission is archived in the Spam view is now a setting ("Keep blocked submissions in the Spam view", on by default — the previous behavior).
+
+= 3.0.13 =
+
+* Fix: the browser title of the inquiries list is "Inquiries" again. The "All Inquiries" text is kept only as the submenu label; `get_admin_page_title()` reads the submenu's page title, so the two are set separately now.
+
+= 3.0.12 =
+
+* Change: the admin UI is now a top-level menu with `admin.php?page=...` links — the list lives at `admin.php?page=ifi-inquiry` and Email Template at `admin.php?page=ifi-template`. No more `edit.php?post_type=ifi_inquiry` URLs. The list screen still uses WordPress's native posts list table and keeps all columns, views, filters and the overview board.
+* Change: the inline variable list is now a hanging indent — when placeholders wrap they start under the first variable instead of going back under the "Available variables:" label.
+
+= 3.0.11 =
+
+* Breaking: the bare `{{rows.fieldName}}` token is gone. Only `{{rows}}`, `{{rows.*.label}}` and `{{rows.*.value}}` are supported now; templates that still contain the bare form will show it literally until it is changed.
+* Change: the Field labels chip list offers `{{rows.<field>.value}}` / `{{rows.<field>.label}}` per field, and the subject placeholder/default templates use the explicit `.value` form.
+
+= 3.0.10 =
+
+* Change: four `{{rows}}` forms are now documented and supported — `{{rows}}` (whole table), `{{rows.*}}`, `{{rows.*.label}}` and `{{rows.*.value}}`. The old `{{rows.fieldName}}` keeps working as the value shorthand.
+* Change: `.label` resolves from the same source as the table header (admin Field labels → submitted fieldLabels → readable field name), in HTML templates, subjects and plain-text replies alike.
+
+= 3.0.9 =
+
+* Change: the Reply template tab gets the language groups Auto-confirmation already had. Recipients (To / Cc / Bcc) stay global; subject and body are per language. The reply button picks the group matching that inquiry's browser language and falls back to the default group.
+* Change: the reply variables row lists the full set again ({{rows}}, {{rows.*}}, {{form_type}}, {{time_local}}, {{ip}}, {{lang}}, {{time_zone}}), and all of them resolve — reply content is now rendered on the server, where {{rows}} prints one "Label: value" line per field.
+* Fix: editing a non-default language group wiped its language tag (the form never posted it back), so the group collapsed into the default one on save. Auto-confirmation and Reply template both post the current language now.
+
+= 3.0.8 =
+
+* Change: the Reply template tab uses the same inline variables row as Inquiry notification and Auto-confirmation — the plain "Placeholders:" line is gone, and every variable is a chip you click to insert at the cursor.
+* Change: reply variables are limited to what a mailto reply can actually fill ({{no}}, {{source}}, {{time}}, {{rows.fullName}}, {{rows.email}}), so no chip inserts something that renders empty.
+* Change: "Separate multiple addresses with commas" moves from the old placeholder line to a hint directly under the To / Cc / Bcc row.
+* Fix: on the Reply template tab the variables row now works — the shared script used to bail out as soon as the tab had no live preview.
+
+= 3.0.7 =
+
+* Change: the board and the list page now use WordPress admin design tokens only (accent #2271b1, text #1d2327 / #50575e / #646970, borders #c3c4c7 / #dcdcde, 4px radius, 1px card shadow).
+* Change: card icons and every period label ("Last 14 days", "Last 30 days", "this year") were removed; KPI cards stack title, number, and note vertically.
+* Change: donut palette moves to a blue-to-grey WordPress scale; bars, pills, buttons, table headers, and pagination follow core sizing.
+* Change: the inquiry table now uses the core WordPress list-table styling — bordered white table, zebra rows, native check column, toolbar, search box, and pagination.
+* Change: the All / Pending / Contacted / Spam / Trash views are back to the core subsubsub text links with pipe separators instead of pill buttons.
+* Change: Sources and Languages rows show counts only; their donuts drop the centre total and label the top three shares outside the ring, with count and percentage in the hover label.
+* Change: the KPI mini charts share one baseline and sit inset from the card corner; the Pending card links with just "View"; Monthly trend adds month-over-month growth; Form type prints its shares above the stacked bar.
+* Change: the Sources list scrollbar is moved off the numbers, and the Source column shows the form type (page form / popup form) again.
+* Change: row actions are now View, Mark as contacted (or Mark as pending), and Trash on a single line (the # column is wider); permanent deletion is only available inside Trash, and the delete handler rejects non-trashed records.
+* Change: the attachment toggle uses a CSS triangle caret instead of a dashicon.
+* Change: the page header is back to the core single "Inquiries" heading; the round icon and subtitle are gone.
+* Fix: page titles that arrive prefixed with "文章：" (or "Post: / Article:") are cleaned before they appear in the Source column, the Sources card, the source filter, and emails.
+* Change: the Email Template screen is rebuilt to the reference layout with WordPress admin tokens — page header with Send test email / Save Changes, an inline subject row, field labels, the native WordPress HTML code editor, inline available variables, and a Live Preview card that shows placeholders instead of real inquiry data (Desktop / Mobile switching).
+
+= 3.0.6 =
+
+* Change: Sources and Languages are separate cards again; the second row is four equal-height cards (Monthly trend, Sources, Languages, Form type).
+* Change: both donuts show the total in the centre, and every list row shows its share as a percentage.
+* Change: Form type rows show counts only; the stacked bar carries both count and percentage in its hover label.
+
+= 3.0.5 =
+
+* Change: the "Overview" heading and its rule were removed; the board starts directly with the KPI row.
+* Change: Languages and Sources now share one wide card — Sources on the left, Languages on the right, each with its list above and its donut below.
+* Change: Monthly trend has month abbreviations, a baseline, and a cleaner total line. It is the first card of the second row; Form type is the third.
+
+= 3.0.4 =
+
+* Change: Sources shows the first three rows and scrolls for the rest, instead of truncating at five.
+* Change: every chart on the board is interactive — monthly bars, spam bars, area charts, the form-type bar, and both donuts (hover a slice for its name and count).
+
+= 3.0.3 =
+
+* Change: "Daily new" no longer compares today with yesterday; the card shows today's count and the 14-day chart.
+* New: the second row leads with a monthly trend for the current year (12 bars, current month highlighted, hover for the month total).
+* Change: Languages moved to the middle of the second row, with a donut chart and matching colour swatches.
+* Change: Sources and Form type now share one card — Sources on top (donut included), Form type below.
+
+= 3.0.2 =
+
+* New: views are now All / Pending / Contacted / Spam / Trash. All excludes spam and trash; Pending is "not contacted yet"; Spam holds submissions blocked by the honeypot rule (stored, not emailed, not auto-confirmed).
+* New: the overview board's first row is now Daily new (with a 14-day chart), Pending total, Spam in the last 30 days (per-day bars, plus today's count), and Email Problem / Email Delivered (with the notification and confirmation failure counts).
+* Change: detail cards and the dashboard widget ignore spam records, so counts reflect real inquiries only.
+
+= 3.0.1 =
+
+* Fix: admin CSS/JS are versioned by file modification time (`?ver=3.0.1.<mtime>`), so the browser stops serving a stale `admin.css` / `admin.js` after the plugin files are updated. If the list screen looked unchanged after updating, this was why.
+
+= 3.0.0 =
+
+* Breaking change: the plugin is now Inquiry Form Inbox for Headless WordPress. Folder, main file, text domain, classes, traits, post type (`ifi_inquiry`), meta keys (`ifi_inquiry_*`), options (`ifi_*`), capabilities (`ifi_*_inquiries`), admin actions, nonces, CSS classes, and attachment directory (`uploads/ifi-inquiries/`) all use the new `ifi` prefix. A one-time migration moves data from 2.x (`eln_*`) and 1.x (`inquiry`) automatically. Back up before upgrading.
+* Breaking change: the REST namespace is now `inquiry-form-inbox/v1`. The `email-log-notifications/v1` and `site-inquiries/v1` namespaces were removed. Update your frontend.
+* Breaking change: all developer hooks moved from `eln_` to `ifi_` (`ifi_recipient`, `ifi_max_files`, `ifi_required_fields`, `ifi_length_limits`, `ifi_dashboard_limit`, `ifi_strings`, `ifi_field_manifest`, `ifi_autoreply_sent`).
+* New: the inquiry list columns are now # / From / Message / Attachments / Source / Automatic Status / Received. The automatic status collapses both emails into one badge: All Sent, Only Notification, Only Auto-Confirmation, or Not Sent.
+* New: New / Contacted views with counts, and a "Mark as contacted" row action that can be undone ("Mark as new").
+* New: a collapsible "Overview" board sits at the top of the inquiry list — new-inquiry count, "N not sent" warning, 7/30-day submission volume with the change against the previous period, top visitor languages, page-vs-popup form split, and per-source submission counts (top five, each linking to the filtered list). It can be collapsed, and the state is remembered per browser.
+* Change: the default email templates were redesigned to match the WordPress admin style — light grey canvas, white card, `#dcdcde` borders, `#2271b1` accent, system fonts, English copy. Saved custom templates are left untouched; clear the HTML source to fall back to the new defaults.
+* Change: the plugin file no longer ships a compatibility layer for 1.x admin actions.
+
+= 2.0.5 =
+
+* Fix: 2.0.4 shipped a hand-compiled MO that included untranslated entries with an empty `msgstr`. WordPress translates the plugin header fields, so the Plugins screen showed a blank row and activating it failed with "does not have a valid header". MO compilation now skips empty translations, like `msgfmt` does.
+* Feature: added a "View details" link in the plugin row, pointing to https://github.com/kaisyuan-tseng/email-log-notifications.
+
+= 2.0.4 =
+
+* Copy: rewrote the email template screen so each hint says one thing. The page opened with a paragraph explaining that HTML is HTML, the preview card captioned itself, and the media button explained what a media button does — all removed. What is left: subject placeholders, where the header text lives, how a language group is matched, and which front-end field feeds which placeholder.
+* Copy: the HTML hint used to point at a `<!-- 表头标题 -->` comment that no longer exists in the default template; it now refers to the comments at the top of the source.
+* Fix: placeholder tooltips were hardcoded Chinese even on English admin screens. They are gettext strings now, translated for zh_CN and zh_TW, and only the non-obvious ones keep a tooltip.
+
+= 2.0.3 =
+
+* Fix: attachments could be delivered by email but never appeared in the admin. Archiving the staged upload used a bare `rename()`, which fails with `EXDEV` whenever the PHP temp directory and `wp-content/uploads` sit on different mounts — typical on shared hosting. The code then silently kept the temp path, which has no public URL, so the inquiry detail showed “—”. Archiving now falls back to `copy()` + unlink.
+* Fix: `persist_attachments()` always returns the same `name / path / url / size` shape, including when the archive directory cannot be created. Previously a failed `wp_mkdir_p()` returned the staging entries, which have a different shape.
+* Improvement: attachments that could not be archived are still listed by name and size in the inquiry detail, with an explanatory tooltip, instead of being hidden.
+
+= 2.0.2 =
+
+* Fix: submissions with attachments were always rejected with "File type .xxx is not allowed." `wp_check_filetype_and_ext()` expects a map of `extension regex => mime`, but it was given a plain list of extensions, so its internal regex became `\.(0)$` and every upload resolved to `ext = false`. Plain-text inquiries were unaffected, which made it look like a host problem.
+* Fix: file type detection now uses `wp_check_filetype()` against a proper extension/mime map, and a `finfo` content check rejects PHP/HTML payloads disguised with an allowed extension. CAD formats (`.step`, `.dwg`, `.dxf`) are no longer rejected when the host's `finfo` reports them as `text/plain`.
+
+= 2.0.1 =
+
+* Compatibility: moved constants out of traits. Trait constants need PHP 8.2, so on a host still pinned to PHP 8.0/8.1 the plugin file failed to compile and the whole plugin was dead on arrival (locally perfect on 8.3+). The plugin header has always said `Requires PHP: 8.0`; now the code actually is.
+* Fix: rate limiting no longer collapses every visitor into one bucket when the site sits behind a reverse proxy that is not on the trusted list. That is the normal setup when the marketing site proxies `/wp-json` to WordPress — the proxy's own IP was used as the visitor identity, so the 4th submission inside a minute returned 429 for everyone. Requests that arrive through an unknown proxy now fall back to the signed visitor cookie (one bucket per visitor).
+* New: trusted proxies can be configured with `define( 'IFI_TRUSTED_PROXIES', array( '203.0.113.10' ) )` in `wp-config.php`, in addition to the `ifi_trusted_proxies` filter.
+
+= 2.0.0 =
+
+* Breaking change: inquiry post type renamed to `eln_inquiry`, meta keys and options prefixed with `eln_`, and attachments moved to `uploads/eln-inquiries/`. A one-time migration runs in the admin. Back up before upgrading.
+* Breaking change: legacy REST namespace `site-inquiries/v1` and old admin action names are deprecated and will be removed in 2.1.0.
+* Security: removed a debug log that wrote template settings to a web-accessible file.
+* Security: removed a server-side HTTP request driven by visitor-supplied URLs (SSRF).
+* Security: inquiry detail and delete now use object-level capability checks.
+* Security: hardened rate limiting, upload validation, inline script encoding, and preview sandboxing.
+* Engineering: split the monolithic plugin into focused modules, externalized CSS/JS, and added uninstall and privacy support.
+* I18n: replaced the built-in three-language array with WordPress gettext and bundled POT/PO/MO files.
+
+== Upgrade Notice ==
+
+= 3.0.0 =
+Back up your database and uploads before upgrading. This release renames every plugin identifier and migrates post types, meta keys, options, capabilities, and attachment paths. Update your frontend to POST /wp-json/inquiry-form-inbox/v1/inquiry; the old REST namespaces no longer exist.
+
+= 2.0.0 =
+Back up your database and uploads before upgrading. This release migrates post types, meta keys, options, and attachment paths.

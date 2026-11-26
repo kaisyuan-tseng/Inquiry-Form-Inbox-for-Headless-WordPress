@@ -1,0 +1,82 @@
+{
+    "readme_bytes": 21947,
+    "core_version": "7.1.5",
+    "checks": [
+        {
+            "rule": "size <= 10k",
+            "verdict": "fail",
+            "detail": "21947 bytes"
+        },
+        {
+            "rule": "Stable tag == header Version",
+            "verdict": "pass",
+            "detail": "Stable tag \"3.0.14\" vs header \"3.0.14\""
+        },
+        {
+            "rule": "Stable tag != trunk",
+            "verdict": "pass",
+            "detail": "3.0.14"
+        },
+        {
+            "rule": "Tested up to is numeric",
+            "verdict": "pass",
+            "detail": "7.1.4"
+        },
+        {
+            "rule": "Tested up to has no minor",
+            "verdict": "warn",
+            "detail": "\"7.1.4\" — the directory ignores minor versions; write the major only"
+        },
+        {
+            "rule": "Tested up to <= installed core",
+            "verdict": "pass",
+            "detail": "tested 7.1.4 vs installed 7.1.5"
+        },
+        {
+            "rule": "Tags <= 5",
+            "verdict": "pass",
+            "detail": "5 tags: inquiry, form, headless, inbox, email"
+        },
+        {
+            "rule": "No tag equal to the plugin slug",
+            "verdict": "pass",
+            "detail": "exclusive tags are hidden by the directory"
+        },
+        {
+            "rule": "Short description <= 150 chars",
+            "verdict": "pass",
+            "detail": "54 chars: Connect any frontend. Keep every inquiry in one place."
+        },
+        {
+            "rule": "Short description has no markup",
+            "verdict": "pass",
+            "detail": "Connect any frontend. Keep every inquiry in one place."
+        },
+        {
+            "rule": "Screenshots declared => files exist",
+            "verdict": "fail",
+            "detail": "4 declared, missing: assets/screenshot-1.png, assets/screenshot-2.png, assets/screenshot-3.png, assets/screenshot-4.png"
+        },
+        {
+            "rule": "Changelog keeps current + one major back",
+            "verdict": "pass",
+            "detail": "21 entries across 2 majors (3.0, 2.0)"
+        },
+        {
+            "rule": "Required header fields present",
+            "verdict": "pass",
+            "detail": "all present"
+        },
+        {
+            "rule": "No readme.MD alongside readme.txt",
+            "verdict": "pass",
+            "detail": "none"
+        },
+        {
+            "rule": "Requires PHP — header is authoritative",
+            "verdict": "pass",
+            "detail": "header \"8.0\", readme \"8.0\" (ignored since WP 5.8)"
+        }
+    ],
+    "status": "FAIL"
+}

@@ -1,0 +1,251 @@
+/* Inquiry Form Inbox for Headless WordPress — 后台共享样式（版本 3.0.7）
+ * 询盘列表弹窗 / 列表页统计行 / 核心仪表盘挂件 / 列表列与徽章共用此文件。
+ * 视觉只使用 WordPress 后台设计令牌：主色 #2271b1、悬停 #135e96、文字 #1d2327 / #50575e / #646970、
+ * 边框 #c3c4c7 / #dcdcde、浅底 #f0f0f1、圆角 4px、阴影 0 1px 1px rgba(0,0,0,.04)。
+ */
+
+/* ---------------------------------------------------------------- 列表弹窗 */
+/* 结构照搬 WP「外观 → 主题详情」，遮罩同 .theme-backdrop：浅灰 90%、不盖左侧菜单和管理栏 */
+.ifi-modal{position:fixed;top:32px;left:160px;right:0;bottom:0;z-index:9980;display:none;align-items:center;justify-content:center;padding:40px;background:rgba(240,240,241,.9);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;font-size:13px;line-height:1.5;color:#1d2327;}
+.ifi-modal.is-open{display:flex;}
+.ifi-modal__panel{position:relative;width:min(1080px,100%);height:min(720px,100%);display:flex;flex-direction:column;background:#fff;box-shadow:0 1px 20px 5px rgba(0,0,0,.1);}
+.ifi-modal__top{position:relative;flex:none;height:48px;border-bottom:1px solid #dcdcde;}
+.ifi-modal__nav{display:flex;}
+.ifi-modal__arrow{display:inline-flex;align-items:center;justify-content:center;width:54px;height:48px;border:0;border-right:1px solid #dcdcde;background:transparent;color:#3c434a;cursor:pointer;vertical-align:top;}
+.ifi-modal__arrow svg{display:block;fill:none;stroke:#3c434a;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;}
+.ifi-modal__arrow:hover:not(:disabled){background:#f0f0f1;color:#1d2327;}
+.ifi-modal__arrow:hover:not(:disabled) svg{stroke:#1d2327;}
+.ifi-modal__arrow:disabled{color:#c3c4c7;cursor:default;}
+.ifi-modal__arrow:disabled svg{stroke:#c3c4c7;}
+.ifi-modal__top .ifi-modal__close{position:absolute;top:0;right:0;display:inline-flex;align-items:center;justify-content:center;width:50px;height:48px;border:0;border-left:1px solid #dcdcde;background:transparent;color:#3c434a;cursor:pointer;font-size:20px;line-height:1;}
+.ifi-modal__top .ifi-modal__close:hover{background:#f0f0f1;color:#1d2327;}
+.ifi-modal__wrap{display:flex;flex:1;min-height:0;}
+.ifi-modal__main{flex:1;min-width:0;overflow:auto;padding:28px 32px 40px;background:#fff;}
+.ifi-modal__stage{max-width:720px;margin:0 auto;border:1px solid #dcdcde;background:#fff;box-shadow:0 1px 8px rgba(0,0,0,.07);}
+.ifi-modal__stage>*{display:block;padding:28px 32px;}
+/* 邮件表格自适应信纸框：模板已改 width:100%;max-width:640px，
+   存量记录里 640px 硬编码的表格在这里强制收缩（!important 压过行内样式） */
+.ifi-modal__stage img{max-width:100%;height:auto;}
+.ifi-modal__stage table{max-width:100%;}
+.ifi-modal__stage table[width="640"],
+.ifi-modal__stage table[style*="640px"]{width:100% !important;max-width:100% !important;}
+.ifi-modal__loading{text-align:center;color:#646970;padding:64px 0;border:0;box-shadow:none;}
+.ifi-modal__side{flex:none;width:30%;min-width:280px;max-width:440px;overflow:auto;padding:20px 25px;background:#fff;}
+.ifi-modal__chip{display:inline-block;padding:1px 8px;border-radius:3px;font-size:12px;line-height:1.7;}
+.ifi-modal__chip.is-all{background:#edfaef;color:#00a32a;}
+.ifi-modal__chip.is-partial{background:#fcf9e8;color:#996800;}
+.ifi-modal__chip.is-none{background:#f0f0f1;color:#787c82;}
+.ifi-modal__title{margin:0 0 4px;font-size:21px;font-weight:400;line-height:1.4;}
+.ifi-modal__no{margin:0;color:#646970;font-size:12px;}
+/* 编号现在同时是 h2：覆盖上面那条小字号规则，按侧栏标题显示 */
+.ifi-modal__title.ifi-modal__no{margin:0 0 16px;color:#1d2327;font-size:21px;font-weight:400;line-height:1.4;}
+.ifi-modal__fields{margin:0;}
+.ifi-modal__fields dt{margin:16px 0 3px;color:#646970;font-size:12px;}
+.ifi-modal__fields dt:first-of-type{margin-top:0;}
+.ifi-modal__fields dd{margin:0;font-size:13px;word-break:break-word;}
+.ifi-modal__fields dd .ifi-mail-item{display:block;}
+.ifi-modal__foot{flex:none;height:53px;display:flex;justify-content:center;align-items:center;gap:8px;padding:10px 25px 5px;background:#f6f7f7;border-top:1px solid #f0f0f1;}
+/* 删除：与核心 .delete-theme 一致——默认红字透底，hover 红底白字红边 */
+.ifi-modal__delete{color:#b32d2e !important;border:1px solid transparent !important;background:transparent !important;}
+.ifi-modal__delete:hover{background:#b32d2e !important;border-color:#b32d2e !important;color:#fff !important;}
+/* 只有真正收起（.folded）才贴 36px；auto-fold 只是「窗口变窄自动折叠」的标记，
+   菜单此时可能还是展开的 160px，跟着缩会盖住菜单 */
+.folded .ifi-modal{left:36px;}
+/* 窄屏：遮罩铺满、面板全屏 */
+@media (max-width:782px){
+    .ifi-modal{left:0;top:0;padding:0;}
+    .ifi-modal__panel{width:100%;height:100%;}
+    .ifi-modal__wrap{flex-direction:column;overflow:auto;}
+    .ifi-modal__main{overflow:visible;padding:16px 16px 24px;}
+    .ifi-modal__side{width:auto;max-width:none;border-left:0;border-top:1px solid #dcdcde;}
+}
+
+/* ---------------------------------------------------------------- 列表页概览看板 */
+/* 两行四列：第一行 4 张 KPI 卡，第二行 4 张等高明细卡；卡片统一 WP 原生描边与阴影 */
+.ifi-board { margin: 18px 0 10px; }
+/* JS 就绪前看板还在 .wrap 外，给个与 .wrap 对齐的边距；挪进页面后这条不再命中 */
+#wpbody-content > .ifi-board { margin: 18px 20px 10px 2px; }
+.ifi-board__body { padding: 0; }
+
+.ifi-board__kpis { display: grid; grid-template-columns: repeat(var(--ifi-kpi-cols, 4), minmax(0, 1fr)); gap: 12px; margin-bottom: 12px; }
+.ifi-board__details { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 1100px) { .ifi-board__details { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 900px) { .ifi-board__kpis { --ifi-kpi-cols: 2; } }
+@media (max-width: 782px) { .ifi-board__kpis, .ifi-board__details { grid-template-columns: minmax(0, 1fr); } }
+
+.ifi-board__card { position: relative; display: flex; flex-direction: column; min-width: 0; overflow: hidden; padding: 16px; background: #fff; border: 1px solid #c3c4c7; border-radius: 4px; box-shadow: 0 1px 1px rgba(0, 0, 0, .04); }
+/* KPI 卡：标签 / 数字 / 副文案纵向排列，右下角是迷你图 */
+.ifi-board__card--kpi { justify-content: flex-start; gap: 2px; min-height: 112px; padding: 14px 16px; }
+/* 左侧白色渐隐，保证文字压在迷你图上仍然清晰 */
+.ifi-board__card--kpi::after { content: ""; position: absolute; top: 0; bottom: 0; left: 0; width: 62%; background: linear-gradient(90deg, #fff 62%, rgba(255, 255, 255, 0)); pointer-events: none; }
+.ifi-board__kpi { position: relative; z-index: 1; min-width: 0; flex: 1; }
+.ifi-board__area { position: absolute; right: 16px; bottom: 12px; width: 43%; height: 52%; pointer-events: none; }
+/* 面积图的悬停热区：每个点显示日期 + 数值 */
+.ifi-board__hit { position: absolute; right: 16px; bottom: 12px; width: 43%; height: 52%; z-index: 2; pointer-events: none; }
+.ifi-board__hit span { position: absolute; width: 12px; height: 12px; margin: 0 0 -6px -6px; border-radius: 50%; pointer-events: auto; cursor: default; }
+.ifi-board__hit span::before { content: ""; position: absolute; left: 50%; top: 50%; width: 7px; height: 7px; margin: -3.5px 0 0 -3.5px; border-radius: 50%; background: #2271b1; box-shadow: 0 0 0 2px #fff; opacity: 0; }
+.ifi-board__hit span:hover::before { opacity: 1; }
+.ifi-board__hit span::after { content: attr(data-label); position: absolute; left: 50%; bottom: 16px; transform: translateX(-50%); padding: 3px 7px; background: #1d2327; color: #fff; border-radius: 4px; font-size: 11px; line-height: 1.4; white-space: nowrap; opacity: 0; transition: opacity .1s; pointer-events: none; }
+.ifi-board__hit span:hover::after { opacity: 1; }
+.ifi-board__hit span:first-child::after { left: 0; transform: none; }
+.ifi-board__hit span:last-child::after { left: auto; right: 0; transform: none; }
+.ifi-board__card-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+/* 环形图下方的居中容器 */
+.ifi-board__donut-wrap { display: flex; justify-content: center; margin-top: auto; padding-top: 14px; }
+.ifi-board__donut-wrap .ifi-donut { width: 132px; height: 132px; margin-left: 0; }
+/* 年度月度趋势卡：年度总数 + 本月对上月的环比 */
+.ifi-board__month-num { display: flex; align-items: baseline; gap: 8px; margin: 0 0 4px; color: #1d2327; font-size: 28px; font-weight: 600; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.ifi-board__month-vs { color: #646970; font-size: 11px; font-weight: 400; }
+/* 扇形（环形）迷你图：SVG 弧线，每段可悬停，中心显示总数 */
+.ifi-donut { position: relative; flex: none; width: 52px; height: 52px; margin-left: auto; }
+.ifi-donut svg { display: block; width: 100%; height: 100%; }
+.ifi-donut__seg { cursor: default; transition: opacity .12s; }
+.ifi-donut__seg:hover { opacity: .6; }
+/* 环外的主要分段百分比（占比最高的三个） */
+.ifi-donut__pct { fill: #50575e; font-size: 5px; font-weight: 600; pointer-events: none; }
+.ifi-board__swatch { display: inline-block; width: 8px; height: 8px; margin-right: 6px; border-radius: 50%; vertical-align: middle; }
+.ifi-board__card-title { margin: 0; color: #50575e; font-size: 12px; font-weight: 600; line-height: 1.5; }
+.ifi-board__num { margin: 0; color: #1d2327; font-size: 30px; line-height: 1.1; font-weight: 600; font-variant-numeric: tabular-nums; }
+.ifi-board__num.is-warn { color: #d63638; }
+.ifi-board__hint { margin: 8px 0 0; color: #646970; font-size: 12px; line-height: 1.6; }
+.ifi-board__hint a { color: #2271b1; text-decoration: none; }
+.ifi-board__hint a:hover { color: #135e96; text-decoration: underline; }
+.ifi-board__ok { color: #007017; font-weight: 600; }
+.ifi-board__warn { color: #d63638; font-weight: 600; }
+
+.ifi-board__rows { margin: 0; padding: 0; list-style: none; }
+/* 来源列表：默认显示 3 行，超出滚动；放在 .ifi-board__rows 之后，
+   并用双类名保证 margin/padding 不被上面的归零规则覆盖 */
+.ifi-board__rows.ifi-board__scroll { max-height: 81px; margin-right: -8px; padding-right: 14px; overflow-y: auto; }
+.ifi-board__rows.ifi-board__scroll::-webkit-scrollbar { width: 6px; }
+.ifi-board__rows.ifi-board__scroll::-webkit-scrollbar-thumb { background: #c3c4c7; border-radius: 3px; }
+/* 核心样式给所有 li 加了 6px 下边距，这里清零，保证滚动区正好卡在 3 行 */
+.ifi-board__row { display: flex; align-items: baseline; gap: 10px; justify-content: space-between; margin: 0; padding: 3px 0; font-size: 13px; line-height: 1.6; }
+.ifi-board__row-label { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #50575e; text-decoration: none; }
+a.ifi-board__row-label { color: #2271b1; }
+a.ifi-board__row-label:hover { color: #135e96; text-decoration: underline; }
+.ifi-board__value { display: inline-flex; align-items: baseline; gap: 6px; flex: none; }
+.ifi-board__count { flex: none; color: #1d2327; font-weight: 600; font-variant-numeric: tabular-nums; }
+.ifi-board__delta { padding: 0 5px; border-radius: 4px; font-size: 11px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.ifi-board__delta.is-up { background: #edfaef; color: #007017; }
+.ifi-board__delta.is-down { background: #fcf0f1; color: #b32d2e; }
+.ifi-board__delta.is-flat { background: #f0f0f1; color: #646970; }
+
+/* 提交量卡片的迷你图：KPI 卡里贴右下角；明细卡里贴底部 */
+.ifi-board__spark { display: flex; align-items: flex-end; gap: 3px; height: 34px; margin-top: auto; padding-top: 12px; }
+.ifi-board__spark--corner { position: absolute; right: 16px; bottom: 12px; width: 43%; height: 52%; margin: 0; padding: 0; gap: 1px; pointer-events: none; }
+/* 年度月度柱状图：占满卡片底部，12 根柱 + 月份缩写 */
+.ifi-board__spark--months { height: 88px; margin-top: auto; padding: 10px 0 20px; border-bottom: 1px solid #dcdcde; }
+.ifi-board__spark--months span { background: #c3c4c7; border-radius: 3px 3px 0 0; }
+.ifi-board__spark--months span.is-last { background: #2271b1; }
+.ifi-board__spark--months span::before { content: attr(data-month); position: absolute; left: 50%; top: calc(100% + 5px); transform: translateX(-50%); color: #646970; font-size: 9px; line-height: 1; }
+.ifi-board__spark--months span.is-last::before { color: #2271b1; font-weight: 600; }
+.ifi-board__spark span { position: relative; flex: 1; min-height: 4px; background: #c3c4c7; border-radius: 2px 2px 0 0; pointer-events: auto; cursor: default; }
+.ifi-board__spark span.is-last { background: #2271b1; }
+.ifi-board__spark span::after { content: attr(data-label); position: absolute; left: 50%; bottom: calc(100% + 6px); transform: translateX(-50%); padding: 3px 7px; background: #1d2327; color: #fff; border-radius: 4px; font-size: 11px; line-height: 1.4; white-space: nowrap; opacity: 0; transition: opacity .1s; pointer-events: none; z-index: 5; }
+.ifi-board__spark span:hover::after { opacity: 1; }
+.ifi-board__spark span:first-child::after { left: 0; transform: none; }
+.ifi-board__spark span:last-child::after { left: auto; right: 0; transform: none; }
+
+/* 表单类型占比条 */
+.ifi-board__bar { display: flex; gap: 2px; margin-top: auto; padding-top: 18px; }
+.ifi-board__bar-seg { position: relative; height: 8px; border-radius: 4px; }
+.ifi-board__bar-seg::after { content: attr(data-label); position: absolute; left: 50%; bottom: calc(100% + 6px); transform: translateX(-50%); padding: 3px 7px; background: #1d2327; color: #fff; border-radius: 4px; font-size: 11px; line-height: 1.4; white-space: nowrap; opacity: 0; pointer-events: none; z-index: 5; }
+.ifi-board__bar-seg:hover::after { opacity: 1; }
+.ifi-board__bar-seg:first-child::after { left: 0; transform: none; }
+.ifi-board__bar-seg:last-child::after { left: auto; right: 0; transform: none; }
+/* 占比条上方的百分比：贴在分段正上方，首尾贴边避免溢出卡片；悬停时让位给详细 tooltip */
+.ifi-board__bar-pct { position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%); color: #50575e; font-size: 10px; font-weight: 600; line-height: 1; white-space: nowrap; pointer-events: none; transition: opacity .1s; }
+.ifi-board__bar-seg:first-child .ifi-board__bar-pct { left: 0; transform: none; }
+.ifi-board__bar-seg:last-child .ifi-board__bar-pct { left: auto; right: 0; transform: none; }
+/* 悬浮时保留百分比：段上的 tooltip 已经给出名称/数量，百分比不该跟着消失 */
+/* 环形图分段的浮动提示（由 admin.js 定位） */
+.ifi-tip { position: fixed; z-index: 100000; padding: 3px 7px; background: #1d2327; color: #fff; border-radius: 4px; font-size: 11px; line-height: 1.4; white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity .1s; }
+.ifi-tip.is-on { opacity: 1; }
+/* 条形图每段的颜色由 palette_color() 内联给出：形态数量不固定（前端可用
+   ifi_form_variants 加自己的形态），写死 .is-page / .is-modal 会漏色 */
+
+/* ---------------------------------------------------------------- 列表视图 */
+/* All / Pending / Contacted / Spam / Trash 直接使用核心 .subsubsub：
+   13px 文本链接、a.current 加粗黑色、计数灰色、竖线分隔，不再做胶囊样式 */
+
+/* ---------------------------------------------------------------- WordPress 仪表盘挂件 */
+/* 与列表页看板同一套读法：四个小指标在上，最近记录在下。
+   记录行两行结构——编号 / 姓名 / 时间，邮箱 / 来源 / 发信徽章——窄栏里也不会互相挤扁 */
+.ifi-widget { display: flex; flex-direction: column; gap: 14px; margin: 0; }
+.ifi-widget__kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin: 0; padding: 0; list-style: none; }
+.ifi-widget__kpi { margin: 0; }
+.ifi-widget__kpi-link { display: block; padding: 10px 12px; border-radius: 4px; background: #f6f7f7; color: inherit; text-decoration: none; }
+.ifi-widget__kpi-link:hover { background: #f0f0f1; }
+.ifi-widget__kpi-link:focus-visible { box-shadow: 0 0 0 2px #2271b1; outline: 2px solid transparent; }
+.ifi-widget__kpi-num { display: block; color: #1d2327; font-size: 22px; font-weight: 600; line-height: 1.2; font-variant-numeric: tabular-nums; }
+.ifi-widget__kpi-num.is-warn { color: #d63638; }
+.ifi-widget__kpi-label { display: block; margin-top: 2px; color: #646970; font-size: 11px; line-height: 1.4; }
+.ifi-widget__list { margin: 0; padding: 0; list-style: none; border-top: 1px solid #f0f0f1; }
+.ifi-widget__item { margin: 0; padding: 9px 0; border-bottom: 1px solid #f0f0f1; }
+.ifi-widget__row { display: flex; align-items: baseline; gap: 8px; }
+.ifi-widget__row--sub { margin-top: 2px; }
+.ifi-widget__no { flex: none; color: #646970; font-size: 11px; font-variant-numeric: tabular-nums; }
+.ifi-widget__name { min-width: 0; overflow: hidden; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
+.ifi-widget__when { flex: none; margin-left: auto; color: #646970; font-size: 11px; white-space: nowrap; }
+.ifi-widget__sub { min-width: 0; overflow: hidden; color: #646970; font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
+.ifi-widget__row--sub .ifi-status-chip { flex: none; margin-left: auto; }
+.ifi-widget__empty { margin: 0; color: #646970; }
+.ifi-widget__foot { margin: 0; }
+.ifi-widget__foot .count { color: #646970; }
+@media (max-width: 600px) { .ifi-widget__kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* ---------------------------------------------------------------- 列表列 */
+/* 列宽：来源是页面标题、状态是一枚徽章，默认宽度会把它们挤成两行 */
+.ifi-muted { color: #646970; font-size: 12px; }
+.ifi-no { color: #50575e; font-size: 12px; }
+/* 附件列：回形针 + 数量，点开是每个附件的展开菜单 */
+.ifi-attach { position: relative; display: inline-block; }
+.ifi-attach > summary { display: inline-flex; align-items: center; gap: 4px; color: #2271b1; cursor: pointer; list-style: none; }
+.ifi-attach > summary::-webkit-details-marker { display: none; }
+.ifi-attach > summary:hover { color: #135e96; }
+.ifi-attach > summary .dashicons-paperclip { width: 16px; height: 16px; font-size: 16px; color: #646970; }
+/* 下箭头用 ::after 画的实心三角（与核心可展开列表一致），展开时翻转 */
+.ifi-attach > summary::after { content: ""; width: 0; height: 0; margin-left: 2px; border: 4px solid transparent; border-top-color: currentColor; transform: translateY(2px); transition: transform .1s ease-in-out; }
+.ifi-attach[open] > summary::after { transform: translateY(-1px) rotate(180deg); }
+.ifi-attach__menu { position: absolute; top: calc(100% + 6px); left: 0; z-index: 30; min-width: 220px; max-width: 340px; margin: 0; padding: 6px 0; background: #fff; border: 1px solid #c3c4c7; border-radius: 4px; box-shadow: 0 3px 5px rgba(0, 0, 0, .2); list-style: none; }
+.ifi-attach__menu li { margin: 0; }
+.ifi-attach__menu a,
+.ifi-attach__menu .ifi-attach__row { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 6px 12px; color: #2c3338; font-size: 12px; text-decoration: none; }
+.ifi-attach__menu a:hover { background: #f0f0f1; color: #2271b1; }
+.ifi-attach__name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ifi-attach__size { flex: none; color: #8c8f94; white-space: nowrap; }
+/* 列宽：七列全部用百分比，合计 100%。
+   核心列表是 table-layout:fixed，混用 px 与百分比很容易超额（超额后浏览器按比例压缩，
+   窄列被压到放不下一个单词，"Attachments" 会断成 "Attach ments"）。
+   第一列只装「编号 + 行操作」，宽度按行操作单行所需定死：英文
+   "View | Mark as Contacted | Trash" 与中文「查看 | 标记为已联系 | 移至回收站」实测 189px，
+   加左右内边距与余量取 218px。用百分比会在宽屏上白涨到 300px（1280 实测 229px 已够），
+   窄屏又掉到 168px 把「移至回收站」裁掉。附件列留 10%，否则表头 "Attachments" 会断词。 */
+.fixed .column-ifi_inquiry_no { width: 218px; }
+.fixed .column-ifi_inquiry_no .row-actions { white-space: nowrap; }
+.fixed .column-ifi_inquiry_from { width: 15%; overflow-wrap: anywhere; }
+.fixed .column-ifi_inquiry_message { width: 18%; }
+.fixed .column-ifi_inquiry_attachments { width: 10%; }
+.fixed .column-ifi_inquiry_source { width: 14%; }
+.fixed .column-ifi_inquiry_status { width: 11%; }
+.fixed .column-ifi_inquiry_received { width: 8%; }
+
+/* 自动发信状态徽章：与核心小标签同观感 */
+.ifi-status-chip { display: inline-block; padding: 1px 8px; border-radius: 4px; font-size: 12px; line-height: 1.7; white-space: nowrap; }
+.ifi-status-chip.is-all { background: #edfaef; color: #007017; }
+.ifi-status-chip.is-partial { background: #fcf9e8; color: #996800; }
+.ifi-status-chip.is-none { background: #f0f0f1; color: #646970; }
+.ifi-status-chip.is-fail { background: #fcf0f1; color: #b32d2e; }
+
+/* Spam 视图的内容列：顶部标出命中的规则（值来自 ifi_inquiry_spam，见 spam_reason_label()） */
+.ifi-spam-tag { display: inline-block; margin-bottom: 2px; padding: 0 6px; border-radius: 3px; background: #fcf0f1; color: #b32d2e; font-size: 11px; line-height: 18px; white-space: nowrap; }
+
+/* ---------------------------------------------------------------- 页头与列表面板 */
+/* 页头交给 WordPress 核心：只保留默认的 h1.wp-heading-inline，不加图标与副标题 */
+/* 列表面板只做布局容器：不画边框、不加内边距，让原生 .wp-list-table 的白底描边直接呈现 */
+body.post-type-ifi_inquiry .ifi-list-panel { margin-top: 14px; }
+
+/* 表格、工具栏、搜索框、按钮与分页全部交回 WordPress 核心样式：
+   外框 1px #c3c4c7 + 1px 阴影、表头 14px、斑马纹 #f6f7f7、单元格 8px 10px、行操作 hover 才出现 */
+

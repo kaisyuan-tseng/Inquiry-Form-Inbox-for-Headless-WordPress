@@ -1,0 +1,46 @@
+{
+    "pot": {
+        "path": "languages/inquiry-form-inbox.pot",
+        "msgids": 237
+    },
+    "po": [
+        {
+            "locale": "zh_CN",
+            "po": 237,
+            "missing": [],
+            "extra": [],
+            "empty": [
+                "kaisyuan-tseng",
+                "https://profiles.wordpress.org/kaisyuan-tseng/",
+                "This plugin stores inquiry data submitted through the site contact form: name, email, message, form fields, browser language, timezone, IP address, source page, and any uploaded attachments. Records are visible only to authorized administrators and are used to send inquiry notifications and delivery confirmations. Use the WordPress privacy tools to export or erase records by email address; deleting an inquiry also removes its attachments."
+            ],
+            "mo": 234,
+            "mo_missing": [],
+            "mo_empty": []
+        },
+        {
+            "locale": "zh_TW",
+            "po": 237,
+            "missing": [],
+            "extra": [],
+            "empty": [
+                "kaisyuan-tseng",
+                "https://profiles.wordpress.org/kaisyuan-tseng/",
+                "This plugin stores inquiry data submitted through the site contact form: name, email, message, form fields, browser language, timezone, IP address, source page, and any uploaded attachments. Records are visible only to authorized administrators and are used to send inquiry notifications and delivery confirmations. Use the WordPress privacy tools to export or erase records by email address; deleting an inquiry also removes its attachments."
+            ],
+            "mo": 234,
+            "mo_missing": [],
+            "mo_empty": []
+        }
+    ],
+    "mo": [],
+    "problems": [
+        "2 source string(s) are not in the POT — the POT is stale."
+    ],
+    "source_strings": 234,
+    "missing_from_pot": [
+        "Live Preview",
+        "Sent with the notification email, not archived under uploads."
+    ],
+    "status": "FAIL"
+}

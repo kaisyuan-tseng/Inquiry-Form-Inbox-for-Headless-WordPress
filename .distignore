@@ -1,0 +1,49 @@
+# Files and directories excluded from the distribution zip.
+#
+# Read by build-zip.php and by WP-CLI's `wp dist-archive`. One pattern per line; a bare
+# name matches that entry at the plugin root, `*` globs within a name.
+
+# VCS and editor noise
+.git
+.gitignore
+.github
+.distignore
+*~
+*.swp
+*.log
+
+# Toolchain — needed to work on the plugin, never to run it
+composer.json
+composer.lock
+phpcs.xml.dist
+phpcs-tests.xml
+build-zip.php
+vendor
+node_modules
+package.json
+package-lock.json
+tests
+tools
+build
+dist
+
+# Contributor documentation; the plugin page links to docs/ARCHITECTURE.md instead
+INTEGRATION.md
+
+# Internal reports — project paperwork, not part of the distributed plugin
+docs/NORMALIZATION-REPORT.md
+docs/WPORG-AUDIT.md
+docs/TEST-REPORT.md
+docs/GLOSSARY.md
+docs/TRANSLATION-REVIEW.md
+
+# WordPress.org SVN assets (screenshots, banner, icon) — uploaded to /assets, never zipped
+wporg-assets
+
+# Build artifacts
+*.zip
+*.tar.gz
+
+# Ad-hoc scripts
+*.py
+__pycache__

@@ -1,0 +1,23 @@
+# 系统 / 编辑器
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+
+# 本地打包与日志
+*.zip
+*.tar.gz
+*.log
+*~
+
+# 工具链与临时脚本
+vendor/
+node_modules/
+*_tmp.py
+tools/wp-cli.phar
+
+# 测试运行产物
+tests/runtime/
+tests/reports/run-*
+tests/.phpunit.cache/
+dist/

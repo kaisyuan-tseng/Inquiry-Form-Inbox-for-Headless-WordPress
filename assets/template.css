@@ -1,0 +1,224 @@
+/* Inquiry Form Inbox for Headless WordPress — 设置页公共样式（版本 3.0.9）
+ * 邮件模板页与垃圾规则页共用：页头 / 卡片 / 字段 / 按钮 / 变量区。
+ * 邮件模板页的版式按参考图（页头 + 双栏：模板内容 / 实时预览），
+ * 垃圾规则页只借用其中的卡片与表单控件，本页专属样式在 spam.css。
+ * 配色与控件全部使用 WordPress 后台设计令牌：主色 #2271b1、悬停 #135e96、
+ * 文字 #1d2327 / #50575e / #646970、边框 #c3c4c7 / #dcdcde / #8c8f94、
+ * 浅底 #f0f0f1 / #f6f7f7、圆角 4px、阴影 0 1px 1px rgba(0,0,0,.04)。
+ */
+
+.ifi-tpl-page {
+	--ifi-accent: #2271b1;
+	--ifi-accent-dark: #135e96;
+	--ifi-accent-soft: #f0f6fc;
+	--ifi-ink: #1d2327;
+	--ifi-subtle: #50575e;
+	--ifi-muted: #646970;
+	--ifi-line: #dcdcde;
+	--ifi-line-strong: #c3c4c7;
+	--ifi-field-line: #8c8f94;
+}
+.ifi-tpl-page .notice { margin: 0 0 14px; }
+
+/* ---------------------------------------------------------------- 页头 */
+.ifi-tpl-head { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px 18px; padding-bottom: 14px; margin-bottom: 12px; }
+.ifi-tpl-head h1 { margin: 0; padding: 0; color: var(--ifi-ink); font-size: 23px; font-weight: 400; line-height: 1.3; }
+.ifi-tpl-head__actions { display: flex; align-items: center; gap: 8px; flex: none; }
+
+.ifi-btn { display: inline-flex; align-items: center; gap: 6px; height: 30px; padding: 0 10px; border: 1px solid transparent; border-radius: 3px; font-size: 13px; font-weight: 400; line-height: 1; cursor: pointer; text-decoration: none; }
+.ifi-btn .dashicons { width: 16px; height: 16px; font-size: 16px; }
+.ifi-btn--ghost { background: #f6f7f7; border-color: var(--ifi-accent); color: var(--ifi-accent); }
+.ifi-btn--ghost:hover { background: #f0f0f1; border-color: #0a4b78; color: #0a4b78; }
+.ifi-btn--primary { background: var(--ifi-accent); border-color: var(--ifi-accent); color: #fff; }
+.ifi-btn--primary:hover { background: var(--ifi-accent-dark); border-color: var(--ifi-accent-dark); color: #fff; }
+
+/* ---------------------------------------------------------------- 子页签 */
+.ifi-tpl-tabs { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 14px; }
+.ifi-tpl-tab { padding: 4px 10px; border: 1px solid var(--ifi-line-strong); border-radius: 3px; background: #fff; color: var(--ifi-accent); font-size: 13px; text-decoration: none; }
+.ifi-tpl-tab:hover { border-color: var(--ifi-accent); color: var(--ifi-accent-dark); }
+.ifi-tpl-tab.is-active { background: var(--ifi-accent); border-color: var(--ifi-accent); color: #fff; font-weight: 600; }
+
+/* ---------------------------------------------------------------- 两栏卡片 */
+.ifi-tpl-grid { display: grid; grid-template-columns: minmax(0, 1.12fr) minmax(0, 1fr); gap: 12px; align-items: start; }
+@media (max-width: 1240px) { .ifi-tpl-grid { grid-template-columns: minmax(0, 1fr); } .ifi-tpl-preview { position: static !important; } }
+
+.ifi-tpl-card { background: #fff; border: 1px solid var(--ifi-line-strong); border-radius: 4px; box-shadow: 0 1px 1px rgba(0, 0, 0, .04); overflow: hidden; }
+.ifi-tpl-card__head { position: relative; display: flex; align-items: center; flex-wrap: wrap; gap: 4px 8px; min-height: 54px; box-sizing: border-box; padding: 12px 16px; border-bottom: 1px solid var(--ifi-line); }
+.ifi-tpl-card__icon { width: 18px; height: 18px; font-size: 18px; color: var(--ifi-muted); }
+.ifi-tpl-card__head h2 { margin: 0; color: var(--ifi-ink); font-size: 14px; font-weight: 600; line-height: 1.5; }
+.ifi-tpl-card__desc { flex: 1 1 100%; margin: 2px 0 0; color: var(--ifi-muted); font-size: 12px; }
+.ifi-tpl-card__actions { display: flex; align-items: center; margin-left: auto; }
+.ifi-tpl-card__body { padding: 16px; }
+
+/* ---------------------------------------------------------------- 表单 */
+.ifi-tpl-row { display: flex; flex-wrap: wrap; gap: 16px; }
+.ifi-field { display: flex; flex-direction: column; gap: 6px; margin: 0 0 16px; }
+.ifi-field--grow { flex: 1 1 260px; }
+.ifi-field--lang { max-width: 280px; }
+.ifi-field--editor { margin-bottom: 14px; }
+/* Email Subject：左文字、右输入框 */
+.ifi-field--inline { flex-direction: row; align-items: flex-start; gap: 12px; }
+.ifi-field--inline .ifi-field__label { flex: 0 0 150px; padding-top: 6px; }
+.ifi-field--inline .ifi-field__control { flex: 1 1 auto; min-width: 0; }
+.ifi-field__control input { width: 100%; }
+@media (max-width: 782px) {
+	.ifi-field--inline { flex-direction: column; }
+	.ifi-field--inline .ifi-field__label { flex: none; padding-top: 0; }
+}
+.ifi-field__label { display: flex; align-items: center; gap: 6px; color: var(--ifi-subtle); font-size: 12px; font-weight: 600; }
+.ifi-field__label--row { flex-wrap: wrap; }
+.ifi-field__label label { font-weight: 600; }
+/* 帮助图标：悬停/聚焦显示自绘提示（原生 title 在部分环境不出现） */
+.ifi-help { position: relative; display: inline-flex; color: #8c8f94; cursor: help; }
+.ifi-help .dashicons { width: 14px; height: 14px; font-size: 14px; }
+.ifi-help::after {
+	content: attr(data-tip);
+	position: absolute; top: calc(100% + 6px); left: -8px;
+	z-index: 20; width: max-content; max-width: 280px;
+	padding: 6px 8px; border-radius: 3px;
+	background: #1d2327; color: #fff;
+	font-size: 12px; font-weight: 400; line-height: 1.45; text-align: left;
+	white-space: normal; opacity: 0; visibility: hidden; pointer-events: none;
+	transition: opacity .12s;
+}
+.ifi-help:hover::after,
+.ifi-help:focus-visible::after { opacity: 1; visibility: visible; }
+.ifi-hint { margin: 0 0 14px; color: var(--ifi-muted); font-size: 12px; line-height: 1.5; }
+/* 回复模板：地址行下面的说明紧贴 To/Cc/Bcc（行内字段自带 16px 下边距，这里收回来） */
+.ifi-hint--addr { margin: -10px 0 16px; }
+.ifi-check { display: flex; align-items: center; gap: 8px; margin: 0 0 4px; font-weight: 600; color: var(--ifi-subtle); }
+/* WP 后台给复选框加了 -4px 的上外边距，flex 行里会显得偏高 */
+.ifi-check input[type="checkbox"] { margin: 0; flex: none; }
+
+.ifi-tpl-page input[type="text"],
+.ifi-tpl-page input[type="search"],
+.ifi-tpl-page select,
+.ifi-tpl-page textarea { border-color: var(--ifi-field-line); border-radius: 3px; }
+.ifi-tpl-page input[type="text"] { min-height: 30px; }
+/* 主题输入框与 Field labels / Email Template 同宽：撑满卡片内容区 */
+.ifi-field > input[type="text"],
+.ifi-field > select,
+.ifi-field > textarea { width: 100%; }
+
+.ifi-tpl-badge { margin-left: 2px; min-width: 20px; padding: 0 6px; border-radius: 10px; background: #dcdcde; color: var(--ifi-subtle); font-size: 11px; line-height: 20px; text-align: center; }
+.ifi-tpl-labels { display: flex; flex-direction: column; gap: 6px; margin: 0; }
+/* 空列表不占位，Add 按钮与上面的提示/行保持同样的 10px 间距 */
+.ifi-tpl-labels.is-empty { display: none; }
+.ifi-field--labels .ifi-hint { margin: 0; }
+.ifi-tpl-label-row { display: grid; grid-template-columns: 18px 150px minmax(0, 1fr) 24px; align-items: center; gap: 10px; padding: 5px 8px; background: #fff; border: 1px solid var(--ifi-line); border-radius: 3px; }
+.ifi-tpl-label-row .ifi-sort { cursor: grab; color: #8c8f94; font-size: 13px; letter-spacing: -3px; user-select: none; }
+.ifi-tpl-label-row .ifi-sort:active { cursor: grabbing; }
+.ifi-tpl-label-key { font-size: 11px; color: var(--ifi-muted); font-family: Consolas, Monaco, monospace; }
+.ifi-tpl-label-row .ifi-tpl-label-newkey { width: 100%; font-family: Consolas, Monaco, monospace; font-size: 11px; }
+.ifi-tpl-label-del { width: 24px; height: 24px; padding: 0; border: 0; border-radius: 2px; background: none; color: #b32d2e; font-size: 16px; line-height: 1; cursor: pointer; }
+.ifi-tpl-label-del:hover, .ifi-tpl-label-del:focus { background: #fcf0f1; color: #b32d2e; }
+.ifi-tpl-labels__foot { margin: 4px 0 4px; }
+.ifi-tpl-labels .ui-sortable-placeholder { visibility: visible !important; height: 38px; border: 1px dashed var(--ifi-line-strong); background: #f6f7f7; }
+.ifi-tpl-label-row.ui-sortable-helper { box-shadow: 0 3px 8px rgba(0, 0, 0, .12); border-color: #8c8f94; }
+@media (max-width: 782px) { .ifi-tpl-label-row { grid-template-columns: 18px minmax(0, 1fr) 24px; } .ifi-tpl-label-key { grid-column: 2; } .ifi-tpl-label-row input[type="text"] { grid-column: 2; } .ifi-tpl-label-del { grid-column: 3; grid-row: 1; } }
+
+/* ---------------------------------------------------------------- 编辑器（WordPress 原生） */
+.ifi-seg { display: inline-flex; align-items: center; gap: 2px; margin-left: auto; padding: 2px; background: #f0f0f1; border-radius: 3px; }
+.ifi-seg button { border: 0; background: transparent; padding: 3px 10px; border-radius: 2px; color: var(--ifi-muted); font-size: 12px; line-height: 1.6; cursor: pointer; }
+.ifi-seg button:hover { color: var(--ifi-ink); }
+.ifi-seg button.is-active { background: #fff; color: var(--ifi-accent); font-weight: 600; box-shadow: 0 1px 2px rgba(0, 0, 0, .08); }
+.ifi-seg--sm button { padding: 3px 10px; }
+.ifi-seg--sm button.is-active { background: var(--ifi-accent); color: #fff; box-shadow: none; }
+
+/* 编辑器：一个边框同时包住「Add Media 工具栏 + 代码区」，与原生编辑器一致 */
+.ifi-code-editor { width: 100%; background: #fff; border: 1px solid var(--ifi-line); border-radius: 3px; overflow: hidden; }
+.ifi-code-editor__tools { display: flow-root; padding: 8px 10px; background: #f6f7f7; border-bottom: 1px solid var(--ifi-line); }
+/* Add Media：按参考图做成紧凑的灰色按钮（黑字黑图标），不跟随 WP 7.x 的蓝色按钮 */
+.ifi-code-editor__tools .wp-media-buttons .button {
+	min-height: 32px;
+	padding: 0 12px 0 10px;
+	border: 1px solid #767676;
+	border-radius: 2px;
+	background: #efefef;
+	color: #000;
+	font-size: 13px;
+	font-weight: 400;
+	line-height: 30px;
+	box-shadow: none;
+}
+.ifi-code-editor__tools .wp-media-buttons .button:hover,
+.ifi-code-editor__tools .wp-media-buttons .button:focus {
+	background: #e8e8e8;
+	border-color: #767676;
+	color: #000;
+}
+.ifi-code-editor__tools .wp-media-buttons .button:active {
+	background: #dedede;
+	border-color: #767676;
+	color: #000;
+}
+.ifi-code-editor__frame { background: #fff; border: 0; border-radius: 0; overflow: hidden; }
+.ifi-code-editor textarea { width: 100%; min-height: 480px; padding: 14px 16px; border: 0; border-radius: 0; font-family: Consolas, Monaco, monospace; font-size: 13px; }
+.ifi-code-editor .CodeMirror { height: 480px; border: 0; border-radius: 0; font-family: Consolas, Monaco, monospace; font-size: 13px; line-height: 1.65; }
+.ifi-code-editor .CodeMirror-lines { padding: 14px 0; }
+.ifi-code-editor .CodeMirror pre.CodeMirror-line { padding: 0 16px; }
+/* 语法高亮用 WP 设计令牌，和邮件模板里的色板保持一致 */
+.ifi-code-editor .CodeMirror .cm-tag { color: #0a4b78; }
+.ifi-code-editor .CodeMirror .cm-bracket { color: #0a4b78; }
+.ifi-code-editor .CodeMirror .cm-meta { color: #0a4b78; }
+.ifi-code-editor .CodeMirror .cm-attribute { color: #994800; }
+.ifi-code-editor .CodeMirror .cm-string { color: #007017; }
+.ifi-code-editor .CodeMirror .cm-comment { color: #646970; }
+
+/* ---------------------------------------------------------------- 底部变量 */
+.ifi-tpl-foot { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px 14px; margin: 2px 0 0; }
+/* 标签固定左列，占位符自己成一列：换行后从第一个变量起，不回到标签下面 */
+.ifi-vars { display: flex; flex-wrap: nowrap; align-items: flex-start; gap: 0; margin: 0; color: var(--ifi-muted); font-size: 12px; }
+.ifi-vars .dashicons { position: relative; top: 1px; flex: none; width: 14px; height: 14px; font-size: 14px; line-height: 1; color: #8c8f94; margin-right: 3px; }
+.ifi-vars__label { flex: none; margin-right: 6px; white-space: nowrap; }
+.ifi-vars__list { display: flex; flex: 1 1 auto; flex-wrap: wrap; align-items: center; gap: 2px; min-width: 0; }
+.ifi-var { padding: 0 1px; border: 0; background: none; color: var(--ifi-accent); font-family: Consolas, Monaco, monospace; font-size: 11px; line-height: 1.6; cursor: pointer; }
+.ifi-var:hover { color: var(--ifi-accent-dark); text-decoration: underline; }
+.ifi-var:not(:last-child)::after { content: ","; color: var(--ifi-muted); }
+/* 变量提示：原生 title 在部分后台环境不弹，这里统一用 data-tip 自绘（向上弹出） */
+.ifi-var[data-tip] { position: relative; }
+.ifi-var[data-tip]::before {
+	content: attr(data-tip);
+	position: absolute; bottom: calc(100% + 6px); left: 0;
+	z-index: 20; width: max-content; max-width: 300px;
+	padding: 6px 8px; border-radius: 3px;
+	background: #1d2327; color: #fff;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+	font-size: 12px; font-weight: 400; line-height: 1.45; text-align: left;
+	white-space: normal; opacity: 0; visibility: hidden; pointer-events: none;
+	transition: opacity .12s;
+}
+.ifi-var[data-tip]:hover::before, .ifi-var[data-tip]:focus-visible::before { opacity: 1; visibility: visible; }
+.ifi-vars__sep { margin: 0 2px 0 6px; color: var(--ifi-subtle); }
+.ifi-var--field { color: var(--ifi-subtle); }
+.ifi-var--field:hover { color: var(--ifi-accent-dark); }
+
+/* ---------------------------------------------------------------- 预览 */
+/* 高度由 JS 按「Field labels 没有数据」时的模板卡高度写入；iframe 绝对铺满预览体，不留白 */
+.ifi-tpl-preview { position: sticky; top: 32px; display: flex; flex-direction: column; }
+.ifi-preview-body { position: relative; flex: 1 1 auto; min-height: 664px; padding: 12px; background: #f6f7f7; }
+.ifi-tpl-preview.is-sized .ifi-preview-body { min-height: 0; }
+#ifi-preview { position: absolute; top: 12px; left: 12px; width: calc(100% - 24px); height: calc(100% - 24px); border: 0; background: #fff; box-shadow: 0 1px 1px rgba(0, 0, 0, .04); transition: width .15s ease; }
+.ifi-preview-body.is-mobile #ifi-preview { left: 50%; width: 375px; max-width: calc(100% - 24px); transform: translateX(-50%); }
+.ifi-preview-note { margin: 0; padding: 12px 16px 14px; border-top: 1px solid #f0f0f1; color: var(--ifi-muted); font-size: 12px; }
+
+/* ---------------------------------------------------------------- 语言组 */
+.ifi-lang-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; padding: 10px 16px; background: #f6f7f7; border-bottom: 1px solid var(--ifi-line); }
+.ifi-lang-bar__label { color: var(--ifi-subtle); font-size: 12px; font-weight: 600; }
+.ifi-lang-list { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.ifi-lang-item { display: inline-flex; align-items: stretch; margin: 0; }
+.ifi-lang-tab { display: inline-flex; align-items: center; height: 26px; padding: 0 10px; background: #fff; border: 1px solid var(--ifi-line-strong); border-radius: 3px; color: var(--ifi-accent); font-size: 12px; text-decoration: none; }
+.ifi-lang-tab:hover { border-color: var(--ifi-accent); color: var(--ifi-accent-dark); }
+.ifi-lang-tab.is-active { background: var(--ifi-accent); border-color: var(--ifi-accent); color: #fff; }
+.ifi-lang-item.has-del .ifi-lang-tab { border-radius: 3px 0 0 3px; border-right: 0; }
+.ifi-lang-del { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 26px; border: 1px solid var(--ifi-line-strong); border-radius: 0 3px 3px 0; background: #fff; color: #b32d2e; font-size: 15px; line-height: 1; text-decoration: none; }
+.ifi-lang-del:hover { background: #fcf0f1; border-color: #b32d2e; color: #b32d2e; }
+.ifi-lang-add { display: flex; align-items: center; gap: 6px; margin: 0 0 0 auto; }
+/* 添加语言：下拉框和按钮与语言组标签同高（26px） */
+.ifi-lang-add select { height: 26px; min-height: 26px; padding: 0 24px 0 8px; font-size: 12px; line-height: 24px; }
+.ifi-tpl-page .ifi-lang-add .button.button-small { height: 26px; min-height: 26px; padding: 0 10px; font-size: 12px; line-height: 24px; }
+
+@media (max-width: 782px) {
+	.ifi-tpl-head__actions { width: 100%; }
+	.ifi-tpl-head__actions .ifi-btn { flex: 1 1 auto; justify-content: center; }
+}

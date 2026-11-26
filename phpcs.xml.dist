@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<ruleset name="Inquiry Form Inbox">
+  <description>WordPress Coding Standards for Inquiry Form Inbox.</description>
+
+  <file>.</file>
+  <exclude-pattern>vendor/*</exclude-pattern>
+  <exclude-pattern>node_modules/*</exclude-pattern>
+  <exclude-pattern>languages/*</exclude-pattern>
+  <!--
+    Test scaffolding and one-off ops scripts are not shipped in the distribution
+    (.distignore excludes both) and follow their own conventions, so they are audited
+    separately with tests/phpcs-tests.xml. Keeping them out of this ruleset is what makes
+    "0 errors, 0 warnings" a meaningful gate for the plugin itself.
+  -->
+  <exclude-pattern>tests/*</exclude-pattern>
+  <exclude-pattern>tools/*</exclude-pattern>
+  <exclude-pattern>tests/runtime/*</exclude-pattern>
+
+  <arg name="extensions" value="php"/>
+  <arg name="colors"/>
+  <arg value="sp"/>
+
+  <config name="text_domain" value="inquiry-form-inbox"/>
+  <config name="minimum_supported_wp_version" value="6.0"/>
+  <config name="testVersion" value="8.0-"/>
+
+  <rule ref="WordPress"/>
+  <rule ref="PHPCompatibilityWP"/>
+
+  <!-- Project-specific style decisions. Security and prepared-SQL sniffs stay active. -->
+  <rule ref="WordPress.PHP.YodaConditions"><severity>0</severity></rule>
+  <rule ref="WordPress.PHP.NoSilencedErrors"><severity>0</severity></rule>
+  <rule ref="WordPress.DB.DirectDatabaseQuery.DirectQuery"><severity>0</severity></rule>
+  <rule ref="WordPress.DB.DirectDatabaseQuery.NoCaching"><severity>0</severity></rule>
+  <rule ref="WordPress.DB.SlowDBQuery"><severity>0</severity></rule>
+  <rule ref="WordPress.WP.Capabilities.Unknown"><severity>0</severity></rule>
+  <rule ref="WordPress.WP.AlternativeFunctions"><severity>0</severity></rule>
+  <rule ref="Squiz.Commenting.InlineComment.InvalidEndChar"><severity>0</severity></rule>
+  <rule ref="Squiz.Commenting.FunctionComment.MissingParamTag"><severity>0</severity></rule>
+  <rule ref="Squiz.Commenting.FunctionComment.Missing"><severity>0</severity></rule>
+  <rule ref="Squiz.Commenting.FunctionCommentThrowTag"><severity>0</severity></rule>
+  <rule ref="Squiz.Commenting.FunctionComment.ParamNameNoMatch"><severity>0</severity></rule>
+  <rule ref="Squiz.Commenting.FileComment.MissingPackageTag"><severity>0</severity></rule>
+  <rule ref="Squiz.Commenting.ClassComment"><severity>0</severity></rule>
+  <rule ref="Squiz.Commenting.VariableComment"><severity>0</severity></rule>
+  <rule ref="Squiz.Commenting.BlockComment"><severity>0</severity></rule>
+  <rule ref="Squiz.PHP.CommentedOutCode"><severity>0</severity></rule>
+  <rule ref="Universal.Operators.DisallowShortTernary"><severity>0</severity></rule>
+  <rule ref="Generic.CodeAnalysis.UnusedFunctionParameter"><severity>0</severity></rule>
+  <rule ref="Generic.Commenting.DocComment"><severity>0</severity></rule>
+  <rule ref="WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase"><severity>0</severity></rule>
+</ruleset>

@@ -1,0 +1,137 @@
+{
+    "php": "8.5.9",
+    "files": 26,
+    "failures": 0,
+    "results": [
+        {
+            "file": "includes/class-ifi-migration.php",
+            "ok": true,
+            "error": ""
+        },
+        {
+            "file": "includes/class-ifi-privacy.php",
+            "ok": true,
+            "error": ""
+        },
+        {
+            "file": "includes/class-inquiry-form-inbox.php",
+            "ok": true,
+            "error": ""
+        },
+        {
+            "file": "includes/trait-ifi-admin-modal.php",
+            "ok": true,
+            "error": ""
+        },
+        {
+            "file": "includes/trait-ifi-admin-view.php",
+            "ok": true,
+            "error": ""
+        },
+        {
+            "file": "includes/trait-ifi-assets.php",
+            "ok": true,
+            "error": ""
+        },
+        {
+            "file": "includes/trait-ifi-core.php",
+            "ok": true,
+            "error": ""
+        },
+        {
+            "file": "includes/trait-ifi-cpt-actions.php",
+            "ok": true,
+            "error": ""
+        },
+        {
+            "file": "includes/trait-ifi-cpt.php",
+            "ok": true,
+            "error": ""
+        },
+        {
+            "file": "includes/trait-ifi-dashboard.php",
+            "ok": true,
+            "error": ""
+        },
+        {
+            "file": "includes/trait-ifi-endpoints.php",
+            "ok": true,
+            "error": ""
+        },
+        {
+            "file": "includes/trait-ifi-i18n.php",
+            "ok": true,
+            "error": ""
+        },
+        {
+            "file": "includes/trait-ifi-mailer.php",
+            "ok": true,
+            "error": ""
+        },
+        {
+            "file": "includes/trait-ifi-manifest.php",
+            "ok": true,
+            "error": ""
+        },
+        {
+            "file": "includes/trait-ifi-rate-limiter.php",
+            "ok": true,
+            "error": ""
+        },
+        {
+            "file": "includes/trait-ifi-rest.php",
+            "ok": true,
+            "error": ""
+        },
+        {
+            "file": "includes/trait-ifi-settings-render.php",
+            "ok": true,
+            "error": ""
+        },
+        {
+            "file": "includes/trait-ifi-settings.php",
+            "ok": true,
+            "error": ""
+        },
+        {
+            "file": "includes/trait-ifi-spam-render.php",
+            "ok": true,
+            "error": ""
+        },
+        {
+            "file": "includes/trait-ifi-spam.php",
+            "ok": true,
+            "error": ""
+        },
+        {
+            "file": "includes/trait-ifi-storage.php",
+            "ok": true,
+            "error": ""
+        },
+        {
+            "file": "includes/trait-ifi-template.php",
+            "ok": true,
+            "error": ""
+        },
+        {
+            "file": "includes/trait-ifi-upload.php",
+            "ok": true,
+            "error": ""
+        },
+        {
+            "file": "inquiry-form-inbox.php",
+            "ok": true,
+            "error": ""
+        },
+        {
+            "file": "tools/recover-ifi-temp-attachments.php",
+            "ok": true,
+            "error": ""
+        },
+        {
+            "file": "uninstall.php",
+            "ok": true,
+            "error": ""
+        }
+    ]
+}
