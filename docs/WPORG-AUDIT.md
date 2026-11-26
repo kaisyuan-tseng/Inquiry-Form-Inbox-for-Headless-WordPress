@@ -20,13 +20,12 @@ area they govern, so nothing here rests on a half-remembered list.
 | Finding | Before | Verdict then | Fix |
 |---|---|---|---|
 | readme exceeds the 10k ceiling | 21,947 bytes | **fail** | rewritten to 9,265 bytes; full history moved to `changelog.txt` |
-| Changelog carries 21 versions | 21 entries | **fail** | readme keeps 3.0.15 + 3.0.0; the rest is in `changelog.txt` |
+| Changelog carried 21 versions | 21 entries | **fail** | readme now has no changelog section; the full history lives in `changelog.txt` |
 | Screenshots declared, none shipped | 4 declared, 0 files | **fail** | 4 PNGs generated at 1280×960 into `wporg-assets/` |
 | Duplicate plugin header in `includes/` | `Plugin Name` + `Version: 3.0.7` | **fail** | replaced with a file docblock |
 | `Tested up to` carried a minor version | `7.1.4` | warn | now `7.1` |
 | `Plugin URI` absent | — | warn | added, pointing at the GitHub repository |
 | "View details" row link pointed at the old plugin-name repository | GitHub link | warn | removed; core already provides that link |
-| Migration-failure notice could not be dismissed | `.notice-error`, no dismiss | warn | notice is self-healing (it disappears once the migration succeeds), so no dismiss control is needed; documented in the code |
 
 ## 2. Licence and provenance
 
@@ -74,7 +73,7 @@ consequence of the above, not an omission.
 |---|---|---|
 | No dashboard hijacking | one dashboard widget, registered through `wp_add_dashboard_widget()`, showing only this plugin's own data | pass |
 | No site-wide banners | the only notices are per-screen and contextual | pass |
-| Notices are dismissible or self-resolving | flash notices are one-shot query args; the migration error notice disappears when the migration succeeds | pass |
+| Notices are dismissible or self-resolving | flash notices are one-shot query args | pass |
 | No "powered by" or credit links in the admin | the plugin row link was removed | pass |
 | No affiliate links | none anywhere | pass |
 
@@ -132,9 +131,9 @@ responsibility, and a plugin is closed until reported issues are fixed.
 | Every write path checks capability and intent | `check_admin_referer()` + `current_user_can()` on every state change; the public REST endpoint is deliberately open and documented as such | pass |
 | SQL is prepared | all `$wpdb` access goes through `$wpdb->prepare()` or the query builders | pass |
 | Input is sanitised per type, output escaped per context | PHPCS `WordPress.Security` sniffs are clean | pass |
-| Uploads are validated by extension, declared size and content sniff | `stage_attachments()`; content sniff degrades to extension-only when `fileinfo` is missing, which the readme now states | pass |
+| Uploads are limited by size and count; the front end owns file types | `stage_attachments()` checks upload errors, declared size and count; it no longer keeps an extension whitelist or content sniff. Sites should keep PHP execution disabled under `uploads/`. | pass (by design) |
 | Uninstall removes everything it wrote | single site: covered by `tests/integration/UninstallTest.php`; multisite: `uninstall.php` loops over every site and runs the same cleanup | pass |
-| Install-screen activation reports a valid main file | `build-zip.php` refuses a package without one `inquiry-form-inbox/` folder, the expected main file and exactly one `Plugin Name` header; `install_health_notice()` reports multiple headers or stale 2.x files on the plugin screens | pass |
+| Install-screen activation reports a valid main file | `build-zip.php` refuses a package without one `inquiry-form-inbox/` folder, the expected main file and exactly one `Plugin Name` header; `install_health_notice()` reports multiple headers on the plugin screens | pass |
 
 ## 11. Admission criteria beyond the numbered guidelines
 

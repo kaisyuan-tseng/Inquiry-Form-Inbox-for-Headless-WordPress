@@ -116,8 +116,6 @@ trait IFI_I18n_Trait {
 			'install_health_title'     => __( 'Inquiry Form Inbox installation check', 'inquiry-form-inbox' ),
 			/* translators: %s: comma-separated plugin files that carry a plugin header. */
 			'install_health_multi'     => __( 'This plugin folder contains more than one plugin header: %s. The install screen may activate the wrong file and report “The plugin does not have a valid header.” Delete the extra copies and install the official zip.', 'inquiry-form-inbox' ),
-			/* translators: %s: comma-separated stale legacy files. */
-			'install_health_legacy'    => __( 'Stale 2.x files were found: %s. Delete them and install the official zip.', 'inquiry-form-inbox' ),
 			/* translators: %s: actual main plugin file name. */
 			'install_health_main'      => __( 'The plugin main file is %s, not inquiry-form-inbox.php. Reinstall the official zip so the main file has the expected name.', 'inquiry-form-inbox' ),
 
@@ -261,8 +259,6 @@ trait IFI_I18n_Trait {
 			'error_upload_dir'         => __( 'The upload could not be processed. Please try again.', 'inquiry-form-inbox' ),
 			'error_upload_failed'      => __( 'The upload failed. Please try again.', 'inquiry-form-inbox' ),
 			'error_upload_too_many'    => __( 'Too many files in one submission.', 'inquiry-form-inbox' ),
-			/* translators: %s: file extension. */
-			'error_upload_type'        => __( 'File type .%s is not allowed.', 'inquiry-form-inbox' ),
 			/* translators: %s: file name. */
 			'error_upload_empty'       => __( '%s is empty.', 'inquiry-form-inbox' ),
 			/* translators: %s: file name. */

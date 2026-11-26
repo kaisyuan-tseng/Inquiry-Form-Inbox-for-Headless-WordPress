@@ -91,7 +91,7 @@ That message comes from WordPress when the Activate link on the install screen p
 
 = Are there developer hooks? =
 
-Yes. Filters: `ifi_recipient`, `ifi_required_fields`, `ifi_max_files`, `ifi_length_limits`, `ifi_dashboard_limit`, `ifi_field_manifest`, `ifi_strings`, `ifi_spam_rules`, `ifi_spam_verdict`, `ifi_honeypot_field`, `ifi_rate_limits`, `ifi_trusted_proxies`, `ifi_source_title_prefixes`. Action: `ifi_autoreply_sent`. Full list in `docs/ARCHITECTURE.md`.
+Yes. Filters: `ifi_recipient`, `ifi_required_fields`, `ifi_max_files`, `ifi_file_groups`, `ifi_length_limits`, `ifi_dashboard_limit`, `ifi_field_manifest`, `ifi_strings`, `ifi_spam_rules`, `ifi_spam_verdict`, `ifi_honeypot_field`, `ifi_rate_limits`, `ifi_trusted_proxies`, `ifi_source_title_prefixes`. Action: `ifi_autoreply_sent`. Full list in `docs/ARCHITECTURE.md`.
 
 = How do I remove my data? =
 
@@ -103,42 +103,3 @@ Deleting an inquiry removes its attachments. The WordPress privacy tools export 
 2. Inquiry detail dialog, showing the rendered notification alongside the inquiry metadata.
 3. Block Rules screen with the blocklists and the test panel.
 4. Email template editor with the live preview.
-
-== Changelog ==
-
-= 3.1.3 =
-
-* Security: `X-Forwarded-For` is read from the hop closest to the server, so a spoofed leftmost entry can no longer rotate the rate-limit bucket.
-* Security: attachment staging and archive directories use CSPRNG suffixes instead of `uniqid()`; deletion resolves paths before the allow-list check, and stored bodies are re-filtered before the admin detail view renders them. The visitor cookie is marked Secure on HTTPS.
-* New: a one-time success notice after activation with links to Email Template, Block Rules and Inquiries.
-* New: an installation check warns when the plugin folder contains more than one plugin header or stale 2.x files — a condition that makes the install screen report "The plugin does not have a valid header."
-* Change: uninstall removes per-site data on multisite networks; `uploads/ifi-inquiries` gets an `index.php` guard when the first attachment creates it.
-* Change: the plugin homepage points to the GitHub repository; the Chinese translation of the plugin description was removed.
-
-= 3.1.2 =
-
-* New: both rate limits are editable on Block Rules (defaults 3 per minute, 10 per hour; 0 turns a window off). `ifi_rate_limits` still overrides them.
-* Change: card headers no longer show a per-rule counter.
-
-= 3.1.1 =
-
-* New: the dashboard widget opens an inquiry in place. Clicking a name no longer leaves the dashboard for All Inquiries, and Previous/Next steps through the widget's list.
-* New: the honeypot field name is editable on Block Rules — letters, digits, hyphens and underscores only, an empty value falls back to `companyWebsite`, and the `ifi_honeypot_field` filter still wins.
-* Change: the dashboard's "View all inquiries" link reads 查看所有询盘 in zh_CN, matching "All Inquiries".
-
-= 3.0.0 =
-
-* Breaking change: the plugin is now Inquiry Form Inbox for Headless WordPress. Post type (`ifi_inquiry`), meta keys, options, capabilities, admin actions, nonces, CSS classes and the attachment directory (`uploads/ifi-inquiries/`) all use the `ifi` prefix. A one-time migration moves data from 2.x (`eln_*`) and 1.x (`inquiry`) automatically.
-* Breaking change: the REST namespace is `inquiry-form-inbox/v1`. The `email-log-notifications/v1` and `site-inquiries/v1` namespaces were removed.
-* Breaking change: all developer hooks moved from `eln_` to `ifi_`.
-* New: the inquiry list columns are # / From / Message / Attachments / Source / Delivery Status / Received.
-* New: Pending / Contacted views with counts, and a "Mark as contacted" row action that can be undone.
-* New: a collapsible overview board above the list.
-* Change: default email templates redesigned to match the WordPress admin style.
-
-The complete changelog is in `changelog.txt` in the plugin folder.
-
-== Upgrade Notice ==
-
-= 3.0.0 =
-Back up your database and uploads before upgrading. This release renames every plugin identifier and migrates post types, meta keys, options, capabilities and attachment paths. Update your frontend to `POST /wp-json/inquiry-form-inbox/v1/inquiry`; the old REST namespaces no longer exist.

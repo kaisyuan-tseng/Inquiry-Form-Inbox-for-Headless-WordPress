@@ -2,9 +2,8 @@
 /**
  * Uninstall: what must not survive.
  *
- * "Uninstalling removes everything" is easy to claim and easy to get wrong — the previous
- * release left `ifi_labels_manual` behind precisely because nobody enumerated the options.
- * These tests enumerate.
+ * These tests enumerate every option, transient, record and attachment the current
+ * plugin writes, and assert that uninstall removes them.
  *
  * @package Inquiry_Form_Inbox
  */
@@ -46,8 +45,6 @@ final class UninstallTest extends IfiTestCase {
 		$this->submit();
 
 		update_option( 'ifi_spam_rules', array( 'honeypot' => '1' ), false );
-		update_option( 'ifi_labels_manual', '1', false );
-		update_option( 'ifi_db_version', '30000', false );
 		update_option( 'ifi_seq_' . current_time( 'Ymd' ), 5, false );
 		set_transient( 'ifi_rl_min_deadbeef', array( 'count' => 1 ), 3600 );
 		set_transient( 'ifi_activation_notice_1', 1, 3600 );
@@ -100,17 +97,6 @@ final class UninstallTest extends IfiTestCase {
 		);
 
 		$this->assertSame( array(), $left );
-	}
-
-	public function test_uninstall_removes_the_labels_flag(): void {
-		// Regression lock: this option is written by the migration, not by the settings
-		// screen, so it was missing from the original uninstall list.
-		update_option( 'ifi_labels_manual', '1', false );
-
-		$this->run_uninstall();
-		wp_cache_flush();
-
-		$this->assertFalse( get_option( 'ifi_labels_manual' ) );
 	}
 
 	public function test_uninstall_removes_the_sequence_counters(): void {

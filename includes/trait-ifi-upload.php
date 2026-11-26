@@ -9,7 +9,10 @@ trait IFI_Upload_Trait {
 
 
 	/**
-	 * 校验并把上传文件挪进本次提交的暂存目录，返回 array( name, tmp_path, size )
+	 * 把上传文件挪进本次提交的暂存目录，返回 array( name, tmp_path, size )
+	 *
+	 * 文件类型由前端负责（input 的 accept / 前端校验）；服务端只校验上传错误、
+	 * 文件数量与单文件大小，并清洗文件名。
 	 *
 	 * @throws RuntimeException 任一文件不合法时；消息由 handle() 原样放进 JSON 响应.
 	 */
@@ -24,10 +27,12 @@ trait IFI_Upload_Trait {
 			self::reject( self::t( 'error_upload_dir' ) );
 		}
 
-		$max_files = (int) apply_filters( 'ifi_max_files', 20 );
+		$max_files = (int) apply_filters( 'ifi_max_files', self::MAX_FILES );
 
-		foreach ( self::FILE_GROUPS as $group => $spec ) {
-			if ( empty( $files[ $group ] ) ) {
+		foreach ( self::file_groups() as $group => $max_size ) {
+			$max_size = (int) $max_size;
+			// 上限非正数视为该字段不接收附件；字段名来自过滤器的键，不存在时直接跳过
+			if ( $max_size <= 0 || empty( $files[ $group ] ) ) {
 				continue;
 			}
 			// 前端用 "group[]" 提交；单文件时 PHP 给的是标量，统一成数组
@@ -48,20 +53,6 @@ trait IFI_Upload_Trait {
 					self::reject( self::t( 'error_upload_too_many' ) );
 				}
 				$tmp_path = (string) ( $tmp[ $i ] ?? '' );
-				$ext      = strtolower( (string) pathinfo( (string) $original, PATHINFO_EXTENSION ) );
-				// 按文件名查扩展名：wp_check_filetype() 要的是「扩展名正则 => mime」映射
-				// （self::FILE_MIME_MAP）。这里不用 wp_check_filetype_and_ext()，因为它会拿
-				// finfo 的真实 mime 去比对映射值 —— .step/.dwg 这些 CAD 文件在多数主机上被识别成
-				// text/plain 或 application/octet-stream，比对必然失败，等于把白名单里的类型全毙掉。
-				$checked = wp_check_filetype( (string) $original, self::FILE_MIME_MAP );
-
-				if ( empty( $checked['ext'] ) || ! in_array( strtolower( (string) $checked['ext'] ), $spec['ext'], true ) ) {
-					self::reject( sprintf( self::t( 'error_upload_type' ), $ext ) );
-				}
-				// 扩展名白名单挡不住「.pdf 里装 php/html」，真实内容再嗅一遍
-				if ( in_array( self::sniff_mime( $tmp_path ), self::DENIED_MIMES, true ) ) {
-					self::reject( sprintf( self::t( 'error_upload_type' ), $ext ) );
-				}
 
 				$size = @filesize( $tmp_path );
 				if ( false === $size || $size <= 0 ) {
@@ -70,12 +61,12 @@ trait IFI_Upload_Trait {
 				if ( (int) $sizes[ $i ] !== (int) $size ) {
 					self::reject( sprintf( self::t( 'error_upload_size' ), (string) $original ) );
 				}
-				if ( $size > $spec['max_size'] ) {
+				if ( $size > $max_size ) {
 					self::reject(
 						sprintf(
 							self::t( 'error_upload_large' ),
 							(string) $original,
-							(int) ( $spec['max_size'] / 1048576 )
+							(int) ( $max_size / 1048576 )
 						)
 					);
 				}
@@ -110,24 +101,6 @@ trait IFI_Upload_Trait {
 	private static function reject( string $message ) {
 		// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- returned as a JSON field, not printed as HTML.
 		throw new RuntimeException( $message );
-	}
-
-	/**
-	 * 真实内容类型（finfo）。没有 fileinfo 扩展时返回空串，
-	 * 此时只剩扩展名白名单这一道闸 —— 与旧版行为一致，不会因为环境缺扩展就拒收附件。
-	 */
-	private static function sniff_mime( string $path ): string {
-		if ( ! function_exists( 'finfo_open' ) || ! is_file( $path ) ) {
-			return '';
-		}
-		$finfo = finfo_open( FILEINFO_MIME_TYPE );
-		if ( false === $finfo ) {
-			return '';
-		}
-		$mime = (string) finfo_file( $finfo, $path );
-		finfo_close( $finfo );
-
-		return strtolower( trim( $mime ) );
 	}
 
 	/** 本次提交的暂存目录（进程内固定，方便统一清理；CSPRNG 后缀避免被猜测） */

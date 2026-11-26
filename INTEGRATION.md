@@ -93,16 +93,15 @@ fieldLabels[outerDiameter]=外径
 
 ### 2.4 附件
 
-| 字段 | 白名单 | 单文件上限 |
+| 字段 | 类型限制 | 单文件上限 |
 |---|---|---|
-| `drawings[]` | pdf step stp dwg dxf igs sldprt sldasm zip rar 7z | 20 MB |
-| `pictures[]` | png jpg jpeg webp | 10 MB |
+| `files[]` | 由前端 `accept` 控制 | 20 MB |
+| `images[]` | 由前端 `accept` 控制 | 10 MB |
 
 - 字段名**必须带 `[]`**，否则多个文件只会留下最后一个。
 - 单次总数上限 20（filter `ifi_max_files`）。
-- 服务端按扩展名白名单 + `finfo` 内容嗅探（拒绝伪装成文档的 PHP/HTML）。
+- 服务端只校验上传错误、文件数量与单文件大小，并清洗文件名；不再维护扩展名白名单或内容嗅探，文件类型由前端 `accept` 与前端校验负责。
 - 附件最终落在 `wp-content/uploads/ifi-inquiries/{年月}/{记录ID-随机}/`，meta 里存的是相对 Web 路径。
-- **3.0.0 起目录名从 `eln-inquiries` 改为 `ifi-inquiries`**，升级迁移时自动搬移。
 
 ### 2.5 蜜罐与垃圾规则
 
@@ -146,7 +145,7 @@ add_filter('ifi_rate_limits', fn($l) => [
 
 服务端在入库时生成编号，格式 `IQ-YYYYMMDD` + 3 位当日流水（如 `IQ-20261105001`），存进记录的 `ifi_inquiry_no` meta，邮件模板里用 `{{no}}` 引用。流水用 MySQL 的 `LAST_INSERT_ID(expr)` 原子自增，并发提交不会重号；每日一个计数器（option `ifi_seq_YYYYMMDD`）。「发送测试邮件」和预览不会消耗真实编号。
 
-插件启用后的首次进入后台时，会给**早于该功能**的旧记录按提交时间补号（option `ifi_numbers_backfilled` 记账，只跑一次），当天计数器同时推到已用最大值，保证下一封询盘接着排。
+每条询盘在提交时生成编号（`IQ-YYYYMMDDnnn` + 当日流水）；插件不再给旧记录补号或回填字段值。
 
 ### 2.7 环境数据：IP / 浏览器语言 / 时区
 
@@ -178,7 +177,7 @@ if (tz) data.append("timezone", tz);
 | 成功 | 200 | `{"sent": true}` |
 | 缺必填 | 400 | `{"code":"inquiry_missing_field", ...}` |
 | 邮箱非法 | 400 | `{"code":"inquiry_invalid_email", ...}` |
-| 附件不合规 | 400 | `{"code":"inquiry_bad_upload","message":"File type .exe is not allowed."}` |
+| 附件不合规 | 400 | `{"code":"inquiry_bad_upload","message":"The upload could not be stored."}` |
 | 触发限流 | 429 | `{"code":"inquiry_rate_limited","retry_after":N, ...}`，响应头 `Retry-After: N` |
 | 发信失败 | 500 | `{"code":"inquiry_mail_failed", ...}` |
 
@@ -257,8 +256,8 @@ if (tz) data.append("timezone", tz);
   <label for="f-msg">留言 *</label>
   <textarea id="f-msg" name="message" required></textarea>
 
-  <input type="file" name="drawings[]" multiple accept=".pdf,.step,.stp,.dwg,.dxf,.igs,.zip,.rar,.7z" />
-  <input type="file" name="pictures[]" multiple accept="image/png,image/jpeg,image/webp" />
+  <input type="file" name="files[]" multiple accept=".pdf,.step,.stp,.dwg,.dxf,.igs,.zip,.rar,.7z" />
+  <input type="file" name="images[]" multiple accept="image/png,image/jpeg,image/webp" />
 
   <input name="companyWebsite" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" />
   <button type="submit">发送</button>
@@ -385,9 +384,9 @@ async function submit() {
 - 垃圾规则（关键词 / 邮箱域名 / IP·CIDR / 链接上限 / 重复提交）：命中同样返回 `200 {"sent":true}`，不发信；IP 黑名单连记录都不建。
 - 限流：同一访客默认 1 分钟 3 次 / 1 小时 10 次（双固定窗口，次数可在 Block Rules 页改），超限 429 + `Retry-After`；标识优先公网 IP，回环时用服务端签发的 HttpOnly `ifi_vid`（详见 §2.5.1）。
 - 前端对 429 显示「提交太频繁」专属提示，其余非 2xx 用通用失败提示。
-- 附件校验扩展名白名单、声明大小、真实内容 mime；落盘目录名含随机串，实际不可枚举。**内容嗅探依赖 PHP 的 `fileinfo` 扩展**：没有该扩展时 `sniff_mime()` 返回空串，这一道闸静默降级，只剩扩展名白名单。
+- 附件只校验上传错误、声明大小与单文件上限；落盘目录名含随机串，实际不可枚举。文件类型由前端 `accept` 控制，服务端不再做扩展名/内容 mime 白名单。
 - 默认按 `multipart/form-data` 提交。纯文本字段也可以用 `application/json`（WordPress 会把 JSON 体解析成参数），但**附件必须走 multipart**。
-- 请求体上限：由 Web 服务器的请求体限制与 PHP `post_max_size` 共同决定，请按附件白名单容量配置。
+- 请求体上限：由 Web 服务器的请求体限制与 PHP `post_max_size` 共同决定，请按附件大小上限配置。
 
 ---
 
@@ -405,7 +404,14 @@ add_filter('ifi_required_fields', fn() => ['name', 'mail', 'body']);
 add_filter('ifi_recipient', fn() => 'sales@example.com');
 ```
 
-3. **附件上限 / 白名单**：`ifi_max_files` 可改数量；扩展名白名单写在插件常量 `FILE_GROUPS` 里（`private const`，改动需改源码）。
+3. **附件上限**：`ifi_max_files` 改单次总数；每个上传字段的单文件大小用 `ifi_file_groups` 改（`字段名 => 字节`），默认 `files` 20 MB、`images` 10 MB。文件类型由前端 `accept` 控制，服务端没有扩展名白名单。
+
+```php
+add_filter('ifi_file_groups', function ($groups) {
+    $groups['images'] = 5 * 1024 * 1024; // 只收紧 images
+    return $groups;
+});
+```
 
 > **附件总数的双重上限**：PHP 的 `max_file_uploads`（默认 20）会在插件看到文件之前就把超出的文件丢掉，而插件自己的默认上限也是 20。也就是说默认配置下「单次提交附件过多」这条错误在 HTTP 层永远不会触发，访客传 21 个文件会成功入库 20 个。要真正限制数量，请让 `ifi_max_files` **小于** `max_file_uploads`。
 4. **可信代理**（反代后要按真实 IP 限流）：`define('IFI_TRUSTED_PROXIES', [...])` 或 filter `ifi_trusted_proxies`。
@@ -420,7 +426,7 @@ add_filter('ifi_recipient', fn() => 'sales@example.com');
 ## 8. 验收清单
 
 - [ ] 最小表单（三个必填）能提交，收到邮件且后台出现记录
-- [ ] 附件：单文件、多文件、超限、非法扩展名各测一次
+- [ ] 附件：单文件、多文件、超限、任意扩展名各测一次（类型由前端 `accept` 控制）
 - [ ] 蜜罐填写后返回 200、不发信，且「垃圾」视图出现一条记录（关掉留档后不再产生记录）
 - [ ] Block Rules 里加一个关键词 / 域名 / IP 后，对应提交返回 200 但被拦在「垃圾」视图，测试面板显示命中的规则
 - [ ] 刷新页面后重复提交按钮被禁用（或后端限流生效）

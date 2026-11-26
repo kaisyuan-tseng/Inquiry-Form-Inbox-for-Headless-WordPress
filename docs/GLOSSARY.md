@@ -320,10 +320,9 @@
 | `activation_go_inbox` | Open Inquiries | 打开询盘 |
 | `install_health_title` | Inquiry Form Inbox installation check | 询盘表单收件箱安装检查 |
 | `install_health_multi` | This plugin folder contains more than one plugin header: %s. The install screen may activate the wrong file and report “The plugin does not have a valid header.” Delete the extra copies and install the official zip. | 这个插件目录里有多个插件头：%s。安装页可能启用错误的文件，并提示“该插件没有有效的标题”。请删除多余副本并安装官方 zip。 |
-| `install_health_legacy` | Stale 2.x files were found: %s. Delete them and install the official zip. | 发现 2.x 残留文件：%s。请删除它们并安装官方 zip。 |
 | `install_health_main` | The plugin main file is %s, not inquiry-form-inbox.php. Reinstall the official zip so the main file has the expected name. | 插件主文件名是 %s，不是 inquiry-form-inbox.php。请重新安装官方 zip，让主文件使用预期文件名。 |
 
-#### 错误与校验（21 条）
+#### 错误与校验（20 条）
 
 | Key | English (msgid) | 中文 |
 |---|---|---|
@@ -340,7 +339,6 @@
 | `error_upload_dir` | The upload could not be processed. Please try again. | 附件处理失败，请重试。 |
 | `error_upload_failed` | The upload failed. Please try again. | 上传失败。 |
 | `error_upload_too_many` | Too many files in one submission. | 单次提交的附件过多。 |
-| `error_upload_type` | File type .%s is not allowed. | 不允许上传 .%s 类型的文件。 |
 | `error_upload_empty` | %s is empty. | %s 是空文件。 |
 | `error_upload_size` | %s has an invalid declared size. | %s 声明的文件大小与实际不符。 |
 | `error_upload_large` | %1$s exceeds the %2$d MB limit. | %1$s 超过 %2$d MB 上限。 |

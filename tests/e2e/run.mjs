@@ -137,7 +137,7 @@ async function main() {
 		await scenario( 'upload-pdf-ok', async ( check ) => {
 			const response = await submit(
 				BASE_FIELDS,
-				[ { group: 'drawings', name: 'drawing.pdf', bytes: pdfBytes( 'ok' ), type: 'application/pdf' } ],
+				[ { group: 'files', name: 'drawing.pdf', bytes: pdfBytes( 'ok' ), type: 'application/pdf' } ],
 				new Jar()
 			);
 			check.equal( response.status, 200, 'status' );
@@ -159,28 +159,40 @@ async function main() {
 			}
 		} );
 
-		await scenario( 'upload-bad-extension', async ( check ) => {
+		await scenario( 'upload-any-extension', async ( check ) => {
+			// File types are a frontend contract; the server must not reject .exe by name.
 			const response = await submit(
 				BASE_FIELDS,
-				[ { group: 'drawings', name: 'payload.exe', bytes: pdfBytes( 'bad' ), type: 'application/octet-stream' } ],
+				[ { group: 'files', name: 'payload.exe', bytes: pdfBytes( 'any' ), type: 'application/octet-stream' } ],
 				new Jar()
 			);
-			check.equal( response.status, 400, 'status' );
-			const body = await response.json();
-			check.equal( body.code, 'inquiry_bad_upload', 'error code' );
-			check.ok( /not allowed/.test( body.message ), 'message names the reason' );
-			check.equal( ( await state() ).count, 0, 'nothing stored' );
+			check.equal( response.status, 200, 'status' );
+
+			const record = await onlyRecord();
+			check.ok( record !== null, 'record stored' );
+			if ( record ) {
+				const files = record.meta.ifi_inquiry_attachments;
+				check.ok( Array.isArray( files ) && files.length === 1, 'one attachment recorded' );
+				check.equal( files[ 0 ].name, 'payload.exe', 'arbitrary extension kept' );
+			}
 		} );
 
-		await scenario( 'upload-wrong-group', async ( check ) => {
-			// A PNG is allowed for pictures, not for drawings.
+		await scenario( 'upload-any-group', async ( check ) => {
+			// A PNG in the files group is accepted: groups only differ in size limits.
 			const response = await submit(
 				BASE_FIELDS,
-				[ { group: 'drawings', name: 'photo.png', bytes: pdfBytes( 'png' ), type: 'image/png' } ],
+				[ { group: 'files', name: 'photo.png', bytes: pdfBytes( 'png' ), type: 'image/png' } ],
 				new Jar()
 			);
-			check.equal( response.status, 400, 'status' );
-			check.equal( ( await response.json() ).code, 'inquiry_bad_upload', 'error code' );
+			check.equal( response.status, 200, 'status' );
+
+			const record = await onlyRecord();
+			check.ok( record !== null, 'record stored' );
+			if ( record ) {
+				const files = record.meta.ifi_inquiry_attachments;
+				check.ok( Array.isArray( files ) && files.length === 1, 'one attachment recorded' );
+				check.equal( files[ 0 ].name, 'photo.png', 'file name' );
+			}
 		} );
 
 		await scenario( 'upload-too-many', async ( check ) => {
@@ -193,7 +205,7 @@ async function main() {
 			const files = [];
 			for ( let index = 0; index < 21; index++ ) {
 				files.push( {
-					group: 'drawings',
+					group: 'files',
 					name: `part-${ index }.pdf`,
 					bytes: pdfBytes( `many-${ index }` ),
 					type: 'application/pdf',

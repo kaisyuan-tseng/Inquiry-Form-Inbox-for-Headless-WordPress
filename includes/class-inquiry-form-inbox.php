@@ -22,12 +22,8 @@ final class Inquiry_Form_Inbox {
 	const REST_NAMESPACE = 'inquiry-form-inbox/v1';
 
 	const POST_TYPE = 'ifi_inquiry';
-	/** 2.x 的 post type，仅迁移使用 */
-	const LEGACY_POST_TYPE = 'eln_inquiry';
-	/** 1.x 的 post type，仅迁移使用 */
-	const LEGACY_POST_TYPE_1X = 'inquiry';
-	const VIEW_SLUG           = 'ifi-view';
-	const TPL_SLUG            = 'ifi-template';
+	const VIEW_SLUG = 'ifi-view';
+	const TPL_SLUG  = 'ifi-template';
 	/** 垃圾规则页：顶层菜单「询盘」下的第二个子菜单 */
 	const SPAM_SLUG = 'ifi-spam';
 	/** 后台顶层菜单：列表页 admin.php?page=ifi-inquiry，邮件模板页是它下面的子菜单 */
@@ -42,53 +38,24 @@ final class Inquiry_Form_Inbox {
 	const OPT_REPLY = 'ifi_reply';
 	/** 垃圾规则（蜜罐 / 关键词 / 邮箱域名 / IP / 链接上限 / 重复提交） */
 	const OPT_SPAM = 'ifi_spam_rules';
-	/** 历史询盘补编号的一次性开关（ifi_inquiry_no 是后加的 meta） */
-	const OPT_BACKFILL = 'ifi_numbers_backfilled';
-	/** 历史询盘补字段值的一次性开关（ifi_inquiry_field_values 是后加的 meta） */
-	const OPT_BACKFILL_VALUES = 'ifi_field_values_backfilled';
 
 	/** 询盘编号：IQ-YYYYMMDD + 3 位当日流水（如 IQ-20261105001） */
 	const NO_PREFIX = 'IQ-';
 
-	/** 迁移版本与标识符映射 */
-	const OPT_DB_VERSION = 'ifi_db_version';
-	const DB_VERSION     = '30000';
-	const META_PREFIX    = 'ifi_inquiry_';
-	/** 2.x 的 meta 前缀，仅迁移使用 */
-	const LEGACY_META_PREFIX = 'eln_inquiry_';
-	/** 1.x 的 meta 前缀，仅迁移使用 */
-	const LEGACY_META_PREFIX_1X = 'inquiry_';
+	/** 询盘 meta 前缀 */
+	const META_PREFIX = 'ifi_inquiry_';
 	/** 流水计数器的 option 前缀 */
 	const SEQ_PREFIX = 'ifi_seq_';
-	/** 2.x 的流水号 option 前缀，仅迁移使用 */
-	const LEGACY_SEQ_PREFIX = 'eln_seq_';
-	/** 1.x 的流水号 option 前缀，仅迁移使用 */
-	const LEGACY_SEQ_PREFIX_1X = 'inquiry_seq_';
-	const RATE_PREFIX          = 'ifi_rl_';
-	/** 2.x 的限流 transient 前缀，迁移时清掉 */
-	const LEGACY_RATE_PREFIX = 'eln_rl_';
+	/** 限流 transient 前缀 */
+	const RATE_PREFIX = 'ifi_rl_';
 
 	/** 自定义能力 */
 	const CAP_VIEW   = 'ifi_view_inquiries';
 	const CAP_EDIT   = 'ifi_edit_inquiries';
 	const CAP_DELETE = 'ifi_delete_inquiries';
 
-	/**
-	 * 邮件里唯一的品牌色（页头色条 / 页脚竖线 / 链接）。
-	 * 取 WordPress 后台主色 #2271b1：模板与后台视觉一致。
-	 * 不做成 {{accent}} 占位符：模板源码里直接写这个色值就行，
-	 * 想换色改默认源码或自己的模板即可，插件不掺和配色。
-	 */
-	const BRAND_COLOR = '#2271b1';
-
 	/** 附件总目录（在 uploads 下，可静态访问） */
 	public const STORAGE_DIR = 'ifi-inquiries';
-
-	/** 2.x 遗留附件目录，仅迁移使用 */
-	public const LEGACY_STORAGE_DIR = 'eln-inquiries';
-
-	/** 1.x 遗留附件目录，仅迁移使用 */
-	public const LEGACY_STORAGE_DIR_1X = 'inquiries';
 
 	/*
 	==================================================================
@@ -104,50 +71,18 @@ final class Inquiry_Form_Inbox {
 	/** 静态资源版本号（与插件版本一致；实际 URL 还会拼上文件修改时间） */
 	private const ASSET_VER = '3.1.3';
 
-	/** 每个附件分组的白名单：扩展名 + 单文件大小上限（字节） */
-	private const FILE_GROUPS = array(
-		'drawings' => array(
-			'max_size' => 20971520,
-			'ext'      => array( 'pdf', 'step', 'stp', 'dwg', 'dxf', 'igs', 'sldprt', 'sldasm', 'zip', 'rar', '7z' ),
-		),
-		'pictures' => array(
-			'max_size' => 10485760,
-			'ext'      => array( 'png', 'jpg', 'jpeg', 'webp' ),
-		),
-	);
+	/** 单次提交的附件数量上限 */
+	public const MAX_FILES = 20;
 
 	/**
-	 * 扩展名 => mime 映射，喂给 wp_check_filetype()。
+	 * 附件字段的默认单文件大小上限（字节）：字段名 => 上限。
 	 *
-	 * **不能**把 FILE_GROUPS 里的扩展名数组直接当第三个参数传：WordPress 要的是
-	 * 「扩展名正则 => mime」的映射，传纯列表时键变成 0/1/2，内部拼出的正则是
-	 * `\.(0)$`，任何文件都匹配不上，结果 ext/type 双双为 false ——
-	 * 表现就是「纯文本询盘能发，带附件的全被判成非法文件类型」。
+	 * 服务端不判断文件内容类型，只按前端提交的字段名分组，所以这里不存在
+	 * 「图片 / 非图片」之类的语义。站点可用 `ifi_file_groups` 过滤整体替换。
 	 */
-	private const FILE_MIME_MAP = array(
-		'pdf'      => 'application/pdf',
-		'step|stp' => 'application/step',
-		'dwg'      => 'application/acad',
-		'dxf'      => 'application/dxf',
-		'igs|iges' => 'model/iges',
-		'sldprt'   => 'application/octet-stream',
-		'sldasm'   => 'application/octet-stream',
-		'zip'      => 'application/zip',
-		'rar'      => 'application/rar',
-		'7z'       => 'application/x-7z-compressed',
-		'png'      => 'image/png',
-		'jpg|jpeg' => 'image/jpeg',
-		'webp'     => 'image/webp',
-	);
-
-	/** 内容嗅探命中这些 mime 一律拒绝（扩展名可以改，内容类型骗不了 finfo） */
-	private const DENIED_MIMES = array(
-		'text/html',
-		'text/x-php',
-		'application/x-php',
-		'application/php',
-		'application/x-httpd-php',
-		'application/x-httpd-php-source',
+	private const FILE_GROUPS = array(
+		'files'  => 20971520,
+		'images' => 10485760,
 	);
 
 	/**
@@ -235,16 +170,13 @@ final class Inquiry_Form_Inbox {
 		// 因为激活钩子不会在插件更新时触发，升级上来的站点需要另一条路径。
 		add_action( 'plugins_loaded', array( __CLASS__, 'load_textdomain' ) );
 		IFI_Privacy::init();
-		add_action( 'admin_init', array( 'IFI_Migration', 'maybe_migrate' ) );
-		add_action( 'admin_notices', array( 'IFI_Migration', 'admin_notice' ) );
-		add_filter( 'map_meta_cap', array( 'IFI_Migration', 'map_meta_cap' ), 10, 4 );
+		add_action( 'admin_init', array( 'IFI_Capabilities', 'maybe_upgrade' ) );
+		add_filter( 'map_meta_cap', array( 'IFI_Capabilities', 'map_meta_cap' ), 10, 4 );
 		add_action( 'rest_api_init', array( __CLASS__, 'register_routes' ) );
 		add_action( 'init', array( __CLASS__, 'register_post_type' ) );
 		add_action( 'before_delete_post', array( __CLASS__, 'purge_record_files' ) );
 		add_action( 'untrashed_post', array( __CLASS__, 'restore_status' ) );
 		add_action( 'admin_post_ifi_delete', array( __CLASS__, 'handle_delete' ) );
-		add_action( 'admin_init', array( __CLASS__, 'backfill_numbers' ) );
-		add_action( 'admin_init', array( __CLASS__, 'backfill_field_values' ) );
 
 		/*
 		 * 列定义要挂两个钩子，缺一不可：
@@ -315,6 +247,17 @@ final class Inquiry_Form_Inbox {
 			add_action( 'update_option_' . $option, array( __CLASS__, 'flush_template_cache' ) );
 			add_action( 'add_option_' . $option, array( __CLASS__, 'flush_template_cache' ) );
 		}
+	}
+
+	/**
+	 * 当前生效的附件分组：字段名 => 单文件大小上限（字节）。
+	 *
+	 * @return array<string, int>
+	 */
+	private static function file_groups(): array {
+		$groups = apply_filters( 'ifi_file_groups', self::FILE_GROUPS );
+
+		return is_array( $groups ) ? $groups : self::FILE_GROUPS;
 	}
 
 	/* ================================================================== REST */

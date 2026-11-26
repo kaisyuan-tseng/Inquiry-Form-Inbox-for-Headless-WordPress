@@ -2,9 +2,6 @@
 /**
  * Uninstall cleanup for Inquiry Form Inbox.
  *
- * 3.0.0 起标识符是 ifi_*；这里同时清理 2.x（eln_*）与 1.x（inquiry_*）的遗留数据，
- * 让「先用过旧版本、再装新版」的站点删插件时也能清干净。
- *
  * Multisite: WordPress calls uninstall.php once for the network, so the cleanup runs for
  * every site in the network — options, inquiries, uploads and capabilities are per-site.
  *
@@ -26,51 +23,26 @@ function ifi_uninstall_site() {
 	global $wpdb;
 
 	$ifi_options = array(
-		// 3.0.0
 		'ifi_template',
 		'ifi_autoreply',
 		'ifi_reply',
 		'ifi_spam_rules',
-		'ifi_numbers_backfilled',
-		'ifi_field_values_backfilled',
-		'ifi_labels_manual',
-		'ifi_db_version',
-		'ifi_migration_error',
-		// 2.x 遗留
-		'eln_template',
-		'eln_autoreply',
-		'eln_reply',
-		'eln_numbers_backfilled',
-		'eln_field_values_backfilled',
-		'eln_db_version',
-		'eln_migration_error',
-		'eln_migration_map',
-		// 1.x 遗留
-		'inquiry_numbers_backfilled',
 	);
 
 	foreach ( $ifi_options as $ifi_option ) {
 		delete_option( $ifi_option );
 	}
 
-	$ifi_like_patterns = array(
-		'ifi_seq_',
-		'eln_seq_',
-		'inquiry_seq_',
+	$wpdb->query(
+		$wpdb->prepare(
+			"DELETE FROM {$wpdb->options} WHERE option_name LIKE %s",
+			$wpdb->esc_like( 'ifi_seq_' ) . '%'
+		)
 	);
-
-	foreach ( $ifi_like_patterns as $ifi_prefix ) {
-		$wpdb->query(
-			$wpdb->prepare(
-				"DELETE FROM {$wpdb->options} WHERE option_name LIKE %s",
-				$wpdb->esc_like( $ifi_prefix ) . '%'
-			)
-		);
-	}
 
 	$wpdb->query(
 		$wpdb->prepare(
-			"DELETE FROM {$wpdb->options} WHERE option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s",
+			"DELETE FROM {$wpdb->options} WHERE option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s",
 			$wpdb->esc_like( '_transient_ifi_rl_' ) . '%',
 			$wpdb->esc_like( '_transient_timeout_ifi_rl_' ) . '%',
 			$wpdb->esc_like( '_transient_ifi_field_keys' ) . '%',
@@ -78,18 +50,14 @@ function ifi_uninstall_site() {
 			$wpdb->esc_like( '_transient_ifi_dup_' ) . '%',
 			$wpdb->esc_like( '_transient_timeout_ifi_dup_' ) . '%',
 			$wpdb->esc_like( '_transient_ifi_activation_notice_' ) . '%',
-			$wpdb->esc_like( '_transient_timeout_ifi_activation_notice_' ) . '%',
-			$wpdb->esc_like( '_transient_eln_rl_' ) . '%',
-			$wpdb->esc_like( '_transient_timeout_eln_rl_' ) . '%'
+			$wpdb->esc_like( '_transient_timeout_ifi_activation_notice_' ) . '%'
 		)
 	);
 
 	$ifi_post_ids = $wpdb->get_col(
 		$wpdb->prepare(
-			"SELECT ID FROM {$wpdb->posts} WHERE post_type IN (%s, %s, %s)",
-			'ifi_inquiry',
-			'eln_inquiry',
-			'inquiry'
+			"SELECT ID FROM {$wpdb->posts} WHERE post_type = %s",
+			'ifi_inquiry'
 		)
 	);
 
@@ -101,17 +69,11 @@ function ifi_uninstall_site() {
 	$ifi_base    = wp_normalize_path( $ifi_uploads['basedir'] );
 
 	ifi_uninstall_remove_dir( $ifi_base . '/ifi-inquiries', $ifi_base );
-	ifi_uninstall_remove_dir( $ifi_base . '/eln-inquiries', $ifi_base );
-	ifi_uninstall_remove_dir( $ifi_base . '/inquiries', $ifi_base );
-	ifi_uninstall_remove_dir( $ifi_base . '/eln-migration', $ifi_base );
 
 	$ifi_capabilities = array(
 		'ifi_view_inquiries',
 		'ifi_edit_inquiries',
 		'ifi_delete_inquiries',
-		'eln_view_inquiries',
-		'eln_edit_inquiries',
-		'eln_delete_inquiries',
 	);
 
 	foreach ( array( 'administrator', 'editor' ) as $ifi_role_name ) {

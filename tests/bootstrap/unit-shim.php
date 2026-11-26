@@ -245,7 +245,7 @@ foreach ( $ifi_includes as $ifi_include ) {
 
 require_once $ifi_root . '/includes/class-inquiry-form-inbox.php';
 require_once $ifi_root . '/includes/class-ifi-locale.php';
-require_once $ifi_root . '/includes/class-ifi-migration.php';
+require_once $ifi_root . '/includes/class-ifi-capabilities.php';
 require_once $ifi_root . '/includes/class-ifi-privacy.php';
 
 require_once __DIR__ . '/../lib/Reflect.php';

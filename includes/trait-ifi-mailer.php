@@ -340,8 +340,7 @@ trait IFI_Mailer_Trait {
 		$html = '';
 		foreach ( $ordered as $key => $value ) {
 			if ( $key === 'email' ) {
-				$value_html = '<a href="mailto:' . esc_attr( $value ) . '" style="color:' . self::BRAND_COLOR . ';text-decoration:none;">'
-					. esc_html( $value ) . '</a>';
+				$value_html = '<a href="mailto:' . esc_attr( $value ) . '">' . esc_html( $value ) . '</a>';
 			} else {
 				$value_html = nl2br( esc_html( (string) $value ) );
 			}

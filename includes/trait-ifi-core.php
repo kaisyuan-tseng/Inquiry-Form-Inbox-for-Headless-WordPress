@@ -123,7 +123,7 @@ trait IFI_Core_Trait {
 	/**
 	 * One-time success notice after activation.
 	 *
-	 * IFI_Migration::activate() sets a per-user transient; the next admin request shows this
+	 * IFI_Capabilities::activate() sets a per-user transient; the next admin request shows this
 	 * notice once and clears it. No redirect is involved, so AJAX activation keeps working.
 	 */
 	public static function activation_notice(): void {

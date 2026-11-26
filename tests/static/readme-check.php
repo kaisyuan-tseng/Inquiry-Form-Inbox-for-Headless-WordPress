@@ -215,21 +215,29 @@ if ( '' === $screenshot_block ) {
 // --- Changelog length -----------------------------------------------------
 
 $changelog = '';
-if ( preg_match( '/==\s*Changelog\s*==(.*?)(?=\n==|\z)/si', $readme, $m ) ) {
+$has_changelog = (bool) preg_match( '/==\s*Changelog\s*==(.*?)(?=\n==|\z)/si', $readme, $m );
+if ( $has_changelog ) {
 	$changelog = $m[1];
+	preg_match_all( '/^=\s*(\d+\.\d+(?:\.\d+)?)\s*=/m', $changelog, $m );
+	$versions = $m[1];
+	$majors   = array_values( array_unique( array_map( static function ( $v ) {
+		$p = explode( '.', $v );
+		return $p[0] . '.' . ( $p[1] ?? '0' );
+	}, $versions ) ) );
+	ifi_readme_add(
+		$checks,
+		'Changelog keeps current + one major back',
+		count( $majors ) <= 2 ? 'pass' : 'fail',
+		sprintf( '%d entries across %d majors (%s)', count( $versions ), count( $majors ), implode( ', ', $majors ) )
+	);
+} else {
+	ifi_readme_add(
+		$checks,
+		'Changelog section',
+		'pass',
+		'not present; full history lives in changelog.txt'
+	);
 }
-preg_match_all( '/^=\s*(\d+\.\d+(?:\.\d+)?)\s*=/m', $changelog, $m );
-$versions = $m[1];
-$majors   = array_values( array_unique( array_map( static function ( $v ) {
-	$p = explode( '.', $v );
-	return $p[0] . '.' . ( $p[1] ?? '0' );
-}, $versions ) ) );
-ifi_readme_add(
-	$checks,
-	'Changelog keeps current + one major back',
-	count( $majors ) <= 2 ? 'pass' : 'fail',
-	sprintf( '%d entries across %d majors (%s)', count( $versions ), count( $majors ), implode( ', ', $majors ) )
-);
 
 // --- Required headers -----------------------------------------------------
 

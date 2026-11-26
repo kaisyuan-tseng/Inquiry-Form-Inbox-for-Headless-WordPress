@@ -9,14 +9,17 @@ by the plugin directory.
 * Security: `X-Forwarded-For` is now read from the hop closest to the server. The leftmost entry is client-supplied, so a visitor could rotate it to escape the rate limiter and poison the recorded IP; trusted proxies are skipped from the right.
 * Security: attachment staging and archive directories use `wp_generate_password()` (CSPRNG) instead of the predictable `uniqid()`.
 * Security: deleting an inquiry resolves each attachment path with `realpath()` before the allow-list check, so a `..` segment in meta can no longer escape `uploads/ifi-inquiries/`.
-* Security: stored email bodies are re-filtered with the template editor's kses allow-list before the admin detail view renders them. The same filter keeps `rgba()` colors and `{{tokens}}`; records migrated from 2.x no longer depend on how they were originally stored.
+* Security: stored email bodies are re-filtered with the template editor's kses allow-list before the admin detail view renders them. The same filter keeps `rgba()` colors and `{{tokens}}`; imported/historical records no longer depend on how they were originally stored.
 * Security: the rate-limiter visitor cookie is marked `Secure` on HTTPS.
 * New: a one-time success notice after activation with links to Email Template, Block Rules and Inquiries. It is a notice, not a redirect, so AJAX activation from the install screen is unaffected.
-* New: an installation check on the plugin screens warns when the plugin folder contains more than one plugin header or stale 2.x files. That condition makes WordPress's install screen report "The plugin does not have a valid header." The check only reports; it never deletes files.
+* New: an installation check on the plugin screens warns when the plugin folder contains more than one plugin header. That condition makes WordPress's install screen report "The plugin does not have a valid header." The check only reports; it never deletes files.
 * New: `build-zip.php` refuses to build unless the package has one top-level `inquiry-form-inbox/` folder, the expected main file, and exactly one `Plugin Name` header.
 * Change: uninstall now loops over every site on a multisite network; each site's options, inquiries, uploads and capabilities are removed.
 * Change: `uploads/ifi-inquiries` and each record directory get an `index.php` guard as soon as the first attachment creates them.
+* Change: removed the server-side file extension whitelist and `finfo` content sniff. File types are the front end's contract (`accept`); the server still enforces upload errors, per-group size limits and the file count cap.
 * Change: the plugin homepage now points to the GitHub repository, and the Chinese translation of the plugin description was removed; the description stays in English.
+* Breaking change: removed the legacy 1.x/2.x migration and the 3.x backfill passes. Existing `ifi_*` data is untouched; sites still on old identifiers must migrate before upgrading.
+* Breaking change: upload field groups are now `files[]` (20 MB per file) and `images[]` (10 MB per file); the old business-specific group names are no longer read. Per-field caps come from the new `ifi_file_groups` filter, so changing them no longer requires editing the plugin.
 * Fix: the activation hook is registered from the main plugin file, which is the location WordPress documents, instead of from the class initializer.
 
 = 3.1.2 =

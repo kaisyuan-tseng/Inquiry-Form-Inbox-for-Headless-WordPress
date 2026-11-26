@@ -59,21 +59,6 @@ trait IFI_Install_Health_Trait {
 			);
 		}
 
-		$legacy = array();
-		$root   = dirname( IFI_PLUGIN_FILE );
-		if ( file_exists( $root . '/email-log-notifications.php' ) ) {
-			$legacy[] = 'email-log-notifications.php';
-		}
-		foreach ( glob( $root . '/includes/*eln*' ) ?: array() as $file ) {
-			$legacy[] = 'includes/' . basename( $file );
-		}
-		if ( $legacy ) {
-			$issues[] = sprintf(
-				self::t( 'install_health_legacy' ),
-				implode( ', ', array_unique( $legacy ) )
-			);
-		}
-
 		if ( 'inquiry-form-inbox.php' !== $main ) {
 			$issues[] = sprintf( self::t( 'install_health_main' ), $main );
 		}

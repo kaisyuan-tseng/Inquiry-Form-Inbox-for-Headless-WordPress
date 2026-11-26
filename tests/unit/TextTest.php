@@ -19,7 +19,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Covers readable_label(), size_label(), html_to_text(), plain_text() and
+ * Covers readable_label(), size_label(), html_to_text() and
  * clean_source_title().
  */
 final class TextTest extends TestCase {
@@ -104,26 +104,6 @@ final class TextTest extends TestCase {
 	public function test_html_to_text_collapses_repeated_blank_lines(): void {
 		$text = Reflect::call( 'html_to_text', array( "<p>a</p><div></div><div></div><p>b</p>" ) );
 		$this->assertStringNotContainsString( "\n\n\n", $text );
-	}
-
-	/**
-	 * HTML fragment / expected plain text.
-	 *
-	 * @return array<string, array{0: string, 1: string}>
-	 */
-	public static function plainTextSamples(): array {
-		return array(
-			'br to newline'   => array( 'a<br>b', "a\nb" ),
-			'self closing br' => array( 'a<br/>b', "a\nb" ),
-			'strips tags'     => array( '<strong>bold</strong>', 'bold' ),
-			'decodes entity'  => array( 'a &amp; b', 'a & b' ),
-			'trims'           => array( '  spaced  ', 'spaced' ),
-		);
-	}
-
-	#[DataProvider( 'plainTextSamples' )]
-	public function test_plain_text( string $html, string $expected ): void {
-		$this->assertSame( $expected, Reflect::call( 'plain_text', array( $html ) ) );
 	}
 
 	/**

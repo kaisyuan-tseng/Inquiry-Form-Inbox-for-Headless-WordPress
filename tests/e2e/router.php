@@ -122,7 +122,7 @@ if ( 0 === strpos( $ifi_e2e_uri, '/__test__/' ) ) {
 				// extra files are dropped by PHP before the plugin ever sees them.
 				'limits'  => array(
 					'max_file_uploads' => (int) ini_get( 'max_file_uploads' ),
-					'ifi_max_files'    => (int) apply_filters( 'ifi_max_files', 20 ),
+					'ifi_max_files'    => (int) apply_filters( 'ifi_max_files', \Inquiry_Form_Inbox::MAX_FILES ),
 				),
 			)
 		);

@@ -49,12 +49,12 @@ require_once __DIR__ . '/includes/trait-ifi-assets.php';
 require_once __DIR__ . '/includes/trait-ifi-endpoints.php';
 require_once __DIR__ . '/includes/trait-ifi-install-health.php';
 require_once __DIR__ . '/includes/class-ifi-locale.php';
-require_once __DIR__ . '/includes/class-ifi-migration.php';
+require_once __DIR__ . '/includes/class-ifi-capabilities.php';
 require_once __DIR__ . '/includes/class-ifi-privacy.php';
 require_once __DIR__ . '/includes/class-inquiry-form-inbox.php';
 
 // Register the activation hook from the main file, where WordPress expects it. The callback
 // only grants capabilities and leaves a one-time notice flag; it never redirects or prints.
-register_activation_hook( __FILE__, array( 'IFI_Migration', 'activate' ) );
+register_activation_hook( __FILE__, array( 'IFI_Capabilities', 'activate' ) );
 
 Inquiry_Form_Inbox::init();

@@ -64,7 +64,7 @@ through `tests/lib/Reflect.php`, which throws if a method disappears rather than
 testing nothing.
 
 **L2** covers behaviour: submission, validation, spam rules, rate limiting, auto-confirmation
-language groups, privacy export/erase, capabilities, migration, uninstall. WordPress hooks
+language groups, privacy export/erase, capabilities, uninstall. WordPress hooks
 are snapshotted and restored per test — without that, one test's `add_filter()` breaks every
 test after it.
 
@@ -78,8 +78,6 @@ nothing at all.
 
 ## Known limits
 
-- `fileinfo` is not loaded on the development machine, so the content-sniffing rejection is
-  skipped and reported as skipped. It is not silently green.
 - PHP's `max_file_uploads` (20) drops extra files before `stage_attachments()` sees them, so
   the plugin's own "too many files" branch is covered in L2 (with the cap lowered through the
   filter) and not over HTTP. L3 asserts the ceiling a real site actually experiences.

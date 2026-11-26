@@ -78,7 +78,7 @@ abstract class IfiTestCase extends TestCase {
 		// The plugin grants capabilities on activation; the scratch site never activated it
 		// through the UI, so grant them explicitly. This is also what the self-heal path
 		// does on a real upgrade.
-		\IFI_Migration::init_capabilities();
+		\IFI_Capabilities::init_capabilities();
 	}
 
 	protected function tearDown(): void {

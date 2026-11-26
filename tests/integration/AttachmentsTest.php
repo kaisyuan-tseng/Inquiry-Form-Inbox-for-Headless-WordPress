@@ -28,7 +28,7 @@ final class AttachmentsTest extends IfiTestCase {
 	/**
 	 * Build a $_FILES-shaped array for one group.
 	 *
-	 * @param string $group  drawings|pictures.
+	 * @param string $group  files|images.
 	 * @param string $name   Original file name.
 	 * @param string $bytes  File contents.
 	 * @return array
@@ -62,35 +62,9 @@ final class AttachmentsTest extends IfiTestCase {
 		$this->assertSame( array(), Reflect::call( 'stage_attachments', array( array() ) ) );
 	}
 
-	public function test_a_disallowed_extension_is_rejected(): void {
-		$files = $this->files( 'drawings', 'payload.exe' );
-
-		$this->expectException( RuntimeException::class );
-		$this->expectExceptionMessage( 'not allowed' );
-
-		try {
-			Reflect::call( 'stage_attachments', array( $files ) );
-		} finally {
-			$this->drop( $files['drawings']['tmp_name'][0] );
-		}
-	}
-
-	public function test_an_image_in_the_drawings_group_is_rejected(): void {
-		// Groups carry their own whitelist; a .png is valid for pictures, not for drawings.
-		$files = $this->files( 'drawings', 'photo.png' );
-
-		$this->expectException( RuntimeException::class );
-
-		try {
-			Reflect::call( 'stage_attachments', array( $files ) );
-		} finally {
-			$this->drop( $files['drawings']['tmp_name'][0] );
-		}
-	}
-
 	public function test_a_missing_file_entry_is_skipped_rather_than_rejected(): void {
 		$files = array(
-			'drawings' => array(
+			'files' => array(
 				'name'     => array( '' ),
 				'tmp_name' => array( '' ),
 				'size'     => array( 0 ),
@@ -102,9 +76,9 @@ final class AttachmentsTest extends IfiTestCase {
 	}
 
 	public function test_an_oversize_file_is_rejected(): void {
-		// 21 MB is over the 20 MB drawings cap; the bytes are generated here rather than
-		// stored in the repository.
-		$files = $this->files( 'drawings', 'huge.pdf', str_repeat( 'a', 21 * 1024 * 1024 ) );
+		// 21 MB is over the default 20 MB cap for the files group; the bytes are generated
+		// here rather than stored in the repository.
+		$files = $this->files( 'files', 'huge.pdf', str_repeat( 'a', 21 * 1024 * 1024 ) );
 
 		$this->expectException( RuntimeException::class );
 		$this->expectExceptionMessage( 'limit' );
@@ -112,13 +86,13 @@ final class AttachmentsTest extends IfiTestCase {
 		try {
 			Reflect::call( 'stage_attachments', array( $files ) );
 		} finally {
-			$this->drop( $files['drawings']['tmp_name'][0] );
+			$this->drop( $files['files']['tmp_name'][0] );
 		}
 	}
 
 	public function test_a_declared_size_that_does_not_match_the_file_is_rejected(): void {
-		$files = $this->files( 'drawings', 'liar.pdf' );
-		$files['drawings']['size'][0] = 999999;
+		$files = $this->files( 'files', 'liar.pdf' );
+		$files['files']['size'][0] = 999999;
 
 		$this->expectException( RuntimeException::class );
 		$this->expectExceptionMessage( 'declared size' );
@@ -126,7 +100,7 @@ final class AttachmentsTest extends IfiTestCase {
 		try {
 			Reflect::call( 'stage_attachments', array( $files ) );
 		} finally {
-			$this->drop( $files['drawings']['tmp_name'][0] );
+			$this->drop( $files['files']['tmp_name'][0] );
 		}
 	}
 
@@ -142,7 +116,7 @@ final class AttachmentsTest extends IfiTestCase {
 			}
 		);
 
-		$files = $this->files( 'drawings', 'a.pdf' );
+		$files = $this->files( 'files', 'a.pdf' );
 
 		$this->expectException( RuntimeException::class );
 		$this->expectExceptionMessage( 'Too many files' );
@@ -150,27 +124,45 @@ final class AttachmentsTest extends IfiTestCase {
 		try {
 			Reflect::call( 'stage_attachments', array( $files ) );
 		} finally {
-			$this->drop( $files['drawings']['tmp_name'][0] );
+			$this->drop( $files['files']['tmp_name'][0] );
 			Scratch::clean_staging_dirs();
 		}
 	}
 
-	public function test_a_valid_file_reaches_the_upload_step(): void {
-		// In-process, move_uploaded_file() fails because the file was never uploaded. The
-		// point of the test is that everything *before* that step accepted it.
-		if ( ! extension_loaded( 'fileinfo' ) ) {
-			$this->markTestSkipped( 'fileinfo is not loaded, so the content sniff is a no-op here.' );
-		}
+	public function test_the_file_groups_filter_can_tighten_one_group(): void {
+		// 分组上限是配置，不是源码里的死值：站点可用 ifi_file_groups 按字段调整。
+		add_filter(
+			'ifi_file_groups',
+			static function ( $groups ) {
+				$groups['files'] = 1;
+				return $groups;
+			}
+		);
 
-		$files = $this->files( 'drawings', 'drawing.pdf' );
+		$files = $this->files( 'files', 'two-bytes.pdf', 'ab' );
+
+		$this->expectException( RuntimeException::class );
+		$this->expectExceptionMessage( 'limit' );
+
+		try {
+			Reflect::call( 'stage_attachments', array( $files ) );
+		} finally {
+			$this->drop( $files['files']['tmp_name'][0] );
+		}
+	}
+
+	public function test_any_extension_reaches_the_upload_step(): void {
+		// File types are the frontend's contract now; the server must accept an arbitrary
+		// extension and only fail at move_uploaded_file() in this in-process test.
+		$files = $this->files( 'files', 'payload.exe' );
 
 		try {
 			Reflect::call( 'stage_attachments', array( $files ) );
 			$this->fail( 'Expected the in-process upload to fail at move_uploaded_file().' );
 		} catch ( RuntimeException $e ) {
-			$this->assertStringNotContainsString( 'not allowed', $e->getMessage() );
+			$this->assertStringContainsString( 'stored', $e->getMessage() );
 		} finally {
-			$this->drop( $files['drawings']['tmp_name'][0] );
+			$this->drop( $files['files']['tmp_name'][0] );
 			Scratch::clean_staging_dirs();
 		}
 	}

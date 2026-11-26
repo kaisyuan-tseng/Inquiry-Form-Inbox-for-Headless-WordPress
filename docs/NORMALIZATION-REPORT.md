@@ -154,7 +154,7 @@ Two documentation claims were **false** and are now true:
 - the header said the plugin ships a "three-language dictionary (zh_CN / zh_TW / en)"; the
   zh arrays were always empty and gettext did the work. zh_TW was removed entirely in the
   terminology pass; only zh_CN ships now
-- INTEGRATION.md said `FILE_GROUPS` was editable — it is a `private const`
+- INTEGRATION.md said `FILE_GROUPS` was editable — it was a `private const`; it is now the `ifi_file_groups` filter
 
 ## P2 — packaging
 

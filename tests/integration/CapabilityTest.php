@@ -15,7 +15,7 @@ namespace Ifi\Tests\Integration;
 
 use Ifi\Tests\IfiTestCase;
 use Ifi\Tests\Scratch;
-use IFI_Migration;
+use IFI_Capabilities;
 
 /**
  * Covers map_meta_cap() and init_capabilities().
@@ -119,8 +119,8 @@ final class CapabilityTest extends IfiTestCase {
 			}
 		);
 
-		IFI_Migration::init_capabilities();
-		IFI_Migration::init_capabilities();
+		IFI_Capabilities::init_capabilities();
+		IFI_Capabilities::init_capabilities();
 
 		$this->assertSame( 0, $writes );
 	}
@@ -129,7 +129,7 @@ final class CapabilityTest extends IfiTestCase {
 		$role = get_role( 'editor' );
 		$role->remove_cap( 'ifi_delete_inquiries' );
 
-		IFI_Migration::init_capabilities();
+		IFI_Capabilities::init_capabilities();
 
 		$this->assertTrue( get_role( 'editor' )->has_cap( 'ifi_delete_inquiries' ) );
 	}

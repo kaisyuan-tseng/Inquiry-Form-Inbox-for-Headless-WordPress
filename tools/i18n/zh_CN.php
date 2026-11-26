@@ -40,7 +40,6 @@ return array(
 	'The upload could not be processed. Please try again.' => '附件处理失败，请重试。',
 	'The upload failed. Please try again.'                 => '上传失败，请重试。',
 	'Too many files in one submission.'                    => '单次提交的附件过多。',
-	'File type .%s is not allowed.'                        => '不允许上传 .%s 类型的文件。',
 	'%s is empty.'                                         => '%s 是空文件。',
 	'%s has an invalid declared size.'                     => '%s 声明的文件大小与实际不符。',
 	'%1$s exceeds the %2$d MB limit.'                      => '%1$s 超过 %2$d MB 上限。',

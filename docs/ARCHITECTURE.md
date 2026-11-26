@@ -40,7 +40,7 @@ Content-Type: multipart/form-data
 - **按名透传**：其余字段按前端提交的名字原样收下
 - **环境数据**：`browserLanguage` / `timezone` 由前端采集，服务端校验后入库
 - **IP**：默认只取 `REMOTE_ADDR`；只有 `REMOTE_ADDR` 是配置的可信代理时才采信 `X-Forwarded-For` / `X-Real-IP`。转发链从右向左读，跳过可信代理，取第一个不可信跳——最左侧条目由客户端提供，不能作为限流或入库依据
-- **附件**：`drawings[]`（单个 ≤20MB）、`pictures[]`（单个 ≤10MB），扩展名白名单 + 内容嗅探
+- **附件**：`files[]`（单个 ≤20MB）、`images[]`（单个 ≤10MB）；字段用途由前端 `accept` 决定，服务端只校验上传错误、数量与大小
 - **蜜罐**：`companyWebsite`（默认，后台可改）非空即机器人，静默丢弃（不消耗限流配额）
 - **限流**：同一可信请求标识默认 1 分钟 3 次 / 1 小时 10 次（后台「Block Rules」页可改，0 = 关掉该窗口），超限 429 + `Retry-After`；窗口长度固定为 60s / 3600s，`ifi_rate_limits` 过滤器可整份替换（含 `ttl`）
 - **垃圾规则**（后台「Block Rules」页，option `ifi_spam_rules`）：蜜罐开关、关键词、邮箱域名、
@@ -163,12 +163,12 @@ WordPress 仪表盘上的「最近询盘」挂件用同一套读法：四个指�
 
 ### 5.5 启用反馈与安装检查
 
-- `IFI_Migration::activate()` 只补能力并写一个 per-user transient，不做重定向、不输出：
+- `IFI_Capabilities::activate()` 只补能力并写一个 per-user transient，不做重定向、不输出：
   安装完成页的 AJAX 启用需要干净的 JSON 响应。
 - 下一次后台请求由 `activation_notice()` 显示一次性成功通知，附 Email Template /
   Block Rules / Inquiries 三个入口，显示后删除 transient。
 - `install_health_notice()` 只在插件自己的页面与插件列表页提示结构问题：同一目录多个
-  `Plugin Name` 头、2.x 残留文件、主文件名异常。该检查只报告，不删除文件。它针对的是
+  `Plugin Name` 头、主文件名异常。该检查只报告，不删除文件。它针对的是
   WordPress 安装页报 “The plugin does not have a valid header.” 的常见原因。
 
 ## 6. 邮件模板
@@ -186,7 +186,7 @@ WordPress 仪表盘上的「最近询盘」挂件用同一套读法：四个指�
 - 占位符只输出值，不带任何标签文案——「Timezone:」这类字眼由模板源码自己写。
 - `{{time}}` / `{{time_local}}` 的日期时间格式取站点的 `date_format` / `time_format`，
   末尾拼时区缩写（`CST` / `GMT`）。
-- 品牌色不做占位符，默认模板里直接写 `#2271b1`，想换色改源码即可。
+- 默认模板里的颜色直接写在模板源码里；插件不再提供品牌色常量或占位符，想换色改模板即可。
 - 源码用 `wp_kses` 清洗（放行内联样式与 `{{token}}`），该字段仅 `manage_options` 可写。
 
 ## 7. 数据模型
@@ -195,14 +195,14 @@ WordPress 仪表盘上的「最近询盘」挂件用同一套读法：四个指�
 |---|---|
 | post type | `ifi_inquiry`（私有，`show_ui` 但 `public=false`） |
 | meta 前缀 | `ifi_inquiry_` |
-| option | `ifi_template` / `ifi_autoreply` / `ifi_reply` / `ifi_spam_rules` / `ifi_db_version` / `ifi_numbers_backfilled` / `ifi_field_values_backfilled` / `ifi_labels_manual` |
+| option | `ifi_template` / `ifi_autoreply` / `ifi_reply` / `ifi_spam_rules` |
 | 流水号 | `ifi_seq_YYYYMMDD`（MySQL `LAST_INSERT_ID(expr)` 原子自增） |
 | 限流 transient | `ifi_rl_{window}_{hash}` |
 | 重复提交 transient | `ifi_dup_{hash}` |
 | 附件目录 | `uploads/ifi-inquiries/` |
 | capability | `ifi_view_inquiries` / `ifi_edit_inquiries` / `ifi_delete_inquiries` |
 
-2.x 的 `eln_*` 与 1.x 的 `inquiry*`/`inquiry_*` 标识符由 `IFI_Migration` 一次性迁移。
+插件不再提供 1.x / 2.x 数据迁移，也不再回填旧记录的编号或字段值；只处理当前 `ifi_*` 数据。
 
 ## 8. 开发者钩子
 
@@ -213,6 +213,7 @@ WordPress 仪表盘上的「最近询盘」挂件用同一套读法：四个指�
 | `ifi_recipient` | `admin_email` | 询盘收件人，同时作为自动确认的 Reply-To |
 | `ifi_required_fields` | `fullName`/`email`/`message` | 必填字段 |
 | `ifi_max_files` | `20` | 单次提交附件总数 |
+| `ifi_file_groups` | `files` 20 MB、`images` 10 MB | 附件字段名 => 单文件大小上限（字节）；服务端不判断文件类型，上限非正数的字段不接收附件 |
 | `ifi_length_limits` | 见 `handle()` | 各文本字段长度上限 |
 | `ifi_dashboard_limit` | `5` | 仪表盘挂件显示条数 |
 | `ifi_field_manifest` | `array()` | 给后台「字段标签」页提供字段名建议 |

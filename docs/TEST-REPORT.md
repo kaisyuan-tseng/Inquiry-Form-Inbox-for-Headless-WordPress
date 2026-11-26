@@ -6,15 +6,15 @@ Node 22 · Playwright 1.62 (Chromium 1140).
 ```
 $ IFI_ALLOW_TEST_WRITES=1 php tests/bin/gate.php
 
-  php -l         ok      4.4s
-  phpcs          ok      7.0s
+  php -l         ok      4.0s
+  phpcs          ok      4.5s
   string keys    ok      0.1s
   gettext chain  ok      0.1s
   readme         ok      0.1s
-  unit           ok      1.7s
-  integration    ok     13.0s
-  http           ok      4.2s
-  ui             ok      8.2s
+  unit           ok      0.3s
+  integration    ok     11.9s
+  http           ok      4.5s
+  ui             ok      8.1s
 
 RESULT: OK
 ```
@@ -25,13 +25,13 @@ RESULT: OK
 |---|---|---|
 | PHP syntax | 36 files, 0 failures | |
 | PHPCS (WPCS 3.1 + PHPCompatibilityWP) | **0 errors / 0 warnings** | 28 plugin files; `tests/`, `tools/` audited separately |
-| String keys | 231 declared, 231 referenced, **0 missing, 0 unused** | 303 call sites; 1 select-expression call registered both of its literals |
-| gettext chain | POT = 251 msgids · PO = 251 · MO = 250 | 0 stale, 0 empty MO entries, 3 untranslated per locale (author name, author URI, plugin URI — none should be translated) |
-| readme | 0 fail, 0 warn | 9,768 bytes, 5 tags, `Tested up to 7.1`, 4 screenshots present |
-| Unit | **178 tests, 217 assertions, 0 skipped** | 1.7s |
-| Integration | **157 tests, 458 assertions, 1 skipped** | 13.0s |
-| HTTP | **13 scenarios, 52 assertions** | 4.2s |
-| UI | **6 pages clean** | 8.2s; detail screenshot skipped because the local inbox is empty |
+| String keys | 229 declared, 229 referenced, **0 missing, 0 unused** | 300 call sites; 1 select-expression call registered both of its literals |
+| gettext chain | POT = 248 msgids · PO = 248 · MO = 246 | 0 stale, 0 empty MO entries, 4 untranslated per locale (plugin description + author name, author URI, plugin URI — the description is intentionally English-only) |
+| readme | 0 fail, 0 warn | 6,839 bytes, 5 tags, `Tested up to 7.1`, 4 screenshots present; changelog intentionally omitted (history in `changelog.txt`) |
+| Unit | **173 tests, 212 assertions, 0 skipped** | 0.3s |
+| Integration | **144 tests, 429 assertions, 0 skipped** | 11.9s |
+| HTTP | **13 scenarios, 54 assertions** | 4.5s |
+| UI | **6 pages clean** | 10.2s; detail screenshot skipped because the local inbox is empty |
 
 ## What the suites found
 
@@ -55,17 +55,14 @@ The tests were not written to confirm the code worked. These are defects they su
 - **X-Forwarded-For:** three integration tests pin the hop-closest-to-the-server rule: a spoofed leftmost entry cannot change the rate-limit identity, and forwarded headers from an untrusted peer are ignored.
 - **Deletion:** a meta path that starts inside `uploads/ifi-inquiries/` but resolves outside it (`../secret.txt`) must leave the outside file intact.
 - **Admin render:** a stored body containing `<script>` is filtered before the detail view, while `rgba()` colors survive.
+- **Uploads:** arbitrary extensions are no longer rejected; `.exe` reaches the store step in-process and is accepted over HTTP, and a PNG in the `files` group is accepted. Size and count limits remain, and per-field caps are configurable through `ifi_file_groups`.
 - **Activation:** the activation callback produces no output, leaves a one-time success transient, and `get_plugins('/inquiry-form-inbox')` returns exactly one plugin header.
 - **Build:** `build-zip.php` fails unless the package has the expected main file and exactly one `Plugin Name` header (the first run caught the guard itself comparing root-relative paths to slug-prefixed paths; fixed).
 
 ## Skipped, and why
 
-| Test | Reason |
-|---|---|
-| `AttachmentsTest::test_a_valid_file_reaches_the_upload_step` | `fileinfo` is not loaded in this PHP build, so the content sniff is a no-op and the test would assert nothing. It is reported as **skipped**, not passed. The readme and `INTEGRATION.md` now state that the sniff depends on `fileinfo`. |
-
-Nothing else in the suite is conditionally skipped. A missing `IFI_ALLOW_TEST_WRITES` skips
-L2–L4 wholesale and says so; it never reports green.
+Nothing in the suite is conditionally skipped. A missing `IFI_ALLOW_TEST_WRITES` skips L2–L4
+wholesale and says so; it never reports green.
 
 ## Deviations from the plan
 
@@ -102,8 +99,7 @@ IFI_ALLOW_TEST_WRITES=1 php tests/bin/gate.php
 
 | Area | Why |
 |---|---|
-| Multisite uninstall | the uninstall path loops roles and options for the current site only. Real multisite cleanup is untested; on a network install, site tables beyond the current site keep their data. |
+| Multisite uninstall | `uninstall.php` loops over every site, but the single-site suite cannot exercise a real network. |
 | Real SMTP delivery | all mail is short-circuited. Delivery, bounce handling and SPF/DKIM behaviour belong to the site's mailer. |
-| `fileinfo` content sniffing | extension not available here (above). |
 | Plugin Check | not installed; noted as a manual pre-submission step in `WPORG-AUDIT.md`. |
 | PHP 8.0 / 8.1 runtime | the suite runs on 8.5. `phpcs` enforces `testVersion 8.0-` and a static check confirms no 8.2-only syntax (trait constants were removed for exactly this reason in 2.0.1), but no 8.0 binary is available to execute against. |

@@ -12,7 +12,7 @@ namespace Ifi\Tests\Integration;
 use Ifi\Tests\IfiTestCase;
 
 /**
- * Covers IFI_Migration::activate() and the plugin folder structure.
+ * Covers IFI_Capabilities::activate() and the plugin folder structure.
  */
 final class ActivationTest extends IfiTestCase {
 
