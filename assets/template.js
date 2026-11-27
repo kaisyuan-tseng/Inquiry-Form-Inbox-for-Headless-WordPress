@@ -5,6 +5,26 @@
  */
 (function () {
   function boot() {
+    // 语言选择框停在默认占位项时，Add 按钮置灰不可点；选中语言后恢复。
+    Array.prototype.forEach.call(document.querySelectorAll('.ifi-lang-add'), function (langForm) {
+      var select = langForm.querySelector('select[name="newlang"]');
+      var button = langForm.querySelector('button[type="submit"]');
+      if (!select || !button) { return; }
+
+      function sync() {
+        button.disabled = select.value === '';
+      }
+
+      select.addEventListener('change', sync);
+      langForm.addEventListener('submit', function (e) {
+        if (select.value === '') {
+          e.preventDefault();
+          select.focus();
+        }
+      });
+      sync();
+    });
+
     var cfg = window.IFITpl || {};
     var form = document.getElementById('ifi-tpl-form') || document.getElementById('ifi-reply-form');
     if (!form) return;

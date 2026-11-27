@@ -131,6 +131,31 @@ function pages() {
 			anchors: [ 'Auto-Confirmation Template', 'Language' ],
 			anchorsZh: [ '自动确认', '语言' ],
 			screenshot: 0,
+			after: async ( page ) => {
+				const select = page.locator( '.ifi-lang-add select[name="newlang"]' ).first();
+				const button = page.locator( '.ifi-lang-add button[type="submit"]' ).first();
+				if ( 0 === await select.count() || 0 === await button.count() ) {
+					throw new Error( 'LANG_ADD_FORM_MISSING' );
+				}
+				if ( ! ( await button.isDisabled() ) ) {
+					throw new Error( 'LANG_BUTTON_NOT_DISABLED' );
+				}
+				const value = await select.evaluate( ( el ) => {
+					const option = Array.from( el.options ).find( ( item ) => item.value !== '' );
+					return option ? option.value : '';
+				} );
+				if ( value === '' ) {
+					return;
+				}
+				await select.selectOption( value );
+				if ( await button.isDisabled() ) {
+					throw new Error( 'LANG_BUTTON_STILL_DISABLED' );
+				}
+				await select.selectOption( '' );
+				if ( ! ( await button.isDisabled() ) ) {
+					throw new Error( 'LANG_BUTTON_NOT_DISABLED_AGAIN' );
+				}
+			},
 		},
 		{
 			key: 'dashboard',

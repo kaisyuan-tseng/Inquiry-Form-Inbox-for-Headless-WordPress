@@ -26,6 +26,23 @@ final class AdminRenderTest extends IfiTestCase {
 		$this->assertStringContainsString( 'rgba(0,0,0,.5)', $out );
 	}
 
+	public function test_language_add_button_starts_disabled_until_a_language_is_picked(): void {
+		$slots = array(
+			array( 'lang' => '' ),
+			array( 'lang' => 'zh-hans' ),
+		);
+
+		ob_start();
+		Reflect::call( 'render_lang_bar', array( 'autoreply', $slots, 0 ) );
+		$html = (string) ob_get_clean();
+
+		$this->assertStringContainsString( 'name="newlang"', $html );
+		$this->assertStringContainsString( '<option value="">', $html );
+		$this->assertStringContainsString( 'value="en"', $html );
+		$this->assertStringNotContainsString( 'value="zh-hans"', $html );
+		$this->assertMatchesRegularExpression( '/<button type="submit" class="button button-small" disabled>/', $html );
+	}
+
 	public function test_view_mode_is_disabled_for_inquiries(): void {
 		$types = (array) Reflect::call( 'disable_view_mode', array( array( 'post', 'page', 'ifi_inquiry' ) ) );
 

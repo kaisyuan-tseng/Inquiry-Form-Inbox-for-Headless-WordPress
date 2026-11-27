@@ -398,7 +398,7 @@ trait IFI_Settings_Render_Trait {
 						<option value="<?php echo esc_attr( $opt_code ); ?>"><?php echo esc_html( $opt_label ); ?></option>
 					<?php endforeach; ?>
 				</select>
-				<button type="submit" class="button button-small"><?php echo esc_html( self::t( 'tpl_lang_add' ) ); ?></button>
+				<button type="submit" class="button button-small" disabled><?php echo esc_html( self::t( 'tpl_lang_add' ) ); ?></button>
 			</form>
 		</div>
 		<?php

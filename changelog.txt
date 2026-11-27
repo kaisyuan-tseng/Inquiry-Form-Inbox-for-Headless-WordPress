@@ -29,6 +29,7 @@ by the plugin directory.
 * Change: the View mode section is removed from Screen Options on the inquiries screen; the list has one layout.
 * New: inquiry rows show a status badge after the number — New (today, not opened), Pending (opened or older), Contacted, or Spam. Closing the detail dialog marks the record as viewed, so the badge changes from New to Pending without a reload.
 * Fix: the Empty Trash button on the self-rendered Trash view now permanently deletes every trashed inquiry and returns to Trash. The list form also carries the current view, so filters, search and bulk actions no longer jump back to All.
+* Change: the Add button beside the language selector on the Email Template screen stays disabled until a language is chosen, and disables again when the default option is selected.
 * Fix: the email status now follows the enabled/ignore matrix — with auto-confirmation off it warns even when nothing failed, with it on it warns only for failed sends, and "Ignore unsent warning" suppresses both cases.
 * Fix: the activation hook is registered from the main plugin file, which is the location WordPress documents, instead of from the class initializer.
 
