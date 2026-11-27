@@ -32,7 +32,7 @@ msgstr ""
 
 #. Author URI of the plugin
 #: inquiry-form-inbox.php
-msgid "https://profiles.wordpress.org/kaisyuan-tseng/"
+msgid "https://github.com/kaisyuan-tseng"
 msgstr ""
 
 #: includes/class-ifi-privacy.php:58

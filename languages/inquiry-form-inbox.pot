@@ -38,7 +38,7 @@ msgstr ""
 
 #. Author URI of the plugin
 #: inquiry-form-inbox.php
-msgid "https://profiles.wordpress.org/kaisyuan-tseng/"
+msgid "https://github.com/kaisyuan-tseng"
 msgstr ""
 
 #. translators: 1: language name, 2: region name shown in parentheses.
